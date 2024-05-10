@@ -19,7 +19,6 @@
         <file>fonts/OpenSans-Regular.ttf</file>
         <file>fonts/OpenSans-SemiBold.ttf</file>
         <file>fonts/OpenSans-SemiBoldItalic.ttf</file>
-        <file>mscript.py</file>
         <file>images/Set 1/01.png</file>
         <file>images/Set 1/02.png</file>
         <file>images/Set 1/03.png</file>
@@ -84,5 +83,6 @@
         <file>img/needle.svg</file>
         <file>img/tickmark.svg</file>
         <file>Gauge_animation.qml</file>
+        <file>images/wanring_massage.png</file>
     </qresource>
 </RCC>

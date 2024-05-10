@@ -4,6 +4,7 @@
 
 #include <QObject>
 #include <QString>
+#include <QProcess>
 
 class PythonRunner : public QObject
 {
@@ -16,9 +17,17 @@ public slots:
     void runPythonScript();
 
 signals:
-    void pythonScriptOutput(const QString output) const;  // Added 'const' to the signal declaration
-    void pythonScriptError(const QString error) const;    // Added a new signal for error output
+    void pythonScriptOutput(const QString output);
+    void pythonScriptError(const QString error);
 
+private slots:
+    void readStandardOutput();  // Corrected slot name
+    void readStandardError();   // Added slot for standard error
+
+    void processFinished(int exitCode, QProcess::ExitStatus exitStatus);
+
+private:
+    QProcess process;  // Declare QProcess as a member variable
 };
 
 #endif // PYTHONRUNNER_H

@@ -5,9 +5,7 @@
 #include <QUdpSocket>
 
 struct CarData {
-    float speed;
-    int gear;
-    float steeringAngle;
+    int sleepDetection;
 };
 
 class CarDataReceiver : public QObject {
@@ -17,6 +15,7 @@ public:
 
 signals:
     void carDataReceived(const CarData &data);
+    void sleepStatusChanged(double sleepStatus);
 
 private slots:
     void processPendingDatagrams();

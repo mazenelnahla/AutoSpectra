@@ -17,13 +17,11 @@ void CarDataReceiver::processPendingDatagrams() {
         udpSocket.readDatagram(datagram.data(), datagram.size(), &sender, &senderPort);
 
         QStringList dataList = QString(datagram).split('|');
-        if (dataList.size() == 3) {
+        if (dataList.size() == 2) {
             CarData carData;
-            carData.speed = dataList[0].toFloat();
-            carData.gear = dataList[1].toInt();
-            carData.steeringAngle = dataList[2].toFloat();
-            qDebug() << "speed" << carData.speed;
-            emit carDataReceived(carData);
+            carData.sleepDetection = dataList[0].toFloat();
+            qDebug() << "sleep Detection" << carData.sleepDetection;
+            emit sleepStatusChanged(carData.sleepDetection);
         }
     }
 }

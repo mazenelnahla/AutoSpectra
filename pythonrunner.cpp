@@ -1,15 +1,16 @@
 // pythonrunner.cpp
 #include "pythonrunner.h"
-#include <QProcess>
 #include <QFileInfo>
 #include <QDebug>
 
-PythonRunner::PythonRunner(QObject *parent) : QObject(parent) {}
+PythonRunner::PythonRunner(QObject *parent) : QObject(parent) {
+    connect(&process, &QIODevice::readyRead, this, &PythonRunner::readStandardOutput);
+    connect(&process, &QIODevice::readyRead, this, &PythonRunner::readStandardError);
+    connect(&process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, &PythonRunner::processFinished);
+}
 
-void PythonRunner::runPythonScript()
-{
-    QProcess process;
-    QString scriptPath = "D:/Desktop/GProject/Dashboard/0.QT/AV-Cluster/mscript.py";
+void PythonRunner::runPythonScript() {
+    QString scriptPath = "D:/GProject/Dashboard/Drowsiness_Detection-master/Drowsiness_Detection.py";
     // Set working directory to the script's directory
     process.setWorkingDirectory(QFileInfo(scriptPath).absolutePath());
 
@@ -18,25 +19,24 @@ void PythonRunner::runPythonScript()
         qDebug() << "Failed to start the script process:" << process.errorString();
         return;
     }
+}
 
-    if (!process.waitForFinished(-1)) {
-        qDebug() << "Error occurred during script execution:" << process.errorString();
-        return;
-    }
-
-    if (process.exitCode() != 0) {
-        qDebug() << "Script exited with an error:" << process.exitCode();
-    }
-
+void PythonRunner::readStandardOutput() {
     QString output = process.readAllStandardOutput().simplified();
-    QString errorOutput = process.readAllStandardError().simplified();
+    qDebug() << "Script output:" << output;
+    emit pythonScriptOutput(output);
+}
 
-    if (!errorOutput.isEmpty()) {
-        qDebug() << "Script produced an error:" << errorOutput;
+void PythonRunner::readStandardError() {
+    QString errorOutput = process.readAllStandardError().simplified();
+    qDebug() << "Script produced an error:" << errorOutput;
+    emit pythonScriptError(errorOutput);
+}
+
+void PythonRunner::processFinished(int exitCode, QProcess::ExitStatus exitStatus) {
+    if (exitCode != 0) {
+        qDebug() << "Script exited with an error:" << exitCode;
     }
 
-    qDebug() << "Script output:" << output;
-
-    emit pythonScriptOutput(output);
-    emit pythonScriptError(errorOutput);
+    qDebug() << "Script execution finished with exit code:" << exitCode;
 }

@@ -1,15 +1,12 @@
-import QtQuick 2.12
-import QtQuick.Window 2.12
-import QtQuick.Extras 1.4
-import Qt.labs.calendar 1.0
-import QtQuick.Controls 2.0
+import QtQuick 2.15
+import QtQuick.Window 2.15
+import QtQuick.Controls 2.15
 import com.company.serialmanager 1.0
 import MyPythonScript 1.0
 import com.company.cardatareceiver 1.0
-import QtQuick 2.7
 import QtQuick.Controls.Styles 1.4
-import QtQuick.Extras.Private 1.0
 import QtGraphicalEffects 1.0
+import QtMultimedia 5.12
 Window {
     id: window
     maximumHeight: 600
@@ -19,11 +16,10 @@ Window {
     width: 1024
     height: 600
     visible: true
-//    visibility: "FullScreen"
-//    screen: Qt.application.screens[1]
-    title: qsTr("Instrument cluster")
+    //    visibility: "FullScreen"
+    //    screen: Qt.application.screens[1]
+    title: qsTr("Instrument Cluster")
     color: "#3e3c3c"
-
     Image {
         id: color_fill_1
         source: "images/color_fill_1.png"
@@ -31,6 +27,7 @@ Window {
         y: 0
         opacity: 1
     }
+
     Image {
         id: rectangle_1
         source: "images/rectangle_1.png"
@@ -38,6 +35,24 @@ Window {
         y: 153
         opacity: 0.83921568627451
     }
+
+    VideoOutput {
+        id: viewfinder
+        x: 124
+        y: 70
+        width: 1236
+        height: 698
+        anchors.fill: rectangle_1
+        anchors.centerIn: parent
+        source: camera
+        visible: false
+
+    }
+    Camera {
+        id: camera
+
+    }
+
     Image {
         id: right_side
         source: "images/right_side.png"
@@ -166,6 +181,7 @@ Window {
         x: 247
         y: 363
         opacity: 1
+        visible: true
     }
     Image {
         id: door_open
@@ -180,6 +196,7 @@ Window {
         x: 782
         y: 72
         opacity: 1
+        visible: true
     }
     Image {
         id: parking_break
@@ -187,6 +204,7 @@ Window {
         x: 144
         y: 49
         opacity: 1
+        visible: true
     }
     Image {
         id: seat_belt
@@ -194,6 +212,7 @@ Window {
         x: 210
         y: 65
         opacity: 1
+        visible: true
     }
     Image {
         id: steering_error
@@ -201,6 +220,7 @@ Window {
         x: 853
         y: 44
         opacity: 1
+        visible: true
     }
     Image {
         id: assist_disable
@@ -208,6 +228,7 @@ Window {
         x: 919
         y: 15
         opacity: 1
+        visible: true
     }
     Image {
         id: high_beam
@@ -256,6 +277,7 @@ Window {
         x: 323
         y: 83
         opacity: 1
+        visible: false
     }
     Text {
         id: _cautionMassage
@@ -271,6 +293,7 @@ Window {
         width: 306
         height: 19
         opacity: 1
+        visible: false
     }
     Text {
         id: clockdate
@@ -280,7 +303,7 @@ Window {
         font.bold: true
         color: "#ffffff"
         smooth: true
-        x: 317
+        x: 304
         y: 34
         opacity: 1
     }
@@ -292,94 +315,102 @@ Window {
         font.bold: true
         color: "#7f7f7f"
         smooth: true
-        x: 381
+        x: 368
         y: 42
         opacity: 1
     }
     Text {
         id: tempLabel
-        text: "25"
+        text: "Nan"
         font.pixelSize: 22
+        horizontalAlignment: Text.AlignHCenter
         font.weight: Font.Black
         font.family: "Arial-Black"
         color: "#ffffff"
         smooth: true
-        x: 648
-        y: 36
+        x: 647
+        y: 37
+        width: 44
+        height: 27
         opacity: 1
+
+        Text {
+            id: tempDegree
+            text: "o"
+            font.pixelSize: 15
+            font.family: "ArialMT"
+            color: "#7f7f7f"
+            smooth: true
+            x: 47
+            y: -6
+            width: 7
+            opacity: 1
+        }
+        Text {
+            id: tempSign
+            text: "c"
+            font.pixelSize: 23
+            font.family: "ArialMT"
+            color: "#7f7f7f"
+            smooth: true
+            x: 52
+            y: 0
+            opacity: 1
+        }
     }
-    Text {
-        id: tempDegree
-        text: "o"
-        font.pixelSize: 15
-        font.family: "ArialMT"
-        color: "#7f7f7f"
-        smooth: true
-        x: 682
-        y: 28
-        width: 7
-        opacity: 1
-    }
-    Text {
-        id: tempSign
-        text: "c"
-        font.pixelSize: 23
-        font.family: "ArialMT"
-        color: "#7f7f7f"
-        smooth: true
-        x: 687
-        y: 34
-        opacity: 1
-    }
+
     Image {
         id: artistImage
         source: "images/group_1.png"
         x: 425
         y: 216
         opacity: 1
-    }
-    Text {
-        id: playingNow
-        text: "Playing Now"
-        font.pixelSize: 21
-        horizontalAlignment: Text.AlignHCenter
-        font.weight: Font.Black
-        font.family: "Arial-Black"
-        color: "#f2f2f2"
-        smooth: true
-        x: 425
-        y: 180
-        width: 169
-        height: 25
-        opacity: 0.70196078431373
-    }
-    Text {
-        id: songTitle
-        text: "...ready for it?"
-        font.pixelSize: 20
-        horizontalAlignment: Text.AlignHCenter
-        font.family: "Arial-Black"
-        color: "#ffffff"
-        smooth: true
-        x: 414
-        y: 394
-        width: 180
-        height: 24
-        opacity: 1
-    }
-    Text {
-        id: artistName
-        text: "Taylor Swift"
-        font.pixelSize: 19
-        horizontalAlignment: Text.AlignHCenter
-        font.family: "Arial-Black"
-        color: "#ffffff"
-        smooth: true
-        x: 425
-        y: 422
-        width: 169
-        height: 19
-        opacity: 0.4
+        visible: true
+        Text {
+            id: playingNow
+            text: "Playing Now"
+            font.pixelSize: 21
+            horizontalAlignment: Text.AlignHCenter
+            font.weight: Font.Black
+            font.family: "Arial-Black"
+            color: "#f2f2f2"
+            smooth: true
+            x: 0
+            y: -36
+            width: 169
+            height: 25
+            opacity: 0.70196078431373
+        }
+
+        Text {
+            id: songTitle
+            text: "...ready for it?"
+            font.pixelSize: 20
+            horizontalAlignment: Text.AlignHCenter
+            font.family: "Arial-Black"
+            color: "#ffffff"
+            smooth: true
+            x: -11
+            y: 178
+            width: 180
+            height: 24
+            opacity: 1
+        }
+
+        Text {
+            id: artistName
+            text: "Taylor Swift"
+            font.pixelSize: 19
+            horizontalAlignment: Text.AlignHCenter
+            font.family: "Arial-Black"
+            color: "#ffffff"
+            smooth: true
+            x: 0
+            y: 206
+            width: 169
+            height: 19
+            opacity: 0.4
+        }
     }
     Text {
         id: _P
@@ -442,8 +473,8 @@ Window {
         font.family: "Arial"
         color: "#e7bf8c"
         smooth: true
-        x: 448
-        y: 37
+        x: 447
+        y: 35
         width: 133
         height: 22
         opacity: 1
@@ -451,7 +482,7 @@ Window {
 
     Image {
         id: rightlabel
-        x: 595
+        x: 592
         y: 29
         width: 35
         height: 35
@@ -488,7 +519,7 @@ Window {
 
     Image {
         id: leftlabel
-        x: 409
+        x: 399
         y: 29
         width: 35
         height: 35
@@ -522,13 +553,109 @@ Window {
         }
     }
 
+    Image {
+        id: wanring_massage
+        source: "images/wanring_massage.png"
+        x: 293
+        y: 294
+        opacity: 1
+        visible: false
+
+        Text {
+            id: _errorEngine
+            x: 50
+            y: 91
+            width: 343
+            height: 89
+            color: "#e8c291"
+            text: qsTr("Engine operating at reduced output. Possible to continue. Drive with caution. Have the system checked by nearest service center.")
+            font.pixelSize: 19
+            verticalAlignment: Text.AlignVCenter
+            wrapMode: Text.Wrap
+            font.weight: Font.DemiBold
+            layer.format: ShaderEffectSource.RGBA
+            layer.textureMirroring: ShaderEffectSource.MirrorHorizontally
+            layer.wrapMode: ShaderEffectSource.ClampToEdge
+            font.preferShaping: true
+            font.kerning: true
+        }
+
+        Text {
+            id: _errorAirbag
+            x: 50
+            y: 91
+            width: 343
+            height: 89
+            color: "#e8c291"
+            text: qsTr("Engine operating at reduced output. Possible to continue. Drive with caution. Have the system checked by nearest service center.")
+            font.pixelSize: 19
+            verticalAlignment: Text.AlignVCenter
+            wrapMode: Text.Wrap
+            font.weight: Font.DemiBold
+            layer.format: ShaderEffectSource.RGBA
+            layer.textureMirroring: ShaderEffectSource.MirrorHorizontally
+            layer.wrapMode: ShaderEffectSource.ClampToEdge
+            font.preferShaping: true
+            font.kerning: true
+        }
+
+        Text {
+            id: _errorSteering
+            x: 50
+            y: 91
+            width: 343
+            height: 89
+            color: "#e8c291"
+            text: qsTr("Engine operating at reduced output. Possible to continue. Drive with caution. Have the system checked by nearest service center.")
+            font.pixelSize: 19
+            verticalAlignment: Text.AlignVCenter
+            wrapMode: Text.Wrap
+            font.weight: Font.DemiBold
+            layer.format: ShaderEffectSource.RGBA
+            layer.textureMirroring: ShaderEffectSource.MirrorHorizontally
+            layer.wrapMode: ShaderEffectSource.ClampToEdge
+            font.preferShaping: true
+            font.kerning: true
+        }
+
+        Text {
+            id: _errorRadarDetected
+            x: 50
+            y: 91
+            width: 343
+            height: 89
+            color: "#e8c291"
+            text: qsTr("Engine operating at reduced output. Possible to continue. Drive with caution. Have the system checked by nearest service center.")
+            font.pixelSize: 19
+            verticalAlignment: Text.AlignVCenter
+            wrapMode: Text.Wrap
+            font.weight: Font.DemiBold
+            layer.format: ShaderEffectSource.RGBA
+            layer.textureMirroring: ShaderEffectSource.MirrorHorizontally
+            layer.wrapMode: ShaderEffectSource.ClampToEdge
+            font.preferShaping: true
+            font.kerning: true
+        }
+
+        Text {
+            id: _errorTitle
+            x: 98
+            y: 52
+            color: "#d92a27"
+            text: qsTr("Engine malfunction")
+            font.pixelSize: 19
+            font.capitalization: Font.Capitalize
+            font.weight: Font.ExtraBold
+        }
+    }
+
     Connections {
         target: serialManager
         onTemperatureChanged: {tempLabel.text = ""+newTemp;}
         onSpeedChanged:{if(selected_gear.text === "P"){
                 speed_read.text = 0;
             }else{
-            speed_read.text = ""+newSpeed;}
+                speed_read.text = ""+newSpeed;}
         }
         onDoorStatusChanged:{
             if(newDoorStatus){
@@ -563,16 +690,15 @@ Window {
     }
 
     Connections {
-        target: pythonRunner
-        onPythonScriptOutput: {
-            if(output!=""){
-            _cautionMassage.text = output;
-            }else{
-                _cautionMassage.text="";
-                _caution.visible=false;
+        target: carDataReceiver
+        onSleepStatusChanged: {
+            if(sleepStatus==1){
+                _cautionMassage.visible=true;
+                alert_.visible=true;
             }
         }
     }
+
     Timer {
         interval: 1000
         running: true
@@ -597,13 +723,32 @@ Window {
             return hours + ":" + minutes
         }
     }
+    Connections {
+        target: serialManager
+        onTemperatureChanged: {tempLabel.text = ""+newTemp+" C";}
+        onSelectedGearChanged:{
+            if(selected_gear.text === "R"){
+                camera.start() // Start the camera
+                viewfinder.visible = true // Show the viewfinder
+                artistImage.visible=false
+            }else{
+                camera.stop() // Stop the camera (not start)
+                viewfinder.visible = false // Hide the viewfinder
+                artistImage.visible=true
+            }
+        }
+    }
+
+
 
 }
 
 
 
+
+
 /*##^##
 Designer {
-    D{i:0;formeditorZoom:0.5}
+    D{i:0;formeditorZoom:0.66}
 }
 ##^##*/
