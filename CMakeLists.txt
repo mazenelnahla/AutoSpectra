@@ -15,6 +15,9 @@ find_package(QT NAMES Qt6 Qt5 COMPONENTS Core SerialPort Gui Quick REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core SerialPort Gui Quick REQUIRED)
 
 set(PROJECT_SOURCES
+        cardatareceiver.h
+        pythonrunner.h
+        serialmanager.h
         cardatareceiver.cpp
         pythonrunner.cpp
         serialmanager.cpp
@@ -41,6 +44,9 @@ else()
     else()
         add_executable(AutoSpectra
           ${PROJECT_SOURCES}
+          SpotifyReceiver.h SpotifyReceiver.cpp
+
+
         )
     endif()
 endif()

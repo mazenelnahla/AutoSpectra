@@ -1,25 +1,27 @@
 import QtQuick 2.15
 import QtQuick.Window 2.15
 import QtQuick.Controls 2.15
+import QtQuick.Controls.Styles 1.4
+import QtGraphicalEffects 1.0
+import QtMultimedia 5.15
 import com.company.serialmanager 1.0
 import MyPythonScript 1.0
 import com.company.cardatareceiver 1.0
-import QtQuick.Controls.Styles 1.4
-import QtGraphicalEffects 1.0
-import QtMultimedia 5.12
+import spotifyreceiver 1.0
 Window {
     id: window
+    color: "#3e3c3c"
+    height: 600
     maximumHeight: 600
     maximumWidth: 1024
     minimumHeight: 600
     minimumWidth: 1024
-    width: 1024
-    height: 600
     visible: true
+    width: 1024
+    title: qsTr("Instrument Cluster")
     //    visibility: "FullScreen"
     //    screen: Qt.application.screens[1]
-    title: qsTr("Instrument Cluster")
-    color: "#3e3c3c"
+
     Image {
         id: color_fill_1
         source: "images/color_fill_1.png"
@@ -74,7 +76,7 @@ Window {
         width: 317
         height: 317
         value: speed_read.text
-        maximumValue: 250
+        maximumValue: 140
         anchors {
             margins: window.height * 0.2
         }
@@ -96,7 +98,7 @@ Window {
             y: 268
             font.family: "GoogleSansDisplay-Bold"
             color: "#d92a27"
-            text: qsTr("250")
+            text: qsTr("140")
             font.pixelSize: 17
             font.bold: true
         }
@@ -329,7 +331,7 @@ Window {
         color: "#ffffff"
         smooth: true
         x: 647
-        y: 37
+        y: 34
         width: 44
         height: 27
         opacity: 1
@@ -361,16 +363,19 @@ Window {
 
     Image {
         id: artistImage
-        source: "images/group_1.png"
+        source: ""
+        width:170
+        height:170
         x: 425
         y: 216
         opacity: 1
-        visible: true
+        visible: false
         Text {
             id: playingNow
             text: "Playing Now"
             font.pixelSize: 21
             horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
             font.weight: Font.Black
             font.family: "Arial-Black"
             color: "#f2f2f2"
@@ -380,33 +385,37 @@ Window {
             width: 169
             height: 25
             opacity: 0.70196078431373
+            visible: false
         }
 
         Text {
             id: songTitle
-            text: "...ready for it?"
+            text: ""
             font.pixelSize: 20
             horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
             font.family: "Arial-Black"
             color: "#ffffff"
+            wrapMode: Text.Wrap
             smooth: true
-            x: -11
-            y: 178
-            width: 180
-            height: 24
+            x: -59
+            y: 179
+            width: 294
+            height: 32
             opacity: 1
         }
 
         Text {
             id: artistName
-            text: "Taylor Swift"
+            text: ""
             font.pixelSize: 19
             horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
             font.family: "Arial-Black"
             color: "#ffffff"
             smooth: true
             x: 0
-            y: 206
+            y: 225
             width: 169
             height: 19
             opacity: 0.4
@@ -464,8 +473,8 @@ Window {
         font.weight: Font.Black
     }
     Text {
-        id: sport_mode
-        text: "Sport Mode"
+        id: drive_mode
+        text: "Parking"
         font.pixelSize: 18
         horizontalAlignment: Text.AlignHCenter
         font.capitalization: Font.AllUppercase
@@ -489,7 +498,7 @@ Window {
         source: "images/right.png"
         fillMode: Image.PreserveAspectFit
         opacity:0
-        visible: true
+        visible: false
 
         SequentialAnimation {
             running: true
@@ -505,14 +514,14 @@ Window {
                 target: rightlabel
                 property: "opacity"
                 to: 0
-                duration: 600  // Adjust the duration of the fade-out
+                duration: 1500  // Adjust the duration of the fade-out
             }
 
             NumberAnimation {
                 target: rightlabel
                 property: "opacity"
                 to: 1
-                duration: 600  // Adjust the duration of the fade-in
+                duration: 1500  // Adjust the duration of the fade-in
             }
         }
     }
@@ -526,6 +535,7 @@ Window {
         source: "images/left.png"
         fillMode: Image.PreserveAspectFit
         opacity:0
+        visible: false
 
         SequentialAnimation {
             running: true
@@ -541,14 +551,14 @@ Window {
                 target: leftlabel
                 property: "opacity"
                 to: 0
-                duration: 600  // Adjust the duration of the fade-out
+                duration: 1500  // Adjust the duration of the fade-out
             }
 
             NumberAnimation {
                 target: leftlabel
                 property: "opacity"
                 to: 1
-                duration: 600  // Adjust the duration of the fade-in
+                duration: 1500  // Adjust the duration of the fade-in
             }
         }
     }
@@ -570,7 +580,7 @@ Window {
             color: "#e8c291"
             text: qsTr("Engine operating at reduced output. Possible to continue. Drive with caution. Have the system checked by nearest service center.")
             font.pixelSize: 19
-            verticalAlignment: Text.AlignVCenter
+            verticalAlignment: Text.AlignTop
             wrapMode: Text.Wrap
             font.weight: Font.DemiBold
             layer.format: ShaderEffectSource.RGBA
@@ -587,9 +597,9 @@ Window {
             width: 343
             height: 89
             color: "#e8c291"
-            text: qsTr("Engine operating at reduced output. Possible to continue. Drive with caution. Have the system checked by nearest service center.")
+            text: qsTr("Continue wearing safety belt. consult nearest service center.")
             font.pixelSize: 19
-            verticalAlignment: Text.AlignVCenter
+            verticalAlignment: Text.AlignTop
             wrapMode: Text.Wrap
             font.weight: Font.DemiBold
             layer.format: ShaderEffectSource.RGBA
@@ -606,9 +616,9 @@ Window {
             width: 343
             height: 89
             color: "#e8c291"
-            text: qsTr("Engine operating at reduced output. Possible to continue. Drive with caution. Have the system checked by nearest service center.")
+            text: qsTr("Steering system may have some communictaion issues or broken parts. Drive with caution. Have the system checked by nearest service center.")
             font.pixelSize: 19
-            verticalAlignment: Text.AlignVCenter
+            verticalAlignment: Text.AlignTop
             wrapMode: Text.Wrap
             font.weight: Font.DemiBold
             layer.format: ShaderEffectSource.RGBA
@@ -625,9 +635,28 @@ Window {
             width: 343
             height: 89
             color: "#e8c291"
-            text: qsTr("Engine operating at reduced output. Possible to continue. Drive with caution. Have the system checked by nearest service center.")
+            text: qsTr("Attention, Radar is near you, Please slow down and keep focused on the road.")
             font.pixelSize: 19
-            verticalAlignment: Text.AlignVCenter
+            verticalAlignment: Text.AlignTop
+            wrapMode: Text.Wrap
+            font.weight: Font.DemiBold
+            layer.format: ShaderEffectSource.RGBA
+            layer.textureMirroring: ShaderEffectSource.MirrorHorizontally
+            layer.wrapMode: ShaderEffectSource.ClampToEdge
+            font.preferShaping: true
+            font.kerning: true
+        }
+
+        Text {
+            id: _errorRoadImprefections
+            x: 50
+            y: 91
+            width: 343
+            height: 89
+            color: "#e8c291"
+            text: qsTr("Alert an imperfection has been dectected please slow down. Drive with caution. Nearest road bump in 10 meters away.")
+            font.pixelSize: 19
+            verticalAlignment: Text.AlignTop
             wrapMode: Text.Wrap
             font.weight: Font.DemiBold
             layer.format: ShaderEffectSource.RGBA
@@ -644,6 +673,7 @@ Window {
             color: "#d92a27"
             text: qsTr("Engine malfunction")
             font.pixelSize: 19
+            verticalAlignment: Text.AlignTop
             font.capitalization: Font.Capitalize
             font.weight: Font.ExtraBold
         }
@@ -667,21 +697,25 @@ Window {
         onSelectedGearChanged:{
             selected_gear.text=selectedGear;
             if (selected_gear.text === "P") {
+                drive_mode.text="Parking"
                 _P.color = "#ffffff";
             } else {
                 _P.color = "#7f7f7f";
             }
             if (selected_gear.text === "N") {
+                drive_mode.text="Neutral"
                 _N.color = "#ffffff";
             } else {
                 _N.color = "#7f7f7f";
             }
             if (selected_gear.text === "D") {
+                drive_mode.text="Driving Mode"
                 _D.color = "#ffffff";
             } else {
                 _D.color = "#7f7f7f";
             }
             if (selected_gear.text === "R") {
+                drive_mode.text="Reversing"
                 _R.color = "#ffffff";
             } else {
                 _R.color = "#7f7f7f";
@@ -728,6 +762,7 @@ Window {
         onTemperatureChanged: {tempLabel.text = ""+newTemp+" C";}
         onSelectedGearChanged:{
             if(selected_gear.text === "R"){
+                drive_mode.text="Reversing"
                 camera.start() // Start the camera
                 viewfinder.visible = true // Show the viewfinder
                 artistImage.visible=false
@@ -739,7 +774,30 @@ Window {
         }
     }
 
-
+    Connections {
+        target: SpotifyReceiver // Assuming you have an object named spotifyReceiver in QML
+        onAlbumImageUrlReceived: {
+            artistImage.source = albumImageUrl
+            artistImage.visible=true
+            playingNow.visible=true
+        }
+        onTrackNameReceived: {
+            songTitle.text=track_Name
+        }
+        onArtistNameReceived: {
+            artistName.text=artist_Name
+        }
+        onAlbumNameReceived: {
+            // console.log("Album Name:", album_Name)
+            // Handle album name received
+        }
+    }
+    Connections{
+        target:carDataReceiver
+        onCarSpeed:{
+            speed_read.text = ""+sCarla;
+        }
+    }
 
 }
 
@@ -747,8 +805,4 @@ Window {
 
 
 
-/*##^##
-Designer {
-    D{i:0;formeditorZoom:0.66}
-}
-##^##*/
+

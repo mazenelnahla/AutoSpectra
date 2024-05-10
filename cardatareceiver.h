@@ -6,6 +6,7 @@
 
 struct CarData {
     int sleepDetection;
+    int carlaSpeed;
 };
 
 class CarDataReceiver : public QObject {
@@ -16,6 +17,7 @@ public:
 signals:
     void carDataReceived(const CarData &data);
     void sleepStatusChanged(double sleepStatus);
+    void carSpeed(double sCarla);
 
 private slots:
     void processPendingDatagrams();

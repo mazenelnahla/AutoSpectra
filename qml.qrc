@@ -65,7 +65,6 @@
         <file>images/color_fill_1.png</file>
         <file>images/daytime_light.png</file>
         <file>images/door_open.png</file>
-        <file>images/group_1.png</file>
         <file>images/high_beam.png</file>
         <file>images/left_side.png</file>
         <file>images/low_bat.png</file>
@@ -84,5 +83,7 @@
         <file>img/tickmark.svg</file>
         <file>Gauge_animation.qml</file>
         <file>images/wanring_massage.png</file>
+        <file>images/s.png</file>
+        <file>Spotify.py</file>
     </qresource>
 </RCC>

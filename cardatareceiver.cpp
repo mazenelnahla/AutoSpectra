@@ -2,7 +2,7 @@
 #include <QDebug>
 
 CarDataReceiver::CarDataReceiver(QObject *parent) : QObject(parent) {
-    udpSocket.bind(QHostAddress::Any, 12345);
+    udpSocket.bind(QHostAddress::Any, 15478);
 
     connect(&udpSocket, &QUdpSocket::readyRead, this, &CarDataReceiver::processPendingDatagrams);
 }
@@ -19,9 +19,12 @@ void CarDataReceiver::processPendingDatagrams() {
         QStringList dataList = QString(datagram).split('|');
         if (dataList.size() == 2) {
             CarData carData;
-            carData.sleepDetection = dataList[0].toFloat();
-            qDebug() << "sleep Detection" << carData.sleepDetection;
-            emit sleepStatusChanged(carData.sleepDetection);
+            // carData.sleepDetection = dataList[0].toFloat();
+            // qDebug() << "sleep Detection" << carData.sleepDetection;
+            // emit sleepStatusChanged(carData.sleepDetection);
+            carData.carlaSpeed = dataList[0].toFloat();
+            qDebug()<<"Speed" << carData.carlaSpeed;
+            emit carSpeed(carData.carlaSpeed);
         }
     }
 }
