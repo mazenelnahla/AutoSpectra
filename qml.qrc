@@ -3,22 +3,6 @@
         <file>main.qml</file>
         <file>images/right.png</file>
         <file>images/left.png</file>
-        <file>fonts/Exo2-Bold.ttf</file>
-        <file>fonts/Exo2-ExtraBold.ttf</file>
-        <file>fonts/Exo2-Medium.ttf</file>
-        <file>fonts/fonts.txt</file>
-        <file>fonts/OpenSans-Bold.ttf</file>
-        <file>fonts/OpenSans-BoldItalic.ttf</file>
-        <file>fonts/OpenSans-ExtraBold.ttf</file>
-        <file>fonts/OpenSans-ExtraBoldItalic.ttf</file>
-        <file>fonts/OpenSans-Italic.ttf</file>
-        <file>fonts/OpenSans-Light.ttf</file>
-        <file>fonts/OpenSans-LightItalic.ttf</file>
-        <file>fonts/OpenSans-Medium.ttf</file>
-        <file>fonts/OpenSans-MediumItalic.ttf</file>
-        <file>fonts/OpenSans-Regular.ttf</file>
-        <file>fonts/OpenSans-SemiBold.ttf</file>
-        <file>fonts/OpenSans-SemiBoldItalic.ttf</file>
         <file>images/Set 1/01.png</file>
         <file>images/Set 1/02.png</file>
         <file>images/Set 1/03.png</file>
@@ -85,5 +69,25 @@
         <file>images/wanring_massage.png</file>
         <file>images/s.png</file>
         <file>Spotify.py</file>
+        <file>images/check-engine-light-icon-1616189100.png</file>
+        <file>fonts/futura.ttf</file>
+        <file>fonts/futura-bold.ttf</file>
+        <file>fonts/futura-bold-condensed-bt.ttf</file>
+        <file>fonts/futura-bold-italic-bt.ttf</file>
+        <file>fonts/futura-book-bt.ttf</file>
+        <file>fonts/futura-book-italic-bt.ttf</file>
+        <file>fonts/futura-extra-black-bt.ttf</file>
+        <file>fonts/futura-extra-black-condensed-italic-bt.ttf</file>
+        <file>fonts/futura-heavy-bt.ttf</file>
+        <file>fonts/futura-heavy-italic-bt.ttf</file>
+        <file>fonts/futura-light-bt.ttf</file>
+        <file>fonts/futura-light-condensed-bt.ttf</file>
+        <file>fonts/futura-light-italic-bt.ttf</file>
+        <file>fonts/futura-medium-bt.ttf</file>
+        <file>fonts/futura-medium-condensed-bt.ttf</file>
+        <file>fonts/futura-medium-italic-bt.ttf</file>
+        <file>Instrument_Cluster.qml</file>
+        <file>images/unknown_song.png</file>
+        <file>images/Set 1/signs.png</file>
     </qresource>
 </RCC>

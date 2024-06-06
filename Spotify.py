@@ -1,5 +1,6 @@
 import socket
 import spotipy
+import json
 from spotipy.oauth2 import SpotifyOAuth
 
 # Spotify authentication
@@ -27,28 +28,29 @@ def update_current_track():
     current_track = spotify_object.current_user_playing_track()
     try:
         if current_track is not None:
-            track_name = current_track['item']['name']
-            artist_name = current_track['item']['artists'][0]['name']
-            album_name = current_track['item']['album']['name']
-            album_image_url = current_track['item']['album']['images'][0]['url']
-            song=track_name +"|" + artist_name + "|" + album_name + "|" + album_image_url
-            print("\n" +track_name +"\n" + artist_name + "\n" + album_name + "\n" + album_image_url)
-            # Send image data over UDP
-            send_image_data(song)
+            json_data ={
+                "trackName": current_track['item']['name'],
+                "artistName": current_track['item']['artists'][0]['name'],
+                "albumName": current_track['item']['album']['name'],
+                "albumURL": current_track['item']['album']['images'][0]['url']
+            }
+            send_image_data(json_data)
         else:
             print("No track currently playing")
     except:
-            track_name = "Advertisement"
-            artist_name = "Spotify"
-            album_image_url = "images/s.png"
-            song=track_name +"|" + artist_name + "|" + "hello" + "|" + album_image_url
-            # Send image data over UDP
-            send_image_data(song)
+            json_data ={
+                "trackName": "Advertisement",
+                "artistName": "Spotify",
+                "albumName": "",
+                "albumURL": "images/s.png"
+            }
+            send_image_data(json_data)
 # Function to send image data over UDP
-def send_image_data(song):
+def send_image_data(json_data):
     # Create a UDP socket
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    sock.sendto(song.encode(), (udp_host, udp_port))
+    json_bytes = json.dumps(json_data).encode('utf-8')
+    sock.sendto(json_bytes, (udp_host, udp_port))
     # Close the socket
     sock.close()
 

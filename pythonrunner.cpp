@@ -10,12 +10,14 @@ PythonRunner::PythonRunner(QObject *parent) : QObject(parent) {
 }
 
 void PythonRunner::runPythonScript() {
-    QString scriptPath = "D:/GProject/Dashboard/with_Arduino/AutoSpectra-cmake/Spotify.py";
-    // QString scriptPath = "D:/GProject/Dashboard/Drowsiness_Detection-master/Drowsiness_Detection.py";
-    // Set working directory to the script's directory
+    QString scriptPath = "D:/GProject/Dashboard/AutoSpectra_with_rpi_and_stm/AutoSpectra-cmake/Spotify.py";
+    QString scriptPath2 = "D:/GProject/Dashboard/Drowsiness_Detection-master/Drowsiness_Detection.py";
     process.setWorkingDirectory(QFileInfo(scriptPath).absolutePath());
-
     process.start("python", QStringList() << scriptPath);
+
+//    process.setWorkingDirectory(QFileInfo(scriptPath2).absolutePath());
+//    process.start("python", QStringList() << scriptPath2);
+
     if (!process.waitForStarted()) {
         qDebug() << "Failed to start the script process:" << process.errorString();
         return;

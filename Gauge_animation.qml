@@ -18,13 +18,33 @@ CircularGauge {
             color:  "#0039383c"
             anchors.centerIn: parent
             radius: 360
-
             Image {
                 anchors.fill: parent
                 source: "qrc:/img/background.svg"
                 asynchronous: true
                 sourceSize {
                     width: width
+                }
+            }
+
+            // Add tick labels behind the Canvas
+            Repeater {
+                model: 7
+                delegate: Text {
+                    property real angle: -200 + (index * 37)
+                    property real radius: gauge.width / 2 - 25 // Adjust radius as needed
+                    property real xOffset: Math.cos(Math.PI * angle / 180) * radius
+                    property real yOffset: Math.sin(Math.PI * angle / 180) * radius
+                    x: (gauge.width / 2) + xOffset - width / 2
+                    y: (gauge.height / 2) + yOffset - height / 2
+                    text: (20+(index *20)).toFixed(0)
+                    color: "white"
+                    font.pixelSize: 20
+                    transform: Rotation {
+                        origin.x: x + width / 2
+                        origin.y: y + height / 2
+                        angle: angle
+                    }
                 }
             }
 
@@ -35,9 +55,28 @@ CircularGauge {
                 onValueChanged: requestPaint()
 
                 function degreesToRadians(degrees) {
-                  return degrees * (Math.PI / 180);
+                    return degrees * (Math.PI / 180);
                 }
-
+                Repeater {
+                    z:1
+                    model: 7
+                    delegate: Text {
+                        property real angle: -200 + (index * 37)
+                        property real radius: gauge.width / 2 - 25 // Adjust radius as needed
+                        property real xOffset: Math.cos(Math.PI * angle / 180) * radius
+                        property real yOffset: Math.sin(Math.PI * angle / 180) * radius
+                        x: (gauge.width / 2) + xOffset - width / 2
+                        y: (gauge.height / 2) + yOffset - height / 2
+                        text: (20+(index *20)).toFixed(0)
+                        color: "white"
+                        font.pixelSize: 20
+                        transform: Rotation {
+                            origin.x: x + width / 2
+                            origin.y: y + height / 2
+                            angle: angle
+                        }
+                    }
+                }
                 onPaint: {
                     var ctx = getContext("2d");
                     ctx.reset();
@@ -45,28 +84,33 @@ CircularGauge {
                     ctx.strokeStyle = "#39383c"
                     ctx.lineWidth = 46
                     ctx.arc(outerRadius,
-                          outerRadius,
-                          outerRadius - ctx.lineWidth / 2,
-                          degreesToRadians(valueToAngle(gauge.value) - 90),
-                          degreesToRadians(valueToAngle(gauge.maximumValue + 1) - 90)
-                            );
+                        outerRadius,
+                        outerRadius - ctx.lineWidth / 2,
+                        degreesToRadians(valueToAngle(gauge.value) - 90),
+                        degreesToRadians(valueToAngle(gauge.maximumValue + 1) - 90)
+                    );
                     ctx.stroke();
                 }
             }
         }
 
+
         foreground: Item {
             Text {
-                x: 114
-                y: 261
-                font.family: "GoogleSansDisplay-Bold"
+                x: 118
+                y: 200
+                width: 167
+                height: 97
+                font.pixelSize: 80
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignBottom
+                font.family: "Futura"
                 font.bold: true
                 smooth: true
                 anchors.centerIn: parent
                 text: gauge.value.toFixed(0)
-                font.pixelSize: 80
                 color: "white"
-                antialiasing: true
+                visible: false
             }
         }
 

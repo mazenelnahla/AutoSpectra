@@ -4,6 +4,9 @@
 #include <QObject>
 #include <QSerialPort>
 #include <QSerialPortInfo>
+#include <QUdpSocket>
+#include <QJsonDocument>
+#include <QJsonObject>
 
 class SerialManager : public QObject
 {
@@ -14,25 +17,22 @@ public:
 
 public slots:
     void readSerial();
+    void sendGearOverUDP(const QString &gear);
 
 signals:
-    void temperatureChanged(const QString &newTemp);
-    void speedChanged(double newSpeed);
-    void doorStatusChanged(double newDoorStatus);
-    void selectedGearChanged(QString selectedGear);
+    void jsonDataParsed(int temperature, int humidity, int door, QString gear);
 
 private:
     QSerialPort m_serial;
     bool m_connectStatus;
-    static const quint16 m_serial_uno_vendor_id = 9025;
-    static const quint16 m_serial_uno_product_id = 67;
+    static const quint16 m_serial_uno_vendor_id = 0x0403;
+    static const quint16 m_serial_uno_product_id = 0x6001;
     QByteArray serialData;
     QString serialBuffer;
     QString parsed_data;
-    double temperature_value;
-    double speed_value;
-    double door_status;
-    QString selected_Gear;
+
+    QUdpSocket udpSocket;
+    static const quint16 udpPort = 1234;
 };
 
 #endif // SERIALMANAGER_H

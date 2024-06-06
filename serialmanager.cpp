@@ -1,13 +1,11 @@
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QDebug>
 #include "serialmanager.h"
 using namespace std;
 SerialManager::SerialManager(QObject *parent)
     : QObject(parent)
 {
-    serialBuffer = "";
-    parsed_data = "";
-    temperature_value = 0.0;
-
     bool m_serial_is_available = false;
     QString m_serial_uno_port_name;
     //  For each available serial port
@@ -46,39 +44,60 @@ SerialManager::~SerialManager()
     {
         m_serial.close();
     }
+    udpSocket.close();
 }
 
 void SerialManager::readSerial()
 {
-    // Read all available data from the serial port
-    serialData = m_serial.readAll();
-    serialBuffer += QString::fromStdString(serialData.toStdString());
+    static QByteArray receivedData;
 
-    // Split the buffer by ',' to get individual readings
-    QStringList buffer_split = serialBuffer.split(',');
+    while (m_serial.canReadLine())
+    {
+        QByteArray data = m_serial.readLine();
+        receivedData.append(data);
+        if (data.endsWith('\n'))
+        {
+            // Parse the received JSON object
+            QJsonParseError jsonError;
+            QJsonDocument jsonDoc = QJsonDocument::fromJson(receivedData, &jsonError);
+            if (jsonError.error != QJsonParseError::NoError)
+            {
+                qDebug() << "Failed to parse JSON data:" << jsonError.errorString();
+            }
+            else if (jsonDoc.isObject())
+            {
+                QJsonObject jsonObj = jsonDoc.object();
+                int temperature = jsonObj["temperature"].toInt();
+                int humidity = jsonObj["humidity"].toInt();
+                int door = jsonObj["door"].toInt();
+                QString gear = jsonObj["gear"].toString();
+                sendGearOverUDP(gear);
+                emit jsonDataParsed(temperature, humidity, door, gear);
+//                qDebug() << "Temperature:" << temperature;
+//                qDebug() << "Humidity:" << humidity;
+//                qDebug() << "Door:" << door;
+//                qDebug() << "Gear:" << gear;
+            }
 
-    // Check if we have at least 5 elements in buffer_split
-    if (buffer_split.length() >= 5) {
-        // Extract values
-        temperature_value = buffer_split[0].toInt();
-        door_status = buffer_split[1].toInt();
-        speed_value = buffer_split[2].toInt();
-        selected_Gear = buffer_split[3];
-        // Clear the buffer
-        serialBuffer.clear();
-
-        // Emit signals for each variable
-        emit temperatureChanged(QString::number(temperature_value));
-        emit speedChanged(speed_value);
-        emit doorStatusChanged(door_status);
-        emit selectedGearChanged(selected_Gear);
-
-
-        qDebug() << "Temperature: " << temperature_value;
-        qDebug() << "Speed: " << speed_value;
-        qDebug() << "Door Status: " << door_status;
-        qDebug() << "Selected Gear: " << selected_Gear;
-
+            // Reset receivedData for the next JSON object
+            receivedData.clear();
+        }
     }
+}
+
+void SerialManager::sendGearOverUDP(const QString &gear)
+{
+    // Create a JSON object to hold the gear information
+    QJsonObject json;
+    json["gear"] = gear;
+
+    // Create a JSON document from the JSON object
+    QJsonDocument jsonDoc(json);
+
+    // Convert the JSON document to bytes
+    QByteArray jsonData = jsonDoc.toJson();
+
+    // Send the JSON data over UDP
+    udpSocket.writeDatagram(jsonData, QHostAddress("192.168.1.14"), 12346); // Replace with the IP and port of the Python PC
 }
 

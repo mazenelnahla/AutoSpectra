@@ -1,4 +1,6 @@
 #include "SpotifyReceiver.h"
+#include <QJsonDocument>
+#include <QJsonObject>
 
 SpotifyReceiver::SpotifyReceiver(QObject *parent) : QObject(parent)
 {
@@ -7,10 +9,8 @@ SpotifyReceiver::SpotifyReceiver(QObject *parent) : QObject(parent)
     connect(&udpSocket, &QUdpSocket::readyRead, this, &SpotifyReceiver::processPendingDatagrams);
 }
 
-void SpotifyReceiver::processPendingDatagrams()
-{
-    while (udpSocket.hasPendingDatagrams())
-    {
+void SpotifyReceiver::processPendingDatagrams() {
+    while (udpSocket.hasPendingDatagrams()) {
         QByteArray datagram;
         datagram.resize(udpSocket.pendingDatagramSize());
         QHostAddress sender;
@@ -18,12 +18,20 @@ void SpotifyReceiver::processPendingDatagrams()
 
         udpSocket.readDatagram(datagram.data(), datagram.size(), &sender, &senderPort);
 
-        QStringList dataList = QString(datagram).split('|');
-        if (dataList.size() == 4) {
-            emit trackNameReceived(dataList[0]);
-            emit artistNameReceived(dataList[1]);
-            emit albumNameReceived(dataList[2]);
-            emit albumImageUrlReceived(dataList[3]);
+        // Decode the received data as a JSON object
+        QJsonParseError jsonError;
+        QJsonDocument jsonDoc = QJsonDocument::fromJson(datagram, &jsonError);
+        if (jsonError.error != QJsonParseError::NoError) {
+            qDebug() << "Error decoding JSON data:" << jsonError.errorString();
+            continue;
+        }
+        if (jsonDoc.isObject()) {
+            QJsonObject jsonObj = jsonDoc.object();
+            QString Track_Name=jsonObj["trackName"].toString();
+            QString Artist_Name=jsonObj["artistName"].toString();
+            QString Album_Name=jsonObj["albumName"].toString();
+            QString Album_Img_URL=jsonObj["albumURL"].toString();
+            emit spotifiyReceivedData(Track_Name, Artist_Name, Album_Name, Album_Img_URL);
         }
     }
 }

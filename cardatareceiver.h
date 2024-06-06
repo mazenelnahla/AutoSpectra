@@ -4,20 +4,13 @@
 #include <QObject>
 #include <QUdpSocket>
 
-struct CarData {
-    int sleepDetection;
-    int carlaSpeed;
-};
-
 class CarDataReceiver : public QObject {
     Q_OBJECT
 public:
     explicit CarDataReceiver(QObject *parent = nullptr);
 
 signals:
-    void carDataReceived(const CarData &data);
-    void sleepStatusChanged(double sleepStatus);
-    void carSpeed(double sCarla);
+    void carlaJsonDataParsed(double speed,QString alart,int sign, QString autoGear,int leftSignal,int rightSignal,int warning,int handBrake);
 
 private slots:
     void processPendingDatagrams();

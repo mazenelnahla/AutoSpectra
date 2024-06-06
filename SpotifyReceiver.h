@@ -11,10 +11,11 @@ public:
     explicit SpotifyReceiver(QObject *parent = nullptr);
 
 signals:
-    void trackNameReceived(const QString &track_Name);
-    void artistNameReceived(const QString &artist_Name);
-    void albumNameReceived(const QString &album_Name);
-    void albumImageUrlReceived(const QString &albumImageUrl);
+    void spotifiyReceivedData(QString Track_Name,QString Artist_Name,QString Album_Name,QString Album_Img_URL);
+//    void trackNameReceived(const QString &track_Name);
+//    void artistNameReceived(const QString &artist_Name);
+//    void albumNameReceived(const QString &album_Name);
+//    void albumImageUrlReceived(const QString &albumImageUrl);
 
 public slots:
     void processPendingDatagrams();
