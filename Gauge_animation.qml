@@ -19,14 +19,35 @@ CircularGauge {
             anchors.centerIn: parent
             radius: 360
             Image {
+                id:needleColor1
+                visible: false
                 anchors.fill: parent
-                source: "qrc:/img/background.svg"
+                source: "/img/background60.svg"
                 asynchronous: true
                 sourceSize {
                     width: width
                 }
             }
-
+            Image {
+                id:needleColor2
+                visible: false
+                anchors.fill: parent
+                source: "/img/background120.svg"
+                asynchronous: true
+                sourceSize {
+                    width: width
+                }
+            }
+            Image {
+                id:needleColor3
+                visible: false
+                anchors.fill: parent
+                source: "/img/background.svg"
+                asynchronous: true
+                sourceSize {
+                    width: width
+                }
+            }
             // Add tick labels behind the Canvas
             Repeater {
                 model: 7
@@ -78,6 +99,21 @@ CircularGauge {
                     }
                 }
                 onPaint: {
+                    if(gauge.value>0&&gauge.value<40){
+                        needleColor1.visible=true
+                        needleColor2.visible=false
+                        needleColor3.visible=false
+                    }
+                    if (gauge.value>=40&&gauge.value<90){
+                        needleColor1.visible=false
+                        needleColor2.visible=true
+                        needleColor3.visible=false
+                    }
+                    if(gauge.value>=90){
+                        needleColor1.visible=false
+                        needleColor2.visible=false
+                        needleColor3.visible=true
+                    }
                     var ctx = getContext("2d");
                     ctx.reset();
                     ctx.beginPath();

@@ -89,5 +89,8 @@
         <file>Instrument_Cluster.qml</file>
         <file>images/unknown_song.png</file>
         <file>images/Set 1/signs.png</file>
+        <file>images/center.png</file>
+        <file>img/background60.svg</file>
+        <file>img/background120.svg</file>
     </qresource>
 </RCC>

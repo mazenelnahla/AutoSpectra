@@ -479,7 +479,7 @@ Item {
             NumberAnimation {
                 from: 0
                 to: 160
-                duration: 2000
+                duration: 4000
                 easing.type: Easing.InOutQuad
             }
 
