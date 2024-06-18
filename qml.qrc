@@ -56,7 +56,6 @@
         <file>images/lower_status.png</file>
         <file>images/parking_break.png</file>
         <file>images/rectangle_1.png</file>
-        <file>images/right_side.png</file>
         <file>images/seat_belt.png</file>
         <file>images/speed_limit.png</file>
         <file>images/steering_error.png</file>
@@ -94,5 +93,8 @@
         <file>img/background120.svg</file>
         <file>images/layer_2.png</file>
         <file>images/367-200.png</file>
+        <file>images/right_side_blue.png</file>
+        <file>images/right_side_red.png</file>
+        <file>images/right_side_yellow.png</file>
     </qresource>
 </RCC>

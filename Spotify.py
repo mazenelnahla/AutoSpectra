@@ -35,7 +35,7 @@ def update_current_track():
                 "albumURL": current_track['item']['album']['images'][0]['url']
             }
             send_song_data(json_data)
-            print(json_data)
+            # print(json_data)
         else:
             json_data ={
                 "trackName":"",
@@ -44,7 +44,7 @@ def update_current_track():
                 "albumURL":""
             }
             send_song_data(json_data)
-            print(json_data)
+            # print(json_data)
     except:
             json_data ={
                 "trackName": "Advertisement",

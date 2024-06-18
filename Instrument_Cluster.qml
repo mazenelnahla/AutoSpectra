@@ -2,8 +2,8 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Extras 1.4
 import QtMultimedia 5.15
-import QtQuick.Controls.Styles 1.4
 import QtGraphicalEffects 1.0
+import QtQuick.Controls.Styles 1.4
 import com.company.serialmanager 1.0
 import MyPythonScript 1.0
 import com.company.cardatareceiver 1.0
@@ -32,7 +32,7 @@ Item {
         source: "images/rectangle_1.png"
         x: 200
         y: 153
-        opacity: 0.83921568627451
+        opacity: 1
     }
 
 
@@ -158,11 +158,28 @@ Item {
 
 
     Image {
-        id: right_side
-        source: "images/right_side.png"
+        id: right_side_blue
+        source: "images/right_side_blue.png"
         x: 616
         y: 113
         opacity: 1
+        visible: true
+    }
+    Image {
+        id: right_side_red
+        source: "images/right_side_red.png"
+        x: 616
+        y: 113
+        opacity: 1
+        visible: false
+    }
+    Image {
+        id: right_side_yellow
+        source: "images/right_side_yellow.png"
+        x: 616
+        y: 113
+        opacity: 1
+        visible: false
     }
 
 
@@ -173,7 +190,6 @@ Item {
         y: 113
         opacity: 1
     }
-
 
 
     Gauge_animation {
@@ -213,6 +229,14 @@ Item {
 
 
     Image {
+        id: left_side_center
+        source: "images/center.png"
+        x: 80
+        y: 197
+        opacity: 1
+    }
+
+    Image {
         id: upper_status
         source: "images/upper_status.png"
         clip: true
@@ -236,10 +260,10 @@ Item {
         id: miles_value
         text: "0000"
         font.pixelSize: 16
-        font.family: "Arial-Black"
+        font.family: "Futura"
         color: "#d0d0d0"
         smooth: true
-        x: 793
+        x: 782
         y: 389
         opacity: 1
     }
@@ -251,11 +275,11 @@ Item {
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
         font.capitalization: Font.AllUppercase
-        font.family: "Arial-BoldMT"
+        font.family: "Futura"
         font.bold: true
         color: "#e7bf8c"
         smooth: true
-        x: 798
+        x: 791
         y: 239
         opacity: 1
         visible: true
@@ -332,7 +356,7 @@ Item {
 
         Text {
             id: drive_mode
-            x: -354
+            x: -344
             y: -204
             text: "Parking"
             font.pixelSize: 18
@@ -358,11 +382,11 @@ Item {
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
         font.capitalization: Font.AllUppercase
-        font.family: "Arial-BoldMT"
+        font.family: "Futura"
         font.bold: true
         color: "#e7bf8c"
         smooth: true
-        x: 798
+        x: 791
         y: 239
         opacity: 1
         visible: false
@@ -446,7 +470,7 @@ Item {
             font.family: "Arial"
             color: "#e7bf8c"
             smooth: true
-            x: -351
+            x: -344
             y: -204
             width: 133
             height: 22
@@ -939,6 +963,22 @@ Item {
                 songTitle.text=Track_Name
                 artistName.text=Artist_Name
             }
+
+            if(speed_read.text>0&&speed_read.text<60){
+                right_side_blue.visible=true
+                right_side_yellow.visible=false
+                right_side_red.visible=false
+            }
+            if (speed_read.text>=60&&speed_read.text<120){
+                right_side_blue.visible=false
+                right_side_yellow.visible=true
+                right_side_red.visible=false
+            }
+            if(speed_read.text>=120){
+                right_side_blue.visible=false
+                right_side_yellow.visible=false
+                right_side_red.visible=true
+            }
         }
     }
 
@@ -1281,6 +1321,18 @@ Item {
 
 
 
+    }
+
+    Text {
+        id: miles
+        x: 824
+        y: 389
+        opacity: 1
+        color: "#7f7f7f"
+        text: "mi"
+        font.pixelSize: 16
+        smooth: true
+        font.family: "Futura"
     }
 
 }
