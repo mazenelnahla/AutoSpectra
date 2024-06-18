@@ -92,5 +92,7 @@
         <file>images/center.png</file>
         <file>img/background60.svg</file>
         <file>img/background120.svg</file>
+        <file>images/layer_2.png</file>
+        <file>images/367-200.png</file>
     </qresource>
 </RCC>

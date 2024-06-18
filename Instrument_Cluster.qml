@@ -1,5 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
+import QtQuick.Extras 1.4
 import QtMultimedia 5.15
 import QtQuick.Controls.Styles 1.4
 import QtGraphicalEffects 1.0
@@ -101,7 +102,7 @@ Item {
 
         Text {
             id: songTitle
-            text: ""
+            text: "."
             font.pixelSize: 20
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
@@ -118,7 +119,7 @@ Item {
 
         Text {
             id: artistName
-            text: ""
+            text: "."
             font.pixelSize: 19
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
@@ -663,7 +664,6 @@ Item {
 
     Text {
         id: _cautionMassage
-        //        text: "Driver need to take a break!"
         text: "System Malfunction"
         font.pixelSize: 18
         horizontalAlignment: Text.AlignHCenter
@@ -692,7 +692,7 @@ Item {
         color: "#ffffff"
         smooth: true
         x: 855
-        y: 548
+        y: 550
         opacity: 1
     }
 
@@ -850,17 +850,6 @@ Item {
                 door_open.visible=true;
             }
 
-            if(selected_gear.text === "R"){
-                drive_mode.text="Reversing"
-                camera.start() // Start the camera
-                viewfinder.visible = true // Show the viewfinder
-                artistImage.visible=false
-            }else{
-                camera.stop() // Stop the camera (not start)
-                viewfinder.visible = false // Hide the viewfinder
-                artistImage.visible=true
-            }
-
             selected_gear.text=gear;
             if (selected_gear.text === "P") {
                 drive_mode.text="Parking"
@@ -883,8 +872,12 @@ Item {
             if (selected_gear.text === "R") {
                 drive_mode.text="Reversing"
                 _R.color = "#ffffff";
+                camera.start() // Start the camera
+                viewfinder.visible = true // Show the viewfinder
             } else {
                 _R.color = "#7f7f7f";
+                camera.stop() // Stop the camera (not start)
+                viewfinder.visible = false // Hide the viewfinder
             }
         }
     }
@@ -892,15 +885,15 @@ Item {
 
 
 
-    Connections {
-        target: carDataReceiver
-        onSleepStatusChanged: {
-            if(sleepStatus===1){
-                _cautionMassage.visible=true;
-                alert_.visible=true;
-            }
-        }
-    }
+//    Connections {
+//        target: carDataReceiver
+//        onSleepStatusChanged: {
+//            if(sleepStatus===1){
+//                _cautionMassage.visible=true;
+//                alert_.visible=true;
+//            }
+//        }
+//    }
 
 
 
@@ -935,15 +928,17 @@ Item {
     Connections{
         target: SpotifyReceiver
         onSpotifiyReceivedData:{
-            artistImg.source = Album_Img_URL
-            if(selected_gear.text === "R"||auto_selected_gear.text === "R"){
+            if(Album_Name===""){
                 artistImage.visible=false
-            }else{
+                playingNow.visible=false
+            }
+            else{
                 artistImage.visible=true
                 playingNow.visible=true
+                artistImg.source = Album_Img_URL
+                songTitle.text=Track_Name
+                artistName.text=Artist_Name
             }
-            songTitle.text=Track_Name
-            artistName.text=Artist_Name
         }
     }
 
@@ -953,21 +948,21 @@ Item {
         target:carDataReceiver
         onCarlaJsonDataParsed:{
             speed_read.text = ""+speed;
-            if(leftSignal==1){
+            if(leftSignal===1){
                 leftlabel.visible=true;
             }
             else{
                 leftlabel.visible=false;
             }
 
-            if(rightSignal==1){
+            if(rightSignal===1){
                 rightlabel.visible=true;
             }
             else{
                 rightlabel.visible=false;
             }
 
-            if(sign==1){
+            if(sign===1){
                 gear.visible=false;
                 gearAuto.visible=true;
                 auto_selected_gear.text=autoGear;
@@ -1000,7 +995,7 @@ Item {
                 gear.visible=true;
                 gearAuto.visible=false;
             }
-            if(warning==0){
+            if(warning===0){
                 wanring_massage.visible=false;
                 alert_.visible=false;
                 _cautionMassage.visible=false;
@@ -1046,128 +1041,245 @@ Item {
         height: 190
         opacity: 1
         visible: true
-        Image {
-            id: caution_icon
-            x: 36
-            y: 29
-            width: 42
-            height: 38
-            source: "images/check-engine-light-icon-1616189100.png"
-            sourceSize.height: 0
-            sourceSize.width: 0
-            fillMode: Image.PreserveAspectFit
+        Item{
+            id: engineMulfunction
             visible: true
-        }
-        Text {
-            id: _errorEngine
-            x: 35
-            y: 68
-            width: 300
-            height: 89
-            color: "#ffffff"
-            text: qsTr("Engine operating at reduced output. Possible to continue. Drive with caution. Have the system checked by nearest service center.")
-            font.pixelSize: 17
-            verticalAlignment: Text.AlignTop
-            lineHeight: 0.9
-            wrapMode: Text.Wrap
-            font.family: "Futura"
-            font.weight: Font.DemiBold
-            font.preferShaping: true
-            font.kerning: true
-            visible: true
+            Image {
+                id: caution_icon_Engine
+                x: 36
+                y: 29
+                width: 42
+                height: 38
+                source: "images/check-engine-light-icon-1616189100.png"
+                sourceSize.height: 0
+                sourceSize.width: 0
+                fillMode: Image.PreserveAspectFit
+            }
+            Text {
+                id: _errorTitle
+                x: 100
+                y: 36
+                width: 245
+                height: 23
+                color: "#d92a27"
+                text: qsTr("Engine Malfunction")
+                font.pixelSize: 19
+                verticalAlignment: Text.AlignVCenter
+                font.family: "Futura"
+                font.capitalization: Font.Capitalize
+                font.weight: Font.ExtraBold
+            }
+            Text {
+                id: _errorEngine
+                x: 35
+                y: 68
+                width: 300
+                height: 89
+                color: "#ffffff"
+                text: qsTr("Engine operating at reduced output. Possible to continue. Drive with caution. Have the system checked by nearest service center.")
+                font.pixelSize: 17
+                verticalAlignment: Text.AlignTop
+                lineHeight: 0.9
+                wrapMode: Text.Wrap
+                font.family: "Futura"
+                font.weight: Font.DemiBold
+                font.preferShaping: true
+                font.kerning: true
+            }
         }
 
-        Text {
-            id: _errorAirbag
-            x: 35
-            y: 68
-            width: 312
-            height: 89
-            color: "#e8c291"
-            text: qsTr("Continue wearing safety belt. consult nearest service center.")
-            font.pixelSize: 19
-            verticalAlignment: Text.AlignTop
-            wrapMode: Text.Wrap
-            font.weight: Font.DemiBold
-            font.preferShaping: true
-            font.kerning: true
+        Item{
+            id: roadImprefection
             visible: false
+            Image {
+                id: caution_icon_Road_Imprefection
+                x: 32
+                y: 13
+                width: 60
+                height: 60
+                source: "images/layer_2.png"
+                sourceSize.height: 0
+                sourceSize.width: 0
+                fillMode: Image.Stretch
+            }
+            Text {
+                id: _errorTitle2
+                x: 80
+                y: 40
+                width: 255
+                height: 23
+                color: "#d97b27"
+                text: qsTr("Road Imprefection Detected")
+                font.pixelSize: 18
+                verticalAlignment: Text.AlignVCenter
+                font.family: "Futura"
+                font.capitalization: Font.Capitalize
+                font.weight: Font.ExtraBold
+            }
+            Text {
+                id: _errorRoadImprefections
+                x: 35
+                y: 68
+                width: 300
+                height: 89
+                color: "#ffffff"
+                text: qsTr("Alert an imperfection has been dectected please slow down. Drive with caution. Nearest road bump in 10 meters away.")
+                font.pixelSize: 17
+                verticalAlignment: Text.AlignTop
+                lineHeight: 0.9
+                wrapMode: Text.Wrap
+                font.family: "Futura"
+                font.weight: Font.DemiBold
+                font.preferShaping: true
+                font.kerning: true
+            }
         }
 
-        Text {
-            id: _errorSteering
-            x: 35
-            y: 68
-            width: 312
-            height: 89
-            color: "#e8c291"
-            text: qsTr("Steering system may have some communictaion issues or broken parts. Drive with caution. Have the system checked by nearest service center.")
-            font.pixelSize: 19
-            verticalAlignment: Text.AlignTop
-            wrapMode: Text.Wrap
-            font.weight: Font.DemiBold
-            font.preferShaping: true
-            font.kerning: true
+        Item{
+            id: radarDetected
             visible: false
+            Image {
+                id: caution_icon_errorRadarDetected
+                x: 36
+                y: 29
+                width: 42
+                height: 38
+                source: "images/layer_2.png"
+                sourceSize.height: 0
+                sourceSize.width: 0
+                fillMode: Image.PreserveAspectFit
+            }
+            Text {
+                id: _errorTitle3
+                x: 100
+                y: 36
+                width: 245
+                height: 23
+                color: "#d92a27"
+                text: qsTr("Speed Radar Detected")
+                font.pixelSize: 19
+                verticalAlignment: Text.AlignVCenter
+                font.family: "Futura"
+                font.capitalization: Font.Capitalize
+                font.weight: Font.ExtraBold
+            }
+            Text {
+                id: _errorRadarDetected
+                x: 35
+                y: 68
+                width: 312
+                height: 89
+                color: "#e8c291"
+                text: qsTr("Attention, Radar is near you, Please slow down and keep focused on the road.")
+                font.pixelSize: 17
+                verticalAlignment: Text.AlignTop
+                lineHeight: 0.9
+                wrapMode: Text.Wrap
+                font.family: "Futura"
+                font.weight: Font.DemiBold
+                font.preferShaping: true
+                font.kerning: true
+            }
         }
 
-        Text {
-            id: _errorRadarDetected
-            x: 35
-            y: 68
-            width: 312
-            height: 89
-            color: "#e8c291"
-            text: qsTr("Attention, Radar is near you, Please slow down and keep focused on the road.")
-            font.pixelSize: 19
-            verticalAlignment: Text.AlignTop
-            wrapMode: Text.Wrap
-            font.weight: Font.DemiBold
-            font.preferShaping: true
-            font.kerning: true
+        Item{
+            id: airBagError
             visible: false
+            Image {
+                id: caution_icon_airBagError
+                x: 39
+                y: 29
+                width: 39
+                height: 35
+                source: "images/367-200.png"
+                sourceSize.height: 0
+                sourceSize.width: 0
+                fillMode: Image.Stretch
+            }
+            Text {
+                id: _errorTitle4
+                x: 84
+                y: 35
+                width: 254
+                height: 23
+                color: "#d92a27"
+                text: qsTr("Airbag System Fault")
+                font.pixelSize: 19
+                verticalAlignment: Text.AlignVCenter
+                font.family: "Futura"
+                font.capitalization: Font.Capitalize
+                font.weight: Font.ExtraBold
+            }
+            Text {
+                id: _errorAirbag
+                x: 35
+                y: 67
+                width: 303
+                height: 95
+                color: "#ffffff"
+                text: qsTr("SRS system detected a fault in the system. Continue wearing safety belt. consult nearest service center.")
+                font.pixelSize: 17
+                verticalAlignment: Text.AlignTop
+                lineHeight: 0.9
+                wrapMode: Text.Wrap
+                font.family: "Futura"
+                font.weight: Font.DemiBold
+                font.preferShaping: true
+                font.kerning: true
+            }
         }
 
-        Text {
-            id: _errorRoadImprefections
-            x: 35
-            y: 68
-            width: 300
-            height: 89
-            color: "#ffffff"
-            text: qsTr("Alert an imperfection has been dectected please slow down. Drive with caution. Nearest road bump in 10 meters away.")
-            font.letterSpacing: 0
-            font.pixelSize: 19
-            verticalAlignment: Text.AlignTop
-            lineHeight: 0.8
-            wrapMode: Text.Wrap
-            font.wordSpacing: 0
-            font.family: "Futura"
-            font.weight: Font.DemiBold
-            font.preferShaping: true
-            font.kerning: true
+
+        Item{
+            id: electricSteeringError
             visible: false
+            Image {
+                id: caution_icon_electricSteeringError
+                x: 35
+                y: 32
+                width: 36
+                height: 33
+                source: "images/steering_error.png"
+                sourceSize.height: 0
+                sourceSize.width: 0
+                fillMode: Image.PreserveAspectFit
+            }
+            Text {
+                id: _errorTitle5
+                x: 82
+                y: 37
+                width: 238
+                height: 23
+                color:"#d92a27"
+                text: qsTr("Electric Steering Failed")
+                font.pixelSize: 19
+                verticalAlignment: Text.AlignVCenter
+                font.family: "Futura"
+                font.capitalization: Font.Capitalize
+                font.weight: Font.ExtraBold
+            }
+            Text {
+                id: _errorSteering
+                x: 35
+                y: 65
+                width: 312
+                height: 89
+                color: "#ffffff"
+                text: qsTr("Steering system may have some communictaion issues or broken parts. Drive with caution. Have the system checked by nearest service center.")
+                font.pixelSize: 17
+                verticalAlignment: Text.AlignTop
+                lineHeight: 0.9
+                wrapMode: Text.Wrap
+                font.family: "Futura"
+                font.weight: Font.DemiBold
+                font.preferShaping: true
+                font.kerning: true
+            }
         }
 
-        Text {
-            id: _errorTitle
-            x: 100
-            y: 36
-            width: 245
-            height: 23
-            color: "#d92a27"
-            text: qsTr("Engine malfunction")
-            font.pixelSize: 19
-            verticalAlignment: Text.AlignVCenter
-            font.family: "Futura"
-            font.capitalization: Font.Capitalize
-            font.weight: Font.ExtraBold
-            visible: true
-        }
 
 
-    }
-    Timer{
+
 
     }
 

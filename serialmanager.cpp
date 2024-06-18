@@ -6,7 +6,8 @@ using namespace std;
 SerialManager::SerialManager(QObject *parent)
     : QObject(parent)
 {
-    bool m_serial_is_available = false;
+    udpSocket.bind(QHostAddress::Any, 12345); // Use appropriate port number
+    bool m_serial_is_available = true;
     QString m_serial_uno_port_name;
     //  For each available serial port
     foreach(const QSerialPortInfo &serialPortInfo, QSerialPortInfo::availablePorts()){
@@ -24,6 +25,7 @@ SerialManager::SerialManager(QObject *parent)
     if(m_serial_is_available){
         qDebug() << "Found the m_serial port...\n";
         m_serial.setPortName(m_serial_uno_port_name);
+        // m_serial.setPortName("/dev/ttyAMA0");
         m_serial.open(QSerialPort::ReadOnly);
         m_serial.setBaudRate(QSerialPort::Baud9600);
         m_serial.setDataBits(QSerialPort::Data8);
@@ -76,7 +78,7 @@ void SerialManager::readSerial()
 //                qDebug() << "Temperature:" << temperature;
 //                qDebug() << "Humidity:" << humidity;
 //                qDebug() << "Door:" << door;
-//                qDebug() << "Gear:" << gear;
+                // qDebug() << "Gear:" << gear;
             }
 
             // Reset receivedData for the next JSON object
@@ -98,6 +100,6 @@ void SerialManager::sendGearOverUDP(const QString &gear)
     QByteArray jsonData = jsonDoc.toJson();
 
     // Send the JSON data over UDP
-    udpSocket.writeDatagram(jsonData, QHostAddress("192.168.1.14"), 12346); // Replace with the IP and port of the Python PC
+    udpSocket.writeDatagram(jsonData, QHostAddress("192.168.1.5"), 12345); // Replace with the IP and port of the Python PC
 }
 

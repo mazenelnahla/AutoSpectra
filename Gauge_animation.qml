@@ -99,17 +99,17 @@ CircularGauge {
                     }
                 }
                 onPaint: {
-                    if(gauge.value>0&&gauge.value<40){
+                    if(gauge.value>0&&gauge.value<60){
                         needleColor1.visible=true
                         needleColor2.visible=false
                         needleColor3.visible=false
                     }
-                    if (gauge.value>=40&&gauge.value<90){
+                    if (gauge.value>=60&&gauge.value<120){
                         needleColor1.visible=false
                         needleColor2.visible=true
                         needleColor3.visible=false
                     }
-                    if(gauge.value>=90){
+                    if(gauge.value>=120){
                         needleColor1.visible=false
                         needleColor2.visible=false
                         needleColor3.visible=true

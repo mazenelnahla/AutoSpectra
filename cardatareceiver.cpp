@@ -4,7 +4,7 @@
 #include <QJsonObject>
 
 CarDataReceiver::CarDataReceiver(QObject *parent) : QObject(parent) {
-    udpSocket.bind(QHostAddress::Any, 15478); // Bind to the same port used by the Python sender
+    udpSocket.bind(QHostAddress::Any, 12345); // Bind to the same port used by the Python sender
 
     connect(&udpSocket, &QUdpSocket::readyRead, this, &CarDataReceiver::processPendingDatagrams);
 }
@@ -29,18 +29,16 @@ void CarDataReceiver::processPendingDatagrams() {
         if (jsonDoc.isObject()) {
             QJsonObject jsonObj = jsonDoc.object();
             // Extract data from the JSON object
-            float speed = jsonObj["Speed"].toDouble();
-            QString alart = jsonObj["Alart"].toString();
+            int speed = jsonObj["speed"].toDouble();
+            QString alart = jsonObj["alart"].toString();
             int sign = jsonObj["autoPilot"].toInt();
             QString autoGear= jsonObj["autoGear"].toString();
             int leftSignal=jsonObj["leftBlink"].toInt();
             int rightSignal=jsonObj["rightBlink"].toInt();
             int warning=jsonObj["warning"].toInt();
             int handBrake=jsonObj["handBrake"].toInt();
-            emit carlaJsonDataParsed(speed, alart, sign, autoGear,leftSignal,rightSignal,warning,handBrake);
-//            qDebug() << "warning:" << warning;
-//            qDebug() << "Speed:" << speed;
-//            qDebug() << "Alart:" << alart;
+            float brake=jsonObj["brake"].toDouble();
+            emit carlaJsonDataParsed(speed, alart, sign, autoGear,leftSignal,rightSignal,warning,handBrake,brake);
 //            qDebug() << "Sign:" << sign;
 //            qDebug() << "gear:" << autoGear;
 //            qDebug() << "LB:" << leftSignal;
