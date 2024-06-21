@@ -1012,7 +1012,7 @@ Item {
             if(sign===1){
                 gear.visible=false;
                 gearAuto.visible=true;
-                auto_selected_gear.text=autoGear;
+                auto_selected_gear.text=AGear;
                 if (auto_selected_gear.text === "P") {
                     auto_drive_mode.text="Parking"
                     auto_P.color = "#ffffff";
@@ -1034,7 +1034,11 @@ Item {
                 if (auto_selected_gear.text === "R") {
                     auto_drive_mode.text="Reversing"
                     auto_R.color = "#ffffff";
+                    camera.start() // Start the camera
+                    viewfinder.visible = true // Show the viewfinder
                 } else {
+                camera.stop() // Stop the camera (not start)
+                viewfinder.visible = false // Hide the viewfinder
                     auto_R.color = "#7f7f7f";
                 }
             }
@@ -1062,15 +1066,6 @@ Item {
                 parking_break.visible=true;
             }else{
                 parking_break.visible=false;
-            }
-            if(auto_selected_gear.text === "R"){
-                drive_mode.text="Reversing"
-                camera.start() // Start the camera
-                viewfinder.visible = true // Show the viewfinder
-            }else{
-                camera.stop() // Stop the camera (not start)
-                viewfinder.visible = false // Hide the viewfinder
-
             }
         }
     }

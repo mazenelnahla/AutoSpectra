@@ -3,11 +3,11 @@
 #include <QDebug>
 #include "serialmanager.h"
 int temperature=0;
+int sendPort=12345;
 using namespace std;
 SerialManager::SerialManager(QObject *parent)
     : QObject(parent)
 {
-    int sendPort=12345;
     udpSocket.bind(QHostAddress::Any, sendPort); // Use appropriate port number
     bool m_serial_is_available = true;
     QString m_serial_uno_port_name;
@@ -102,6 +102,6 @@ void SerialManager::sendGearOverUDP(const QString &gear)
     QByteArray jsonData = jsonDoc.toJson();
 
     // Send the JSON data over UDP
-    udpSocket.writeDatagram(jsonData, QHostAddress("192.168.1.5"), sendPort); // Replace with the IP and port of the Python PC
+    udpSocket.writeDatagram(jsonData, QHostAddress("192.168.1.14"), 12345); // Replace with the IP and port of the Python PC
 }
 
