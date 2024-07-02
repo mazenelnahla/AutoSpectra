@@ -77,9 +77,9 @@ void SerialManager::readSerial()
                 QString gear = jsonObj["gear"].toString();
                 sendGearOverUDP(gear);
                 emit jsonDataParsed(temperature, humidity, door, gear);
-//                qDebug() << "Temperature:" << temperature;
-//                qDebug() << "Humidity:" << humidity;
-//                qDebug() << "Door:" << door;
+                //                qDebug() << "Temperature:" << temperature;
+                //                qDebug() << "Humidity:" << humidity;
+                //                qDebug() << "Door:" << door;
                 // qDebug() << "Gear:" << gear;
             }
 
@@ -104,4 +104,3 @@ void SerialManager::sendGearOverUDP(const QString &gear)
     // Send the JSON data over UDP
     udpSocket.writeDatagram(jsonData, QHostAddress("192.168.1.14"), 12345); // Replace with the IP and port of the Python PC
 }
-

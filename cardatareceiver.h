@@ -10,7 +10,7 @@ public:
     explicit CarDataReceiver(QObject *parent = nullptr);
 
 signals:
-    void carlaJsonDataParsed(int speed,QString alart,int sign, QString AGear,int leftSignal,int rightSignal,int warning,int handBrake, double brake);
+    void carlaJsonDataParsed(int speed,QString alart,int sign, QString AGear,int leftSignal,int rightSignal,int warning,int handBrake, double brake, QString trafficSign,int highBeam, int adaptiveLight);
 
 private slots:
     void processPendingDatagrams();

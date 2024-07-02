@@ -1,8 +1,8 @@
-// pythonrunner.cpp
 #include "pythonrunner.h"
 #include <QFileInfo>
 #include <QDebug>
 #include <QCoreApplication>
+#include <QDir>
 
 PythonRunner::PythonRunner(QObject *parent) : QObject(parent) {
     connect(&process, &QIODevice::readyRead, this, &PythonRunner::readStandardOutput);
@@ -12,16 +12,14 @@ PythonRunner::PythonRunner(QObject *parent) : QObject(parent) {
 
 void PythonRunner::runPythonScript() {
     QString appDir = QCoreApplication::applicationDirPath();
-    // Construct the relative path to the Python script
-    QString scriptRelativePath = "../../Spotify.py";
-    QString scriptPath = appDir + "/" + scriptRelativePath;
+    QString scriptRelativePath = QStringLiteral("../../Spotify.py");
+    QString scriptPath = QDir(appDir).filePath(scriptRelativePath);
 
     QFileInfo fileInfo(scriptPath);
     QString absoluteScriptPath = fileInfo.absoluteFilePath();
 
     process.setWorkingDirectory(fileInfo.absolutePath());
     process.start("python", QStringList() << absoluteScriptPath);
-
 
     if (!process.waitForStarted()) {
         qDebug() << "Failed to start the script process:" << process.errorString();

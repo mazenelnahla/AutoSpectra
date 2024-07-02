@@ -33,7 +33,8 @@ void SpotifyReceiver::processPendingDatagrams() {
             QString Artist_Name=jsonObj["artistName"].toString();
             QString Album_Name=jsonObj["albumName"].toString();
             QString Album_Img_URL=jsonObj["albumURL"].toString();
-            emit spotifiyReceivedData(Track_Name, Artist_Name, Album_Name, Album_Img_URL);
+            bool isPlaying=jsonObj["isPlaying"].toBool();
+            emit spotifiyReceivedData(Track_Name, Artist_Name, Album_Name, Album_Img_URL,isPlaying);
             // qDebug()<<Artist_Name;
 
         }

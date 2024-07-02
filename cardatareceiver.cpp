@@ -31,6 +31,7 @@ void CarDataReceiver::processPendingDatagrams() {
         if (jsonDoc.isObject()) {
             QJsonObject jsonObj = jsonDoc.object();
             // Extract data from the JSON object
+            QString trafficSign= jsonObj["trafficSign"].toString();
             int speed = jsonObj["speed"].toDouble();
             QString alart = jsonObj["alart"].toString();
             int sign = jsonObj["autoPilot"].toInt();
@@ -49,7 +50,9 @@ void CarDataReceiver::processPendingDatagrams() {
             int warning=jsonObj["warning"].toInt();
             int handBrake=jsonObj["handBrake"].toInt();
             float brake=jsonObj["brake"].toDouble();
-            emit carlaJsonDataParsed(speed, alart, sign, AGear,leftSignal,rightSignal,warning,handBrake,brake);
+            int highBeam=jsonObj["highBeam"].toInt();
+            int adaptiveLights=jsonObj["adaptiveLights"].toInt();
+            emit carlaJsonDataParsed(speed, alart, sign, AGear,leftSignal,rightSignal,warning,handBrake,brake,trafficSign,highBeam,adaptiveLights);
            // qDebug() << "Sign:" << sign;
            // qDebug() << "gear:" << autoGear;
            // qDebug() << "LB:" << leftSignal;

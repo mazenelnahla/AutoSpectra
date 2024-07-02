@@ -26,7 +26,6 @@ Item {
         opacity: 0.8
     }
 
-
     Image {
         id: rectangle_1
         source: "images/rectangle_1.png"
@@ -34,9 +33,6 @@ Item {
         y: 153
         opacity: 1
     }
-
-
-
 
     Rectangle {
         id: artistImage
@@ -60,13 +56,11 @@ Item {
             fillMode: Image.PreserveAspectCrop
             width:170
             height:170
-            x: 0
-            y: 0
             opacity: 1
-            layer.enabled:true
-            layer.effect: OpacityMask{
-                maskSource: artistImageSource
-            }
+            // layer.enabled:true
+            // layer.effect: OpacityMask{
+            //     maskSource: artistImageSource
+            // }
         }
         Image {
             id: artistImg
@@ -77,10 +71,10 @@ Item {
             x: 0
             y: 0
             opacity: 1
-            layer.enabled:true
-            layer.effect: OpacityMask{
-                maskSource: artistImageSource
-            }
+            // layer.enabled:true
+            // layer.effect: OpacityMask{
+            //     maskSource: artistImageSource
+            // }
         }
         Text {
             id: playingNow
@@ -152,9 +146,6 @@ Item {
         id: camera
 
     }
-
-
-
 
     Image {
         id: right_side_none
@@ -427,7 +418,7 @@ Item {
 
         Text {
             id: auto_P
-            x: -22
+            x: -23
             y: 114
             width: 20
             height: 20
@@ -440,7 +431,7 @@ Item {
 
         Text {
             id: auto_N
-            x: 4
+            x: 27
             y: 114
             width: 20
             height: 20
@@ -453,7 +444,7 @@ Item {
 
         Text {
             id: auto_D
-            x: 30
+            x: 53
             y: 114
             width: 20
             height: 20
@@ -466,7 +457,7 @@ Item {
 
         Text {
             id: auto_R
-            x: 54
+            x: 0
             y: 114
             width: 20
             height: 20
@@ -565,11 +556,11 @@ Item {
         opacity: 1
         property bool colorFlag: false
     }
-    ColorOverlay {
-            anchors.fill: door_open
-            source: door_open
-            color: door_open.colorFlag ? "#7b7b7b" : "transparent"
-        }
+    // ColorOverlay {
+    //     anchors.fill: door_open
+    //     source: door_open
+    //     color: door_open.colorFlag ? "#515151" : "transparent"
+    // }
 
     Image {
         id: low_bat
@@ -578,7 +569,14 @@ Item {
         y: 72
         opacity: 1
         visible: true
+        property bool colorFlag: false
     }
+    ColorOverlay {
+        anchors.fill: low_bat
+        source: low_bat
+        color: low_bat.colorFlag ? "#515151" : "transparent"
+    }
+
 
     Image {
         id: parking_break
@@ -587,6 +585,7 @@ Item {
         y: 49
         opacity: 1
         visible: true
+        property bool colorFlag: false
     }
 
     Image {
@@ -598,8 +597,8 @@ Item {
         opacity: 1
         source: "images/lower_status.png"
         fillMode: Image.PreserveAspectFit
+        property bool colorFlag: false
     }
-
 
     Image {
         id: seat_belt
@@ -608,8 +607,13 @@ Item {
         y: 65
         opacity: 1
         visible: true
+        property bool colorFlag: false
     }
-
+    ColorOverlay {
+        anchors.fill: seat_belt
+        source: seat_belt
+        color: seat_belt.colorFlag ? "#515151" : "transparent"
+    }
 
     Image {
         id: assist_disable
@@ -618,6 +622,7 @@ Item {
         y: 15
         opacity: 1
         visible: true
+        property bool colorFlag: false
     }
 
 
@@ -628,6 +633,7 @@ Item {
         y: 44
         opacity: 1
         visible: true
+        property bool colorFlag: false
     }
 
 
@@ -638,9 +644,14 @@ Item {
         y: 551
         width: 41
         opacity: 1
+        property bool colorFlag: false
     }
 
-
+    ColorOverlay {
+        anchors.fill: low_beam
+        source: low_beam
+        color: low_beam.colorFlag ? "#515151" : "transparent"
+    }
 
     Image {
         id: high_beam
@@ -652,20 +663,14 @@ Item {
         width: 40
         height: 25
         opacity: 1
+        property bool colorFlag: false
     }
 
-
-
-    Image {
-        id: adaptive_off
-        source: "images/adaptive_off.png"
-        x: 457
-        y: 551
-        width: 40
-        height: 25
-        opacity: 1
+    ColorOverlay {
+        anchors.fill: high_beam
+        source: high_beam
+        color: high_beam.colorFlag ? "#515151" : "transparent"
     }
-
 
     Image {
         id: adaptive_on
@@ -677,9 +682,14 @@ Item {
         width: 40
         height: 25
         opacity: 1
+        property bool colorFlag: false
     }
 
-
+    ColorOverlay {
+        anchors.fill: adaptive_on
+        source: adaptive_on
+        color: adaptive_on.colorFlag ? "#515151" : "transparent"
+    }
 
     Image {
         id: daytime_light
@@ -688,8 +698,13 @@ Item {
         y: 553
         width: 46
         opacity: 1
+        property bool colorFlag: false
     }
-
+    ColorOverlay {
+        anchors.fill: daytime_light
+        source: daytime_light
+        color: daytime_light.colorFlag ? "#515151" : "transparent"
+    }
 
     Text {
         id: alert_
@@ -808,8 +823,8 @@ Item {
 
     Image {
         id: rightlabel
-        x: 592
-        y: 29
+        x: 595
+        y: 21
         width: 35
         height: 35
         source: "images/right.png"
@@ -847,8 +862,8 @@ Item {
 
     Image {
         id: leftlabel
-        x: 399
-        y: 29
+        x: 395
+        y: 21
         width: 35
         height: 35
         source: "images/left.png"
@@ -903,18 +918,24 @@ Item {
             if (selected_gear.text === "P") {
                 drive_mode.text="Parking"
                 _P.color = "#ffffff";
+                camera.stop() // Stop the camera (not start)
+                viewfinder.visible = false // Hide the viewfinder
             } else {
                 _P.color = "#7f7f7f";
             }
             if (selected_gear.text === "N") {
                 drive_mode.text="Neutral"
                 _N.color = "#ffffff";
+                camera.stop() // Stop the camera (not start)
+                viewfinder.visible = false // Hide the viewfinder
             } else {
                 _N.color = "#7f7f7f";
             }
             if (selected_gear.text === "D") {
                 drive_mode.text="Driving Mode"
                 _D.color = "#ffffff";
+                camera.stop() // Stop the camera (not start)
+                viewfinder.visible = false // Hide the viewfinder
             } else {
                 _D.color = "#7f7f7f";
             }
@@ -925,8 +946,6 @@ Item {
                 viewfinder.visible = true // Show the viewfinder
             } else {
                 _R.color = "#7f7f7f";
-                camera.stop() // Stop the camera (not start)
-                viewfinder.visible = false // Hide the viewfinder
             }
         }
     }
@@ -976,7 +995,7 @@ Item {
 
     Connections{
         target: SpotifyReceiver
-        function onSpotifiyReceivedData( Track_Name, Artist_Name, Album_Name, Album_Img_URL){
+        function onSpotifiyReceivedData( Track_Name, Artist_Name, Album_Name, Album_Img_URL,isPlaying){
             if(Album_Name===""){
                 artistImage.visible=false
                 playingNow.visible=false
@@ -984,9 +1003,15 @@ Item {
             else{
                 artistImage.visible=true
                 playingNow.visible=true
+                if(isPlaying){
+                    playingNow.text="Playing Now"
+                }else{
+                    playingNow.text="Music Puased"
+                }
                 artistImg.source = Album_Img_URL
                 songTitle.text=Track_Name
                 artistName.text=Artist_Name
+
             }
         }
     }
@@ -995,20 +1020,6 @@ Item {
         target:carDataReceiver
         onCarlaJsonDataParsed:{
             speed_read.text = ""+speed;
-            if(leftSignal===1){
-                leftlabel.visible=true;
-            }
-            else{
-                leftlabel.visible=false;
-            }
-
-            if(rightSignal===1){
-                rightlabel.visible=true;
-            }
-            else{
-                rightlabel.visible=false;
-            }
-
             if(sign===1){
                 gear.visible=false;
                 gearAuto.visible=true;
@@ -1016,18 +1027,24 @@ Item {
                 if (auto_selected_gear.text === "P") {
                     auto_drive_mode.text="Parking"
                     auto_P.color = "#ffffff";
+                    camera.stop() // Stop the camera (not start)
+                    viewfinder.visible = false // Hide the viewfinder
                 } else {
                     auto_P.color = "#7f7f7f";
                 }
                 if (auto_selected_gear.text === "N") {
                     auto_drive_mode.text="Neutral"
                     auto_N.color = "#ffffff";
+                    camera.stop() // Stop the camera (not start)
+                    viewfinder.visible = false // Hide the viewfinder
                 } else {
                     auto_N.color = "#7f7f7f";
                 }
                 if (auto_selected_gear.text === "D") {
                     auto_drive_mode.text="Driving Mode"
                     auto_D.color = "#ffffff";
+                    camera.stop() // Stop the camera (not start)
+                    viewfinder.visible = false // Hide the viewfinder
                 } else {
                     auto_D.color = "#7f7f7f";
                 }
@@ -1037,35 +1054,104 @@ Item {
                     camera.start() // Start the camera
                     viewfinder.visible = true // Show the viewfinder
                 } else {
-                camera.stop() // Stop the camera (not start)
-                viewfinder.visible = false // Hide the viewfinder
                     auto_R.color = "#7f7f7f";
+                }
+                if(leftSignal===1){
+                    leftlabel.visible=true;
+                    camera.start() // Start the camera
+                    viewfinder.visible = true // Show the viewfinder
+                }
+                else{
+                    leftlabel.visible=false;
+                }
+
+                if(rightSignal===1){
+                    rightlabel.visible=true;
+                    camera.start() // Start the camera
+                    viewfinder.visible = true // Show the viewfinder
+                }else{
+                    rightlabel.visible=false;
+                }
+                if(rightSignal===1 && leftSignal==1){
+                    camera.stop() // Stop the camera (not start)
+                    viewfinder.visible = false // Hide the viewfinder
                 }
             }
             else{
                 gear.visible=true;
                 gearAuto.visible=false;
+                if(leftSignal===1){
+                    leftlabel.visible=true;
+                    camera.start() // Start the camera
+                    viewfinder.visible = true // Show the viewfinder
+                }
+                else{
+                    leftlabel.visible=false;
+                }
+
+                if(rightSignal===1){
+                    rightlabel.visible=true;
+                    camera.start() // Start the camera
+                    viewfinder.visible = true // Show the viewfinder
+                }else{
+                    rightlabel.visible=false;
+                }
+
             }
             if(warning===0){
                 wanring_massage.visible=false;
                 alert_.visible=false;
                 _cautionMassage.visible=false;
-                daytime_light.visible=false;
-                adaptive_on.visible=false;
-                adaptive_off.visible=false;
-                low_beam.visible=false;
-                high_beam.visible=false;
                 assist_disable.visible=false;
                 steering_error.visible=false;
-                speed_limit.visible=false;
+                low_beam.visible=false;
+                low_beam.colorFlag=true;
+                low_bat.colorFlag=true;
                 low_bat.visible=false;
                 seat_belt.visible=false;
+                seat_belt.colorFlag=true;
+                daytime_light.visible=false;
+                daytime_light.colorFlag=true;
                 hasRealData: 1;
             }
+            if(highBeam){
+                high_beam.visible=true;
+                high_beam.colorFlag=false;
+            }else{
+                high_beam.visible=false;
+                high_beam.colorFlag=true;
+            }
+
+            if(adaptiveLight){
+                adaptive_on.visible=true;
+                adaptive_on.colorFlag=false;
+            }else{
+                adaptive_on.visible=false;
+                adaptive_on.colorFlag=true;
+            }
+
             if(handBrake){
                 parking_break.visible=true;
             }else{
                 parking_break.visible=false;
+            }
+            if(trafficSign=="speed_30"){
+                speed_limit.source="images/Set 1/06.png"
+            }
+            if(trafficSign=="speed_60"){
+                speed_limit.source="images/Set 1/12.png"
+            }
+            if(trafficSign=="speed_80"){
+                speed_limit.source="images/Set 1/16.png"
+            }
+            if(trafficSign=="speed_120"){
+                speed_limit.source="images/Set 1/24.png"
+            }
+            if(trafficSign=="speed_140"){
+                speed_limit.source="images/Set 1/28.png"
+            }
+            if(trafficSign==""){
+                speed_limit.source="images/Set 1/signs.png"
             }
         }
     }
@@ -1316,10 +1402,6 @@ Item {
                 font.kerning: true
             }
         }
-
-
-
-
 
     }
 
