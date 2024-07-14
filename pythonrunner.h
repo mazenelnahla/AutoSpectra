@@ -1,4 +1,3 @@
-// pythonrunner.h
 #ifndef PYTHONRUNNER_H
 #define PYTHONRUNNER_H
 
@@ -14,20 +13,23 @@ public:
     explicit PythonRunner(QObject *parent = nullptr);
 
 public slots:
-    void runPythonScript();
+    void runSpotifyScript();
+    void runDrowsinessDetectionScript();
 
 signals:
     void pythonScriptOutput(const QString output);
     void pythonScriptError(const QString error);
 
 private slots:
-    void readStandardOutput();  // Corrected slot name
-    void readStandardError();   // Added slot for standard error
-
+    void readSpotifyOutput();
+    void readSpotifyError();
+    void readDrowsinessDetectionOutput();
+    void readDrowsinessDetectionError();
     void processFinished(int exitCode, QProcess::ExitStatus exitStatus);
 
 private:
-    QProcess process;  // Declare QProcess as a member variable
+    QProcess spotifyProcess;
+    QProcess drowsinessDetectionProcess;
 };
 
 #endif // PYTHONRUNNER_H

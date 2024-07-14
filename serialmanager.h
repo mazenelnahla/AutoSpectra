@@ -20,6 +20,10 @@ public:
 public slots:
     void readSerial();
     void sendGearOverUDP(const QString &gear);
+    void sendAutopilotCommand(bool enable);
+    void sendGearCommand(const QString &gear);
+
+
 
 signals:
     void jsonDataParsed(int temperature, int humidity, int door, QString gear);

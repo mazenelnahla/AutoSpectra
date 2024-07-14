@@ -3,6 +3,7 @@ import spotipy
 import json
 from spotipy.oauth2 import SpotifyOAuth
 import time
+import threading
 
 # Spotify authentication
 client_id = '3fb73f276ec048b78eff8151cee5563c'
@@ -10,9 +11,9 @@ client_secret = 'e8d229b5cc704e4d9c29bbd62957f93d'
 redirect_uri = 'http://localhost:8888'
 scope = "user-read-currently-playing user-modify-playback-state"
 
-# UDP server address and port
-udp_host = '127.0.0.1'  # Change to your UDP server's address
-udp_port = 12356        # Change to your UDP server's port number
+# UDP server addresses and port
+udp_hosts = ['127.0.0.1', '192.168.1.184']  # Add the IP addresses here
+udp_port = 12356  # Change to your UDP server's port number
 
 # Function to update the currently playing track information
 def update_current_track():
@@ -42,7 +43,6 @@ def update_current_track():
                     "isPlaying": current_track['is_playing'],
                     "currentTime": progress_sec,
                     "duration": duration_sec
-                    
                 }
             else:
                 json_data = {
@@ -76,7 +76,10 @@ def send_song_data(json_data):
         # Create a UDP socket
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         json_bytes = json.dumps(json_data).encode('utf-8')
-        sock.sendto(json_bytes, (udp_host, udp_port))
+
+        for host in udp_hosts:
+            sock.sendto(json_bytes, (host, udp_port))
+
         # Close the socket
         sock.close()
     except socket.error as e:
@@ -110,7 +113,7 @@ def handle_play_pause(command):
 # Function to receive commands from the QML application
 def receive_commands():
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    sock.bind((udp_host, 12456))
+    sock.bind((udp_hosts[0], 12456))  # Bind to the first host in the list
 
     while True:
         data, addr = sock.recvfrom(1024)  # buffer size is 1024 bytes
@@ -124,7 +127,6 @@ def receive_commands():
             print(f"Error occurred while handling command: {str(e)}")
 
 # Start the thread to receive commands
-import threading
 threading.Thread(target=receive_commands, daemon=True).start()
 
 # Start updating the currently playing track information

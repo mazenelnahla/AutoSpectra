@@ -45,7 +45,7 @@ else()
         add_executable(AutoSpectra
           ${PROJECT_SOURCES}
           SpotifyReceiver.h SpotifyReceiver.cpp
-          can_bus.h can_bus.cpp
+
 
 
         )

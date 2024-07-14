@@ -46,7 +46,9 @@ int main(int argc, char *argv[])
 
 
     // Run the Python script when the QML component is completed
-    pythonRunner.runPythonScript();
+    PythonRunner runner;
+    runner.runSpotifyScript();
+    runner.runDrowsinessDetectionScript();
 
     return app.exec();
 }

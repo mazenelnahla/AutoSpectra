@@ -6,7 +6,7 @@
 
 SpotifyReceiver::SpotifyReceiver(QObject *parent) : QObject(parent)
 {
-    udpSocket.bind(QHostAddress::Any, 12356); // Adjust the port as needed
+    udpSocket.bind(QHostAddress::Any, 12357); // Adjust the port as needed
 
     connect(&udpSocket, &QUdpSocket::readyRead, this, &SpotifyReceiver::processPendingDatagrams);
 }

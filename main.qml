@@ -21,8 +21,8 @@ Window {
     minimumWidth: 1024
     title: qsTr("Instrument Cluster")
      // visibility: "FullScreen"
-//     screen: Qt.application.primaryScreen
-//    property int autoPilot: 1
+     // screen: Qt.application.screens[0]
+
     Instrument_Cluster{
 
     }
