@@ -11,7 +11,7 @@ public:
     explicit SpotifyReceiver(QObject *parent = nullptr);
 
 signals:
-    void spotifiyReceivedData(QString Track_Name,QString Artist_Name,QString Album_Name,QString Album_Img_URL,bool isPlaying);
+    void spotifyReceivedData(QString Track_Name,QString Artist_Name,QString Album_Name,QString Album_Img_URL,bool isPlaying);
 
 public slots:
     void processPendingDatagrams();

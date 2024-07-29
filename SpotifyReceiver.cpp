@@ -6,7 +6,7 @@
 
 SpotifyReceiver::SpotifyReceiver(QObject *parent) : QObject(parent)
 {
-    udpSocket.bind(QHostAddress::Any, 12357); // Adjust the port as needed
+    udpSocket.bind(QHostAddress::Any, 12356); // Adjust the port as needed
 
     connect(&udpSocket, &QUdpSocket::readyRead, this, &SpotifyReceiver::processPendingDatagrams);
 }
@@ -34,7 +34,7 @@ void SpotifyReceiver::processPendingDatagrams() {
             QString Album_Name=jsonObj["albumName"].toString();
             QString Album_Img_URL=jsonObj["albumURL"].toString();
             bool isPlaying=jsonObj["isPlaying"].toBool();
-            emit spotifiyReceivedData(Track_Name, Artist_Name, Album_Name, Album_Img_URL,isPlaying);
+            emit spotifyReceivedData(Track_Name, Artist_Name, Album_Name, Album_Img_URL,isPlaying);
             // qDebug()<<Artist_Name;
 
         }

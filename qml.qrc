@@ -97,5 +97,10 @@
         <file>images/right_side_red.png</file>
         <file>images/right_side_yellow.png</file>
         <file>images/Right_Side.png</file>
+        <file>images/button_frame.png</file>
+        <file>images/fota_bg.png</file>
+        <file>images/update_icon.png</file>
+        <file>Fota.qml</file>
+        <file>images/warning.png</file>
     </qresource>
 </RCC>

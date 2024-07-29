@@ -49,7 +49,6 @@ void PythonRunner::runDrowsinessDetectionScript() {
 
 void PythonRunner::readSpotifyOutput() {
     QString output = spotifyProcess.readAllStandardOutput().simplified();
-    // qDebug() << "Spotify script output:" << output;
     emit pythonScriptOutput(output);
 }
 

@@ -31,8 +31,8 @@ int main(int argc, char *argv[])
     CarDataReceiver carDataReceiver;
     engine.rootContext()->setContextProperty("carDataReceiver", &carDataReceiver);
 
-    SpotifyReceiver SpotifyReceiver;
-    engine.rootContext()->setContextProperty("SpotifyReceiver", &SpotifyReceiver);
+    SpotifyReceiver spotifyReceiver;
+    engine.rootContext()->setContextProperty("SpotifyReceiver", &spotifyReceiver);
 
     const QUrl url(QStringLiteral("qrc:/main.qml"));
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
     // Run the Python script when the QML component is completed
     PythonRunner runner;
     runner.runSpotifyScript();
-    runner.runDrowsinessDetectionScript();
+    // runner.runDrowsinessDetectionScript();
 
     return app.exec();
 }

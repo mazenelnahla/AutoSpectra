@@ -131,7 +131,7 @@ void SerialManager::sendGearOverUDP(const QString &gear)
     // Convert the JSON document to bytes
     QByteArray jsonData = jsonDoc.toJson();
     // Send the JSON data over UDP
-    udpSocket.writeDatagram(jsonData, QHostAddress("192.168.1.14"), 12346); // Replace with the IP and port of the Python PC
+    udpSocket.writeDatagram(jsonData, QHostAddress("192.168.1.15"), 12346); // Replace with the IP and port of the Python PC
 }
 
 void SerialManager::sendAutopilotCommand(bool enable)

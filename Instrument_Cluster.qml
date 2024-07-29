@@ -21,13 +21,15 @@ Item {
 
     // }
 
+
     Image {
         id: color_fill_1
         source: "images/color_fill_1.png"
         x: 0
         y: 0
-        opacity: 0.8
+        opacity: 1
     }
+
 
     Image {
         id: rectangle_1
@@ -36,6 +38,7 @@ Item {
         y: 153
         opacity: 1
     }
+
 
     Rectangle {
         id: artistImage
@@ -131,6 +134,7 @@ Item {
         }
     }
 
+
     VideoOutput {
         id: viewfinder
         x: 124
@@ -141,14 +145,15 @@ Item {
         anchors.centerIn: parent
         source: camera
         visible: false
-
     }
+
 
 
     Camera {
         id: camera
         deviceId:"@device:pnp:\\\\?\\usb#vid_1c4f&pid_3002&mi_00#6&3a2fa42b&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global"
     }
+
 
     Rectangle {
         id: noSignalIndicator
@@ -178,6 +183,7 @@ Item {
         }
     }
 
+
     Image {
         id: right_side_none
         source: "images/Right_Side.png"
@@ -187,6 +193,7 @@ Item {
         visible: speed_read.text <= 0 || hasRealData== false
     }
 
+
     Image {
         id: right_side_blue
         source: "images/right_side_blue.png"
@@ -195,6 +202,7 @@ Item {
         opacity: 1
         visible: speed_read.text > 0 && speed_read.text < 60 && hasRealData== true
     }
+
     Image {
         id: right_side_red
         source: "images/right_side_red.png"
@@ -203,6 +211,7 @@ Item {
         opacity: 1
         visible: speed_read.text >= 120 && hasRealData== true
     }
+
     Image {
         id: right_side_yellow
         source: "images/right_side_yellow.png"
@@ -211,6 +220,7 @@ Item {
         opacity: 1
         visible: speed_read.text >= 60 && speed_read.text < 120 && hasRealData== true
     }
+
 
 
     Image {
@@ -222,6 +232,7 @@ Item {
         rotation: -173.341
     }
 
+
     Image {
         id: left_side
         source: "images/left_side.png"
@@ -229,6 +240,7 @@ Item {
         y: 113
         opacity: 1
     }
+
 
 
     Gauge_animation {
@@ -267,6 +279,7 @@ Item {
 
 
 
+
     Image {
         id: left_side_center
         source: "images/center.png"
@@ -274,6 +287,7 @@ Item {
         y: 197
         opacity: 1
     }
+
 
     Image {
         id: upper_status
@@ -283,6 +297,7 @@ Item {
         y: 0
         opacity: 0.911
     }
+
 
     Image {
         id: lower_status
@@ -295,9 +310,10 @@ Item {
         opacity: 1
     }
 
+
     Text {
         id: miles_value
-        text: "0000"
+        text: "0004"
         font.pixelSize: 16
         font.family: "Futura"
         color: "#d0d0d0"
@@ -306,6 +322,7 @@ Item {
         y: 379
         opacity: 1
     }
+
 
     Text {
         id: miles
@@ -318,6 +335,7 @@ Item {
         smooth: true
         font.family: "Futura"
     }
+
 
     Text {
         id: gear
@@ -337,58 +355,6 @@ Item {
 
 
         Text {
-            id: _P
-            x: -23
-            y: 114
-            width: 20
-            height: 20
-            color: "#ffffff"
-            text: qsTr("P")
-            font.pixelSize: 25
-            horizontalAlignment: Text.AlignHCenter
-            font.weight: Font.Black
-        }
-
-        Text {
-            id: _N
-            x: 27
-            y: 114
-            width: 20
-            height: 20
-            color: "#7f7f7f"
-            text: qsTr("N")
-            font.pixelSize: 25
-            horizontalAlignment: Text.AlignHCenter
-            font.weight: Font.Black
-        }
-
-        Text {
-            id: _D
-            x: 53
-            y: 114
-            width: 20
-            height: 20
-            color: "#7f7f7f"
-            text: qsTr("D")
-            font.pixelSize: 25
-            horizontalAlignment: Text.AlignHCenter
-            font.weight: Font.Black
-        }
-
-        Text {
-            id: _R
-            x: 0
-            y: 114
-            width: 20
-            height: 20
-            color: "#7f7f7f"
-            text: qsTr("R")
-            font.pixelSize: 25
-            horizontalAlignment: Text.AlignHCenter
-            font.weight: Font.Black
-        }
-
-        Text {
             id: selected_gear
             text: "P"
             font.pixelSize: 80
@@ -404,6 +370,62 @@ Item {
             height: 86
             opacity: 1
         }
+
+        Text {
+            id: _P
+            x: -23
+            y: 114
+            width: 20
+            height: 20
+            color: "#ffffff"
+            text: qsTr("P")
+            font.pixelSize: 25
+            horizontalAlignment: Text.AlignHCenter
+            font.weight: Font.Black
+        }
+
+
+        Text {
+            id: _N
+            x: 27
+            y: 114
+            width: 20
+            height: 20
+            color: "#7f7f7f"
+            text: qsTr("N")
+            font.pixelSize: 25
+            horizontalAlignment: Text.AlignHCenter
+            font.weight: Font.Black
+        }
+
+
+        Text {
+            id: _D
+            x: 53
+            y: 114
+            width: 20
+            height: 20
+            color: "#7f7f7f"
+            text: qsTr("D")
+            font.pixelSize: 25
+            horizontalAlignment: Text.AlignHCenter
+            font.weight: Font.Black
+        }
+
+
+        Text {
+            id: _R
+            x: 0
+            y: 114
+            width: 20
+            height: 20
+            color: "#7f7f7f"
+            text: qsTr("R")
+            font.pixelSize: 25
+            horizontalAlignment: Text.AlignHCenter
+            font.weight: Font.Black
+        }
+
 
         Text {
             id: drive_mode
@@ -423,7 +445,9 @@ Item {
             opacity: 1
         }
 
+
     }
+
 
 
     Text {
@@ -531,6 +555,7 @@ Item {
     }
 
 
+
     Text {
         id: speed_read
         text: speedValue
@@ -579,6 +604,7 @@ Item {
     }
 
 
+
     Image {
         id: speed_limit
         source: "images/Set 1/signs.png"
@@ -592,6 +618,7 @@ Item {
         visible: true
     }
 
+
     Image {
         id: door_open
         source: "images/door_open.png"
@@ -600,11 +627,13 @@ Item {
         opacity: 1
         property bool colorFlag: false
     }
-    // ColorOverlay {
-    //     anchors.fill: door_open
-    //     source: door_open
-    //     color: door_open.colorFlag ? "#515151" : "transparent"
-    // }
+
+    ColorOverlay {
+        anchors.fill: door_open
+        source: door_open
+        color: door_open.colorFlag ? "#515151" : "transparent"
+    }
+
 
     Image {
         id: low_bat
@@ -615,11 +644,13 @@ Item {
         visible: true
         property bool colorFlag: false
     }
+
     ColorOverlay {
         anchors.fill: low_bat
         source: low_bat
         color: low_bat.colorFlag ? "#515151" : "transparent"
     }
+
 
 
     Image {
@@ -632,10 +663,11 @@ Item {
         property bool colorFlag: false
     }
 
+
     Image {
         id: lower_status1
-        x: 785
-        y: 444
+        x: 791
+        y: 445
         width: 380
         height: 236
         opacity: 1
@@ -643,6 +675,7 @@ Item {
         fillMode: Image.PreserveAspectFit
         property bool colorFlag: false
     }
+
 
     Image {
         id: seat_belt
@@ -653,11 +686,13 @@ Item {
         visible: true
         property bool colorFlag: false
     }
+
     ColorOverlay {
         anchors.fill: seat_belt
         source: seat_belt
         color: seat_belt.colorFlag ? "#515151" : "transparent"
     }
+
 
     Image {
         id: assist_disable
@@ -668,6 +703,7 @@ Item {
         visible: true
         property bool colorFlag: false
     }
+
 
 
     Image {
@@ -681,21 +717,25 @@ Item {
     }
 
 
+
     Image {
         id: low_beam
         source: "images/low_beam.png"
         x: 521
-        y: 551
+        y: 554
         width: 41
         opacity: 1
         property bool colorFlag: false
     }
 
+
     ColorOverlay {
+        y: 554
         anchors.fill: low_beam
         source: low_beam
         color: low_beam.colorFlag ? "#515151" : "transparent"
     }
+
 
     Image {
         id: high_beam
@@ -703,18 +743,21 @@ Item {
         sourceSize.height: 0
         sourceSize.width: 0
         x: 398
-        y: 551
+        y: 554
         width: 40
         height: 25
         opacity: 1
         property bool colorFlag: false
     }
 
+
     ColorOverlay {
+        y: 554
         anchors.fill: high_beam
         source: high_beam
         color: high_beam.colorFlag ? "#515151" : "transparent"
     }
+
 
     Image {
         id: adaptive_on
@@ -722,33 +765,39 @@ Item {
         sourceSize.height: 0
         sourceSize.width: 0
         x: 457
-        y: 551
+        y: 554
         width: 40
         height: 25
         opacity: 1
         property bool colorFlag: false
     }
 
+
     ColorOverlay {
+        y: 554
         anchors.fill: adaptive_on
         source: adaptive_on
         color: adaptive_on.colorFlag ? "#515151" : "transparent"
     }
 
+
     Image {
         id: daytime_light
         source: "images/daytime_light.png"
         x: 579
-        y: 553
+        y: 554
         width: 46
         opacity: 1
         property bool colorFlag: false
     }
+
     ColorOverlay {
+        y: 554
         anchors.fill: daytime_light
         source: daytime_light
         color: daytime_light.colorFlag ? "#515151" : "transparent"
     }
+
 
     Text {
         id: alert_
@@ -765,6 +814,7 @@ Item {
         opacity: 1
         visible: true
     }
+
 
 
 
@@ -787,6 +837,7 @@ Item {
         visible: true
     }
 
+
     Text {
         id: alert_sleep
         text: "Alert"
@@ -802,6 +853,7 @@ Item {
         opacity: 1
         visible: false
     }
+
 
 
 
@@ -824,6 +876,7 @@ Item {
         visible: false
     }
 
+
     Text {
         id: clockdate
         text: "00:00"
@@ -839,6 +892,7 @@ Item {
 
 
 
+
     Text {
         id: clockDateSign
         text: "PM"
@@ -851,6 +905,7 @@ Item {
         y: 556
         opacity: 1
     }
+
 
 
 
@@ -900,6 +955,7 @@ Item {
 
 
 
+
     Image {
         id: rightlabel
         x: 595
@@ -936,6 +992,7 @@ Item {
             }
         }
     }
+
 
 
 
@@ -976,6 +1033,8 @@ Item {
         }
     }
 
+
+
     Image {
         id: wanring_massage
         x: 327
@@ -989,7 +1048,7 @@ Item {
         visible: true
         Item{
             id: engineMulfunction
-            visible: false
+            visible: true
             Image {
                 id: caution_icon_Engine
                 x: 36
@@ -1178,7 +1237,7 @@ Item {
 
         Item{
             id: electricSteeringError
-            visible: true
+            visible: false
             Image {
                 id: caution_icon_electricSteeringError
                 x: 35
@@ -1223,6 +1282,57 @@ Item {
             }
         }
 
+    }
+
+    Image {
+        id: lower_status2
+        x: -142
+        y: 531
+        width: 339
+        height: 69
+        opacity: 1
+        source: "images/lower_status.png"
+        fillMode: Image.PreserveAspectFit
+        property bool colorFlag: false
+    }
+
+    Image {
+        id: fota_update_icon
+        source: "/images/update_icon.png"
+        sourceSize.height: 50
+        sourceSize.width: 50
+        x: 20
+        y: 547
+        width: 40
+        height: 40
+        opacity: 1
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {
+                fota_open.visible=!fota_open.visible;
+            }
+        }
+    }
+    Image {
+        id: warning_icon
+        source: "/images/warning.png"
+        sourceSize.height: 50
+        sourceSize.width: 50
+        x: 86
+        y: 547
+        width: 40
+        height: 40
+        opacity: 1
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {
+                wanring_massage.visible=!wanring_massage.visible;
+            }
+        }
+    }
+    Fota {
+        id:fota_open
+        visible:false;
     }
 
     Connections {
@@ -1288,17 +1398,9 @@ Item {
                 camera.stop() // Stop the camera (not start)
                 viewfinder.visible = false // Hide the viewfinder
             }
-            if(autopilot){
-                if(selected_gear.text == "R"){
-                    camera.stop() // Stop the camera (not start)
-                    viewfinder.visible = false // Hide the viewfinder
-
-                }
-            }
-
-
         }
     }
+
 
     Connections{
         target:carDataReceiver
@@ -1459,6 +1561,7 @@ Item {
         }
     }
 
+
     Timer {
         interval: 1000
         running: true
@@ -1483,9 +1586,10 @@ Item {
             return hours + ":" + minutes
         }
     }
+
     Connections{
         target: SpotifyReceiver
-        function onSpotifiyReceivedData( Track_Name, Artist_Name, Album_Name, Album_Img_URL,isPlaying){
+        function onSpotifyReceivedData( Track_Name, Artist_Name, Album_Name, Album_Img_URL,isPlaying){
             if(Album_Name===""){
                 artistImage.visible=false
                 playingNow.visible=false
@@ -1501,10 +1605,11 @@ Item {
                 artistImg.source = Album_Img_URL
                 songTitle.text=Track_Name
                 artistName.text=Artist_Name
-
             }
         }
     }
+
+
 
 }
 
