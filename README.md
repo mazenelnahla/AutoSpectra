@@ -132,28 +132,28 @@ Ensure you have the following installed:
     ./autospectra
 
 ## Dependencies
-    Qt 5.15: The main framework for the application.
-    Python: For scripting and advanced data processing.
-    QProcess: For handling external processes and scripts.
-    JSON: For configuration and data communication.
-    Spotipy: For Spotify integration.
+- Qt 5.15: The main framework for the application.
+- Python: For scripting and advanced data processing.
+- QProcess: For handling external processes and scripts.
+- JSON: For configuration and data communication.
+- Spotipy: For Spotify integration.
 
 ## Contributing
-    Contributions are welcome! Please follow these steps to contribute:
+Contributions are welcome! Please follow these steps to contribute:
 
-    Fork the repository.
-    Create a new branch (git checkout -b feature-branch).
-    Commit your changes (git commit -am 'Add new feature').
-    Push to the branch (git push origin feature-branch).
-    Create a new Pull Request.
+Fork the repository.
+Create a new branch (git checkout -b feature-branch).
+Commit your changes (git commit -am 'Add new feature').
+Push to the branch (git push origin feature-branch).
+Create a new Pull Request.
 
 ## License
-    This project is licensed under the MIT License. See the LICENSE file for details.
+This project is licensed under the MIT License. See the LICENSE file for details.
 
 ## Acknowledgements
-    Qt community for providing extensive documentation and support.
-    Spotipy library contributors for making Spotify integration easier.
-    Raspberry Pi Foundation for providing a versatile development platform.
-    All contributors to the open-source libraries and tools used in this project.
+Qt community for providing extensive documentation and support.
+Spotipy library contributors for making Spotify integration easier.
+Raspberry Pi Foundation for providing a versatile development platform.
+All contributors to the open-source libraries and tools used in this project.
 
-    Feel free to modify any sections as needed to better fit your project specifics. Let me know if you need any further adjustments!
+Feel free to modify any sections as needed to better fit your project specifics. Let me know if you need any further adjustments!
