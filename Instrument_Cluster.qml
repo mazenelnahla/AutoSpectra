@@ -8,27 +8,35 @@ import com.company.serialmanager 1.0
 import MyPythonScript 1.0
 import com.company.cardatareceiver 1.0
 import spotifyreceiver 1.0
+import spotifyclient 1.0
 Item {
     id: item1
+    width: 1024
+    height: 600
     property bool hasRealData: false
     property bool rSignal:false
     property bool lSignal:false
     property int autopilot:0
-    // Rectangle{
-    //     width: 1024
-    //     height: 600
-    //     color: "#1e1e1e"
+    property string albumImgUrl: ""
+    property string bluetoothDeviceName: "Mazen's A20"
+    property bool isPlaying // Property to track play/pause state
+    property bool isPlaying2 // Property to track play/pause state
+    property int update_flag
+    Rectangle{
+        width: 1024
+        height: 600
+        color: "#353535"
 
-    // }
-
-
-    Image {
-        id: color_fill_1
-        source: "images/color_fill_1.png"
-        x: 0
-        y: 0
-        opacity: 1
     }
+
+
+    // Image {
+    //     id: color_fill_1
+    //     source: "images/color_fill_1.png"
+    //     x: 0
+    //     y: 0
+    //     opacity: 1
+    // }
 
 
     Image {
@@ -48,7 +56,7 @@ Item {
         width:170
         height:170
         x: 425
-        y: 216
+        y: 225
 
         ShaderEffectSource {
             id: artistImageSource
@@ -63,10 +71,10 @@ Item {
             width:170
             height:170
             opacity: 1
-            layer.enabled:true
-            layer.effect: OpacityMask{
-                maskSource: artistImageSource
-            }
+            // layer.enabled:true
+            // layer.effect: OpacityMask{
+            //     maskSource: artistImageSource
+            // }
         }
         Image {
             id: artistImg
@@ -77,10 +85,42 @@ Item {
             x: 0
             y: 0
             opacity: 1
-            layer.enabled:true
-            layer.effect: OpacityMask{
-                maskSource: artistImageSource
-            }
+            // layer.enabled:true
+            // layer.effect: OpacityMask{
+            //     maskSource: artistImageSource
+            // }
+        }
+        Image {
+            id: bluetooth_icon
+            source: "images/Bluetooth_white_tray_icon.png"
+            anchors.horizontalCenterOffset: -100
+            anchors.horizontalCenter: parent.horizontalCenter
+            focus: true
+            sourceSize.height: 20
+            sourceSize.width: 20
+            fillMode: Image.PreserveAspectFit
+            width:20
+            height:20
+            x: -22
+            y: -55
+            opacity: 1
+        }
+        Text {
+            id: bluetooth_connected
+            text: "Connected to: " +bluetoothDeviceName
+            font.pixelSize: 15
+            horizontalAlignment: Text.AlignLeft
+            verticalAlignment: Text.AlignVCenter
+            anchors.horizontalCenter: parent.horizontalCenter
+            font.weight: Font.Black
+            font.family: "Arial-Black"
+            color: "#f2f2f2"
+            smooth: true
+            y: -60
+            width: 169
+            height: 25
+            opacity: 0.70196078431373
+            visible: true
         }
         Text {
             id: playingNow
@@ -93,7 +133,7 @@ Item {
             color: "#f2f2f2"
             smooth: true
             x: 0
-            y: -36
+            y: -34
             width: 169
             height: 25
             opacity: 0.70196078431373
@@ -106,12 +146,11 @@ Item {
             font.pixelSize: 20
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
+            anchors.horizontalCenter: parent.horizontalCenter
             font.family: "Arial-Black"
             color: "#ffffff"
-            wrapMode: Text.Wrap
             smooth: true
-            x: -59
-            y: 179
+            y: 168
             width: 294
             height: 32
             opacity: 1
@@ -123,17 +162,161 @@ Item {
             font.pixelSize: 19
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
+            anchors.horizontalCenter: parent.horizontalCenter
             font.family: "Arial-Black"
             color: "#ffffff"
             smooth: true
-            x: 0
-            y: 225
-            width: 169
+            y: 200
+            width: 170
             height: 19
-            opacity: 0.4
+            opacity: 0.5
         }
-    }
 
+        ProgressBar {
+            id:musicProgress
+            y: 230
+            width: 250
+            value: 100
+            anchors.horizontalCenter: parent.horizontalCenter
+            from: 0
+            to: 100
+            height: 5
+            background: Rectangle {
+                implicitWidth: 200
+                implicitHeight: 6
+                color: "#7f7f7f"
+                radius: 3
+            }
+            contentItem: Item {
+                implicitWidth: 200
+                implicitHeight: 4
+
+                Rectangle {
+                    width: musicProgress.visualPosition * parent.width
+                    height: parent.height
+                    radius: 2
+                    color: "#ffffff"
+                }
+            }
+            Text {
+                id: current_time
+                text: "00:00"
+                font.pixelSize: 14
+                font.family: "Arial"
+                font.bold: true
+                color: "#ffffff"
+                smooth: true
+                x: 0
+                y: 10
+                opacity: 0.5
+            }
+            Text {
+                id: finish_time
+                text: "00:00"
+                font.pixelSize: 14
+                font.family: "Arial"
+                font.bold: true
+                color: "#ffffff"
+                smooth: true
+                x: 215
+                y: 10
+                opacity: 0.5
+            }
+        }
+        Image {
+            id:spotifyControlButtons
+            y:270
+            width: 197
+            height: 54
+            source: "images/button_frame.png"
+            anchors.horizontalCenter: parent.horizontalCenter
+            opacity: 1
+            Image {
+                id: play
+                source: "images/play.png"
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenterOffset: 0
+                fillMode: Image.PreserveAspectCrop
+                height:45
+                width:45
+                opacity: isPlaying ? 0 : 1
+                anchors.verticalCenter: parent.verticalCenter
+                MouseArea {
+                    anchors.fill: parent
+                    enabled: true
+                    onClicked: {
+                        if(isPlaying2){
+                            spotify.pause()
+                        }else{
+                            spotify.play()
+                        }
+                        isPlaying2 = !isPlaying2;
+                    }
+                }
+            }
+            Image {
+                id: pause
+                source: "images/pause.png"
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenterOffset: 0
+                fillMode: Image.PreserveAspectCrop
+                height:45
+                width:45
+                opacity: isPlaying ? 1 : 0
+                anchors.verticalCenter: parent.verticalCenter
+                MouseArea {
+                    anchors.fill: parent
+                    enabled: true
+                    onClicked: {
+                        if(isPlaying2){
+                            spotify.pause()
+                        }else{
+                            spotify.play()
+                        }
+                        isPlaying2 = !isPlaying2;
+                    }
+                }
+            }
+
+
+            Image {
+                id: forward
+                source: "images/forward.png"
+                anchors.verticalCenterOffset: 0
+                fillMode: Image.PreserveAspectCrop
+                x: 127
+                height:45
+                width:45
+                opacity: 1
+                anchors.verticalCenter: parent.verticalCenter
+                MouseArea {
+                    anchors.fill: parent
+                    enabled: true
+                    onClicked: {
+                        spotify.nextTrack()
+                    }
+                }
+            }
+            Image {
+                id: back
+                source: "images/back.png"
+                fillMode: Image.PreserveAspectCrop
+                x: 21
+                height:45
+                width:45
+                opacity: 1
+                anchors.verticalCenter: parent.verticalCenter
+                MouseArea {
+                    anchors.fill: parent
+                    enabled: true
+                    onClicked: {
+                        spotify.previousTrack()
+                    }
+                }
+            }
+        }
+
+    }
 
     VideoOutput {
         id: viewfinder
@@ -151,7 +334,6 @@ Item {
 
     Camera {
         id: camera
-        deviceId:"@device:pnp:\\\\?\\usb#vid_1c4f&pid_3002&mi_00#6&3a2fa42b&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global"
     }
 
 
@@ -292,28 +474,20 @@ Item {
     Image {
         id: upper_status
         source: "images/upper_status.png"
+        anchors.horizontalCenter: parent.horizontalCenter
         clip: true
-        x: 0
         y: 0
+        width: 1026
+        height: 127
         opacity: 0.911
+        visible: true
     }
 
-
-    Image {
-        id: lower_status
-        source: "images/lower_status.png"
-        fillMode: Image.PreserveAspectFit
-        x: 320
-        y: 445
-        width: 380
-        height: 236
-        opacity: 1
-    }
 
 
     Text {
         id: miles_value
-        text: "0004"
+        text: "0060"
         font.pixelSize: 16
         font.family: "Futura"
         color: "#d0d0d0"
@@ -444,8 +618,6 @@ Item {
             height: 22
             opacity: 1
         }
-
-
     }
 
 
@@ -558,13 +730,13 @@ Item {
 
     Text {
         id: speed_read
-        text: speedValue
         font.pixelSize: 80
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignBottom
         font.family: "Futura"
         font.bold: true
         color: "#ffffff"
+        text: speedValue
         smooth: true
         x: 118
         y: 261
@@ -572,11 +744,10 @@ Item {
         height: 97
         opacity: 1
         visible: true
-        property int speedValue: 0
 
+        property int speedValue: 0
         SequentialAnimation on speedValue {
             id: speedAnimation
-
 
             NumberAnimation {
                 from: 0
@@ -594,24 +765,27 @@ Item {
         }
     }
     // Start the animation only if hasRealData is false
-    Component.onCompleted: {
-        if (hasRealData==false) {
-            speedAnimation.start()
-        }
-        else{
-            speedAnimation.stop()
-        }
-    }
+    // Component.onCompleted: {
+    //     if (hasRealData==false) {
+    //         speedAnimation.start()
+    //     }
+    //     else{
+    //         speedAnimation.stop()
+    //     }
+    // }
 
 
 
     Image {
         id: speed_limit
         source: "images/Set 1/signs.png"
-        fillMode: Image.PreserveAspectCrop
-        sourceSize.width: 0
-        x: 232
-        y: 364
+        sourceSize.height: 37
+        cache: false
+        focus: true
+        fillMode: Image.PreserveAspectFit
+        sourceSize.width: 37
+        x: 237
+        y: 358
         width: 37
         height: 37
         opacity: 1
@@ -662,19 +836,12 @@ Item {
         visible: true
         property bool colorFlag: false
     }
-
-
-    Image {
-        id: lower_status1
-        x: 791
-        y: 445
-        width: 380
-        height: 236
-        opacity: 1
-        source: "images/lower_status.png"
-        fillMode: Image.PreserveAspectFit
-        property bool colorFlag: false
+    ColorOverlay {
+        anchors.fill: parking_break
+        source: parking_break
+        color: parking_break.colorFlag ? "#515151" : "transparent"
     }
+
 
 
     Image {
@@ -694,6 +861,8 @@ Item {
     }
 
 
+
+
     Image {
         id: assist_disable
         source: "images/assist_disable.png"
@@ -704,6 +873,11 @@ Item {
         property bool colorFlag: false
     }
 
+    ColorOverlay {
+        anchors.fill: assist_disable
+        source: assist_disable
+        color: assist_disable.colorFlag ? "#515151" : "transparent"
+    }
 
 
     Image {
@@ -716,87 +890,107 @@ Item {
         property bool colorFlag: false
     }
 
-
-
-    Image {
-        id: low_beam
-        source: "images/low_beam.png"
-        x: 521
-        y: 554
-        width: 41
-        opacity: 1
-        property bool colorFlag: false
-    }
-
-
     ColorOverlay {
-        y: 554
-        anchors.fill: low_beam
-        source: low_beam
-        color: low_beam.colorFlag ? "#515151" : "transparent"
+        anchors.fill: steering_error
+        source: steering_error
+        color: steering_error.colorFlag ? "#515151" : "transparent"
     }
 
 
-    Image {
-        id: high_beam
-        source: "images/high_beam.png"
-        sourceSize.height: 0
-        sourceSize.width: 0
-        x: 398
-        y: 554
-        width: 40
-        height: 25
-        opacity: 1
-        property bool colorFlag: false
+    Item{
+        id:lights_indecators
+        Image {
+            id: low_beam
+            source: "images/low_beam.png"
+            fillMode: Image.PreserveAspectFit
+            x: 200
+            y: 388
+            width: 30
+            height: 30
+            opacity: 1
+            property bool colorFlag: false
+        }
+
+
+        ColorOverlay {
+            y: 554
+            anchors.fill: low_beam
+            source: low_beam
+            color: low_beam.colorFlag ? "#39383c" : "transparent"
+        }
+
+
+        Image {
+            id: high_beam
+            source: "images/high_beam.png"
+            fillMode: Image.PreserveAspectFit
+            sourceSize.height: 0
+            sourceSize.width: 0
+            x: 173
+            y: 353
+            width: 30
+            height: 30
+            opacity: 1
+            property bool colorFlag: false
+        }
+
+
+        ColorOverlay {
+            y: 554
+            anchors.fill: high_beam
+            anchors.leftMargin: 0
+            anchors.rightMargin: 0
+            anchors.topMargin: 0
+            anchors.bottomMargin: 0
+            source: high_beam
+            color: high_beam.colorFlag ? "#39383c" : "transparent"
+        }
+
+
+        Image {
+            id: adaptive_on
+            source: "images/adaptive_on.png"
+            fillMode: Image.PreserveAspectFit
+            sourceSize.height: 0
+            sourceSize.width: 0
+            x: 124
+            y: 353
+            width: 30
+            height: 30
+            opacity: 1
+            property bool colorFlag: false
+        }
+
+
+        ColorOverlay {
+            y: 554
+            anchors.fill: adaptive_on
+            source: adaptive_on
+            color: adaptive_on.colorFlag ? "#39383c" : "transparent"
+        }
+
+
+        Image {
+            id: daytime_light
+            source: "images/daytime_light.png"
+            fillMode: Image.PreserveAspectFit
+            x: 155
+            y: 381
+            width: 30
+            height: 30
+            opacity: 1
+            property bool colorFlag: false
+        }
+
+        ColorOverlay {
+            y: 554
+            anchors.fill: daytime_light
+            source: daytime_light
+            color: daytime_light.colorFlag ? "#39383c" : "transparent"
+        }
     }
 
 
-    ColorOverlay {
-        y: 554
-        anchors.fill: high_beam
-        source: high_beam
-        color: high_beam.colorFlag ? "#515151" : "transparent"
-    }
-
-
-    Image {
-        id: adaptive_on
-        source: "images/adaptive_on.png"
-        sourceSize.height: 0
-        sourceSize.width: 0
-        x: 457
-        y: 554
-        width: 40
-        height: 25
-        opacity: 1
-        property bool colorFlag: false
-    }
-
-
-    ColorOverlay {
-        y: 554
-        anchors.fill: adaptive_on
-        source: adaptive_on
-        color: adaptive_on.colorFlag ? "#515151" : "transparent"
-    }
-
-
-    Image {
-        id: daytime_light
-        source: "images/daytime_light.png"
-        x: 579
-        y: 554
-        width: 46
-        opacity: 1
-        property bool colorFlag: false
-    }
-
-    ColorOverlay {
-        y: 554
-        anchors.fill: daytime_light
-        source: daytime_light
-        color: daytime_light.colorFlag ? "#515151" : "transparent"
-    }
 
 
     Text {
@@ -814,6 +1008,7 @@ Item {
         opacity: 1
         visible: true
     }
+
 
 
 
@@ -838,6 +1033,7 @@ Item {
     }
 
 
+
     Text {
         id: alert_sleep
         text: "Alert"
@@ -853,9 +1049,6 @@ Item {
         opacity: 1
         visible: false
     }
-
-
-
 
     Text {
         id: sleep_cautionMassage
@@ -877,32 +1070,45 @@ Item {
     }
 
 
+
+
+    Image {
+        id: lower_right
+        x: 805
+        y: 532
+        width: 336
+        height: 68
+        opacity: 1
+        source: "images/lower_status.png"
+        fillMode: Image.PreserveAspectFit
+    }
+
     Text {
         id: clockdate
         text: "00:00"
+        anchors.verticalCenter: lower_right.verticalCenter
         font.pixelSize: 20
-        font.family: "Futura"
+        verticalAlignment: Text.AlignVCenter
+        font.styleName: "Black"
+        font.family: "Arial"
         font.bold: true
         color: "#ffffff"
         smooth: true
-        x: 855
-        y: 550
+        x: 865
         opacity: 1
     }
-
-
-
 
     Text {
         id: clockDateSign
         text: "PM"
         font.pixelSize: 12
-        font.family: "Futura"
+        font.styleName: "Black"
+        font.family: "Arial"
         font.bold: true
         color: "#7f7f7f"
         smooth: true
-        x: 919
-        y: 556
+        x: 927
+        y: 562
         opacity: 1
     }
 
@@ -912,16 +1118,15 @@ Item {
     Text {
         id: tempLabel
         text: "--"
+        anchors.verticalCenter: lower_right.verticalCenter
         font.pixelSize: 22
         horizontalAlignment: Text.AlignHCenter
+        font.styleName: "Black"
         font.weight: Font.Black
-        font.family: "Arial-Black"
+        font.family: "Arial"
         color: "#ffffff"
         smooth: true
-        x: 944
-        y: 551
-        width: 44
-        height: 27
+        x: 957
         opacity: 1
 
         Text {
@@ -931,7 +1136,7 @@ Item {
             font.family: "Futura"
             color: "#7f7f7f"
             smooth: true
-            x: 47
+            x: 31
             y: -6
             opacity: 1
         }
@@ -940,12 +1145,13 @@ Item {
             text: "c"
             font.pixelSize: 22
             horizontalAlignment: Text.AlignHCenter
+            font.styleName: "Bold"
             font.weight: Font.Black
-            font.family: "Futura"
+            font.family: "Arial"
             color: "#7f7f7f"
             smooth: true
-            x: 50
-            y: 0
+            x: 33
+            y: 3
             width: 22
             height: 27
             opacity: 1
@@ -971,17 +1177,11 @@ Item {
             running: true
             loops: Animation.Infinite  // Infinite looping
 
-            PropertyAction {
-                target: rightlabel
-                property: "opacity"
-                value: 1
-            }
-
             NumberAnimation {
                 target: rightlabel
                 property: "opacity"
                 to: 0
-                duration: 700  // Adjust the duration of the fade-out
+                duration: 750  // Adjust the duration of the fade-out
             }
 
             NumberAnimation {
@@ -1011,17 +1211,11 @@ Item {
             running: true
             loops: Animation.Infinite  // Infinite looping
 
-            PropertyAction {
-                target: leftlabel
-                property: "opacity"
-                value: 1
-            }
-
             NumberAnimation {
                 target: leftlabel
                 property: "opacity"
                 to: 0
-                duration: 700  // Adjust the duration of the fade-out
+                duration: 750  // Adjust the duration of the fade-out
             }
 
             NumberAnimation {
@@ -1286,10 +1480,10 @@ Item {
 
     Image {
         id: lower_status2
-        x: -142
-        y: 531
-        width: 339
-        height: 69
+        x: -94
+        y: 532
+        width: 336
+        height: 68
         opacity: 1
         source: "images/lower_status.png"
         fillMode: Image.PreserveAspectFit
@@ -1298,14 +1492,17 @@ Item {
 
     Image {
         id: fota_update_icon
+        fillMode: Image.PreserveAspectFit
+        x: 23
         source: "/images/update_icon.png"
-        sourceSize.height: 50
-        sourceSize.width: 50
-        x: 20
-        y: 547
-        width: 40
-        height: 40
+        sourceSize.height: 40
+        sourceSize.width: 40
+        width: 35
+        height: 35
         opacity: 1
+        visible: update_flag !== 0
+        anchors.verticalCenter: lower_status2.verticalCenter
+        property bool colorFlag: update_flag == 0
         MouseArea {
             anchors.fill: parent
             onClicked: {
@@ -1313,16 +1510,23 @@ Item {
             }
         }
     }
+    ColorOverlay {
+        anchors.fill: fota_update_icon
+        source: fota_update_icon
+        color: fota_update_icon.colorFlag ? "#515151" : "transparent"
+    }
     Image {
         id: warning_icon
         source: "/images/warning.png"
-        sourceSize.height: 50
-        sourceSize.width: 50
-        x: 86
-        y: 547
+        fillMode: Image.PreserveAspectFit
+        sourceSize.height: 40
+        sourceSize.width: 40
+        x: 80
         width: 40
         height: 40
         opacity: 1
+        visible: true
+        anchors.verticalCenter: lower_status2.verticalCenter
         MouseArea {
             anchors.fill: parent
             onClicked: {
@@ -1330,9 +1534,45 @@ Item {
             }
         }
     }
+    Image {
+        id: autopilot_mode_button
+        source: "images/Autopilot.png"
+        cache: false
+        fillMode: Image.PreserveAspectFit
+        sourceSize.height: 40
+        sourceSize.width: 40
+        x: 143
+        width: 40
+        height: 40
+        opacity: 1
+        visible: false
+        anchors.verticalCenter: lower_status2.verticalCenter
+        property bool colorFlag: autopilot !==0
+    }
+
+    MouseArea {
+        anchors.fill: autopilot_mode_button
+        onClicked: {
+            autopilot_mode_button.colorFlag=!autopilot_mode_button.colorFlag;
+        }
+    }
+    ColorOverlay {
+        anchors.fill: autopilot_mode_button
+        source: autopilot_mode_button
+        color: autopilot_mode_button.colorFlag ? "#06a660" : "#515151"
+    }
     Fota {
         id:fota_open
         visible:false;
+        Component.onCompleted: {
+            update_flag=update;
+            console.log("Fota component initialized with update value:", update)
+        }
+
+        onUpdateChanged: {
+            update_flag=update;
+            console.log("Fota component update value changed to:", update)
+        }
     }
 
     Connections {
@@ -1368,7 +1608,11 @@ Item {
                 _N.color = "#7f7f7f";
             }
             if (selected_gear.text === "D") {
-                drive_mode.text="Driving Mode"
+                if(autopilot==0){
+                    drive_mode.text="Driving Mode"
+                }else{
+                    drive_mode.text="Autopilot Mode"
+                }
                 _D.color = "#ffffff";
                 if(lSignal===false && rSignal===false){
                     camera.stop() // Stop the camera (not start)
@@ -1385,77 +1629,124 @@ Item {
             } else {
                 _R.color = "#7f7f7f";
             }
-
-            if(lSignal){
-                camera.start() // Start the camera
-                viewfinder.visible = true // Show the viewfinder
-            }
-            if(rSignal){
-                camera.start() // Start the camera
-                viewfinder.visible = true // Show the viewfinder
-            }
-            if(lSignal && rSignal && (auto_selected_gear.text != "R" || selected_gear.text != "R")){
-                camera.stop() // Stop the camera (not start)
-                viewfinder.visible = false // Hide the viewfinder
-            }
         }
     }
 
+    Item{
+        id:lower_alert
+        y:560
+        width: 573
+        height: 186
+        visible: false
+        anchors.horizontalCenter: parent.horizontalCenter
+        Image{
+            id:alert_lower_bg
+            y: -33
+            width: 500
+            height: 160
+            visible: true
+            source: "/images/wanring_massage.png"
+            anchors.horizontalCenter: parent.horizontalCenter
+            sourceSize.height: 186
+            sourceSize.width: 600
+            cache: true
+            enabled: true
+            smooth: true
+            fillMode: Image.Stretch
+        }
+        Image{
+            id:no_wifi_icon
+            x: 70
+            y: -10
+            width: 40
+            height: 40
+            visible: true
+            source:"/images/no-wifi_white.png"
+            sourceSize.height: 45
+            sourceSize.width: 45
+            fillMode: Image.PreserveAspectFit
+        }
+        Text{
+            x: 115
+            y: 0
+            width: 398
+            height: 24
+            color: "white"
+            text: "there is no internet connection, please reconnect."
+            font.letterSpacing: 1
+            font.pixelSize: 15
+            horizontalAlignment: Text.AlignLeft
+            verticalAlignment: Text.AlignVCenter
+            wrapMode: Text.WrapAnywhere
+            font.wordSpacing: 0
+            font.capitalization: Font.Capitalize
+            font.styleName: "Black"
+            font.family: "Arial"
+        }
+    }
 
     Connections{
         target:carDataReceiver
         onCarlaJsonDataParsed:{
-            speed_read.text = ""+speed;
+            speedAnimation.stop();
+            speed_read.speedValue=0;
+            speed_read.speedValue=speed;
+            // speed_read.text = ""+speed;
+            // console.log(speed);
             if(autoPilotFlag===1){
-                gear.visible=false;
-                gearAuto.visible=true;
+                // gear.visible=false;
+                // gearAuto.visible=true;
                 autopilot=1;
-                auto_selected_gear.text=AGear;
-                if (auto_selected_gear.text === "P") {
-                    auto_drive_mode.text="Parking"
-                    auto_P.color = "#ffffff";
-                    if(leftSignal===0&&rightSignal===0){
+                selected_gear.text=AGear;
+                if (selected_gear.text === "P") {
+                    drive_mode.text="Parking"
+                    _P.color = "#ffffff";
+                    if(lSignal===false && rSignal===false){
                         camera.stop() // Stop the camera (not start)
                         viewfinder.visible = false // Hide the viewfinder
                     }
                 } else {
-                    auto_P.color = "#7f7f7f";
+                    _P.color = "#7f7f7f";
                 }
-                if (auto_selected_gear.text === "N") {
-                    auto_drive_mode.text="Neutral"
-                    auto_N.color = "#ffffff";
-                    if(leftSignal===0&&rightSignal===0){
+                if (selected_gear.text === "N") {
+                    drive_mode.text="Neutral"
+                    _N.color = "#ffffff";
+                    if(lSignal===false && rSignal===false){
                         camera.stop() // Stop the camera (not start)
                         viewfinder.visible = false // Hide the viewfinder
                     }
                 } else {
-                    auto_N.color = "#7f7f7f";
+                    _N.color = "#7f7f7f";
                 }
-                if (auto_selected_gear.text === "D") {
-                    auto_drive_mode.text="Autopilot Mode"
-                    auto_D.color = "#ffffff";
-                    if(leftSignal===0&&rightSignal===0){
+                if (selected_gear.text === "D") {
+                    if(autopilot==0){
+                        drive_mode.text="Driving Mode"
+                    }else{
+                        drive_mode.text="Autopilot Mode"
+                    }
+                    _D.color = "#ffffff";
+                    if(lSignal===false && rSignal===false){
                         camera.stop() // Stop the camera (not start)
                         viewfinder.visible = false // Hide the viewfinder
                     }
                 } else {
-                    auto_D.color = "#7f7f7f";
+                    _D.color = "#7f7f7f";
                 }
-                if (auto_selected_gear.text === "R") {
-                    auto_drive_mode.text="Reversing"
-                    auto_R.color = "#ffffff";
+                if (selected_gear.text === "R") {
+                    drive_mode.text="Reversing"
+                    _R.color = "#ffffff";
                     camera.start() // Start the camera
                     viewfinder.visible = true // Show the viewfinder
                 } else {
-                    auto_R.color = "#7f7f7f";
+                    _R.color = "#7f7f7f";
                 }
+
                 if(leftSignal===1){
                     lSignal=true;
                     leftlabel.visible=true;
                     camera.start() // Start the camera
                     viewfinder.visible = true // Show the viewfinder
-                }
-                else{
+                }else if (leftSignal===0){
                     lSignal=false;
                     leftlabel.visible=false;
                 }
@@ -1465,11 +1756,11 @@ Item {
                     rightlabel.visible=true;
                     camera.start() // Start the camera
                     viewfinder.visible = true // Show the viewfinder
-                }else{
+                }else if (rightSignal===0){
                     rSignal=false;
                     rightlabel.visible=false;
                 }
-                if(rightSignal===1 && leftSignal===1 && (auto_selected_gear.text != "R" || selected_gear.text != "R")){
+                if(rightSignal===1 && leftSignal===1 && (selected_gear.text !== "R")){
                     camera.stop() // Stop the camera (not start)
                     viewfinder.visible = false // Hide the viewfinder
                 }
@@ -1482,8 +1773,7 @@ Item {
                     leftlabel.visible=true;
                     camera.start() // Start the camera
                     viewfinder.visible = true // Show the viewfinder
-                }
-                else{
+                }else if (leftSignal===0){
                     lSignal=false;
                     leftlabel.visible=false;
                 }
@@ -1493,28 +1783,36 @@ Item {
                     rightlabel.visible=true;
                     camera.start() // Start the camera
                     viewfinder.visible = true // Show the viewfinder
-                }else{
+                }else if (rightSignal===0){
                     rSignal=false;
                     rightlabel.visible=false;
+                }
+                if(rightSignal===1 && leftSignal===1 && (selected_gear.text !== "R")){
+                    camera.stop() // Stop the camera (not start)
+                    viewfinder.visible = false // Hide the viewfinder
                 }
             }
             if(warning===false){
                 wanring_massage.visible=false;
                 _cautionMassage.visible=false;
                 alert_.visible=false;
+
                 assist_disable.visible=false;
                 steering_error.visible=false;
                 low_beam.visible=false;
-                low_beam.colorFlag=true;
-                low_bat.colorFlag=true;
                 low_bat.visible=false;
                 seat_belt.visible=false;
-                seat_belt.colorFlag=true;
                 daytime_light.visible=false;
+                assist_disable.colorFlag=true;
+                steering_error.colorFlag=true;
+                low_beam.colorFlag=true;
+                low_bat.colorFlag=true;
+                seat_belt.colorFlag=true;
                 daytime_light.colorFlag=true;
                 hasRealData= true;
             }
-            if(highBeam){
+
+            if(highBeam===true){
                 high_beam.visible=true;
                 high_beam.colorFlag=false;
             }else{
@@ -1522,7 +1820,7 @@ Item {
                 high_beam.colorFlag=true;
             }
 
-            if(adaptiveLight){
+            if(adaptiveLight===true){
                 adaptive_on.visible=true;
                 adaptive_on.colorFlag=false;
             }else{
@@ -1530,10 +1828,12 @@ Item {
                 adaptive_on.colorFlag=true;
             }
 
-            if(handBrake){
+            if(handBrake===true){
                 parking_break.visible=true;
+                parking_break.colorFlag=false;
             }else{
                 parking_break.visible=false;
+                parking_break.colorFlag=true;
             }
             if(trafficSign==="speed_30"){
                 speed_limit.source="images/Set 1/06.png"
@@ -1557,6 +1857,54 @@ Item {
                 sleep_cautionMassage.visible=true;
                 sleep_cautionMassage.text="You Need To Take a Brake";
                 alert_sleep.visible=true;
+            }
+        }
+        onNoConnection:{
+            if(warning===true){
+                autopilot=0;
+                wanring_massage.visible=true;
+                _cautionMassage.visible=true;
+                alert_.visible=true;
+                assist_disable.visible=true;
+                steering_error.visible=true;
+                low_beam.visible=true;
+                low_bat.visible=true;
+                seat_belt.visible=true;
+                daytime_light.visible=true;
+                assist_disable.colorFlag=false;
+                steering_error.colorFlag=false;
+                low_beam.colorFlag=false;
+                low_bat.colorFlag=false;
+                seat_belt.colorFlag=false;
+                daytime_light.colorFlag=false;
+                hasRealData= false;
+                high_beam.visible=true;
+                high_beam.colorFlag=false;
+                adaptive_on.visible=true;
+                adaptive_on.colorFlag=false;
+                parking_break.visible=true;
+                parking_break.colorFlag=false;
+                speed_read.speedValue=0;
+                speedAnimation.start()
+                speed_limit.source="images/Set 1/signs.png"
+                sleep_cautionMassage.visible=false;
+                sleep_cautionMassage.text="You Need To Take a Brake";
+                alert_sleep.visible=false;
+            }
+
+            if (selected_gear.text === "D") {
+                if(autopilot==0){
+                    drive_mode.text="Driving Mode"
+                }else{
+                    drive_mode.text="Autopilot Mode"
+                }
+                _D.color = "#ffffff";
+                if(lSignal===false && rSignal===false){
+                    camera.stop() // Stop the camera (not start)
+                    viewfinder.visible = false // Hide the viewfinder
+                }
+            } else {
+                _D.color = "#7f7f7f";
             }
         }
     }
@@ -1588,18 +1936,28 @@ Item {
     }
 
     Connections{
-        target: SpotifyReceiver
-        function onSpotifyReceivedData( Track_Name, Artist_Name, Album_Name, Album_Img_URL,isPlaying){
+        target: spotify
+        function onSpotifyReceivedData( Track_Name, Artist_Name, Album_Name, Album_Img_URL,is_Playing,currentTime,duration, currentTimeformatted, durationformatted){
             if(Album_Name===""){
                 artistImage.visible=false
                 playingNow.visible=false
+                musicProgress.visible = false
+                finish_time.text="00:00"
+                current_time.text="00:00"
             }
             else{
+                finish_time.text=durationformatted
+                current_time.text=currentTimeformatted
+                musicProgress.visible = true
+                musicProgress.value = currentTime
+                musicProgress.to = duration
                 artistImage.visible=true
                 playingNow.visible=true
-                if(isPlaying){
+                if(is_Playing){
+                    isPlaying=is_Playing;
                     playingNow.text="Playing Now"
                 }else{
+                    isPlaying=is_Playing;
                     playingNow.text="Music Puased"
                 }
                 artistImg.source = Album_Img_URL
@@ -1607,9 +1965,33 @@ Item {
                 artistName.text=Artist_Name
             }
         }
+        function onIsConnectedChanged(status){
+            lower_alert.visible=!status;
+        }
     }
 
-
+        // Python spotify
+    // Connections{
+    //     target: SpotifyReceiver
+    //     function onSpotifyReceivedData( Track_Name, Artist_Name, Album_Name, Album_Img_URL,isPlaying){
+    //         if(Album_Name===""){
+    //             artistImage.visible=false
+    //             playingNow.visible=false
+    //         }
+    //         else{
+    //             artistImage.visible=true
+    //             playingNow.visible=true
+    //             if(isPlaying){
+    //                 playingNow.text="Playing Now"
+    //             }else{
+    //                 playingNow.text="Music Puased"
+    //             }
+    //             artistImg.source = Album_Img_URL
+    //             songTitle.text=Track_Name
+    //             artistName.text=Artist_Name
+    //         }
+    //     }
+    // }
 
 }
 

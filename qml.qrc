@@ -67,7 +67,6 @@
         <file>Gauge_animation.qml</file>
         <file>images/wanring_massage.png</file>
         <file>images/s.png</file>
-        <file>Spotify.py</file>
         <file>images/check-engine-light-icon-1616189100.png</file>
         <file>fonts/futura.ttf</file>
         <file>fonts/futura-bold.ttf</file>
@@ -102,5 +101,12 @@
         <file>images/update_icon.png</file>
         <file>Fota.qml</file>
         <file>images/warning.png</file>
+        <file>images/Bluetooth_white_tray_icon.png</file>
+        <file>images/back.png</file>
+        <file>images/forward.png</file>
+        <file>images/pause.png</file>
+        <file>images/play.png</file>
+        <file>images/Autopilot.png</file>
+        <file>images/no-wifi_white.png</file>
     </qresource>
 </RCC>

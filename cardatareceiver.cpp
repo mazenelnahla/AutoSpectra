@@ -2,13 +2,21 @@
 #include <QDebug>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QTimer>
 #include "serialmanager.h"
 QString AGear;
 int autoPilotFlag;
+int leftSignal;
+int rightSignal;
 CarDataReceiver::CarDataReceiver(QObject *parent) : QObject(parent)
 {
     udpSocket.bind(QHostAddress::Any, 12344);
     connect(&udpSocket, &QUdpSocket::readyRead, this, &CarDataReceiver::processPendingDatagrams);
+
+    // Setup the data timeout timer
+    dataTimeoutTimer.setInterval(1000); // Set to desired timeout, e.g., 1 second
+    dataTimeoutTimer.setSingleShot(true); // The timer will fire only once after the interval
+    connect(&dataTimeoutTimer, &QTimer::timeout, this, &CarDataReceiver::checkForDataTimeout);
 }
 
 void CarDataReceiver::processPendingDatagrams()
@@ -41,16 +49,33 @@ void CarDataReceiver::processPendingDatagrams()
             } else if(autoGear == -1){
                 AGear = "R";
             }
-            int handBrake = jsonObj["handBrake"].toInt();
-            int highBeam = jsonObj["highBeam"].toInt();
-            int adaptiveLights = jsonObj["adaptiveLights"].toInt();
-            int leftSignal = jsonObj["leftBlink"].toInt();
-            int rightSignal = jsonObj["rightBlink"].toInt();
+            bool handBrake = jsonObj["handBrake"].toBool();
+            bool highBeam = jsonObj["highBeam"].toBool();
+            bool adaptiveLights = jsonObj["adaptiveLights"].toBool();
+            int blinkerSignal=jsonObj["blinkerSignal"].toInt();
+            if(blinkerSignal==0){
+                leftSignal = 0;
+                rightSignal = 0;
+            }else if (blinkerSignal==1){
+                leftSignal = 0;
+                rightSignal = 1;
+            }else if (blinkerSignal==2){
+                leftSignal = 1;
+                rightSignal = 0;
+            }
             bool warning = jsonObj["warning"].toBool();
             QString alart = jsonObj["alart"].toString();
             bool drowsinessDetection = jsonObj["sleep"].toBool();
-
-            emit carlaJsonDataParsed(speed, alart, autoPilotFlag, AGear, leftSignal, rightSignal, warning, handBrake, trafficSign, highBeam, adaptiveLights, drowsinessDetection);
+            emit carlaJsonDataParsed(speed, alart, autoPilotFlag, AGear, leftSignal, rightSignal, false, handBrake, trafficSign, highBeam, adaptiveLights, drowsinessDetection);
+            dataTimeoutTimer.start();
         }
+    }
+}
+void CarDataReceiver::checkForDataTimeout()
+{
+    dataReceived = false;  // Reset the flag for the next interval
+    if (!dataReceived) {
+        autoPilotFlag = 0 ;
+        emit noConnection(autoPilotFlag,!dataReceived);
     }
 }

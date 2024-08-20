@@ -1,4 +1,4 @@
-# AutoSpectra
+# Auto Spectra
 
 ## Table of Contents
 - [Introduction](#introduction)
@@ -24,6 +24,7 @@ The Auto Spectra Instrument Cluster is a Qt Quick application designed for autom
 - Integration with Python for advanced data processing and control.
 - UDP communication for JSON data exchange.
 - Support for displaying and controlling Spotify playback.
+- Bluetooth device connected to the vehicle.
 
 ## Installation
 
@@ -33,8 +34,8 @@ Ensure you have the following installed:
 
 - Qt 5.15
 - C++ compiler
-- Python (for additional scripting)
-- Raspberry Pi (if applicable for your deployment)
+- Python 3.8 (for additional scripting)
+- Raspberry Pi 3 and up (or any DevBoard), this project tested on pi 4 and pi 5
 
 ### Steps
 
@@ -57,7 +58,41 @@ Ensure you have the following installed:
     sudo apt-get install libudev-dev libinput-dev libts-dev libxcb-xinerama0-dev libxcb-xinerama0 gdbserver
     sudo apt-get install libasound2-dev libpulse-dev gstreamer1.0-omx libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev  gstreamer1.0-alsa
     sudo apt-get install libgeoclue-2-dev libdbus-glib-1-dev libgudev-1.0-dev libbluetooth-dev
+    sudo apt-get install libudev-dev libinput-dev libts-dev libmtdev-dev libjpeg-dev libfontconfig1-dev libssl-dev libdbus-1-dev libglib2.0-dev libxkbcommon-dev libegl1-mesa-dev libgbm-dev libgles2-mesa-dev mesa-common-dev xcb libxcb-xkb-dev x11-xkb-utils libx11-xcb-dev libxkbcommon-x11-dev libwayland-dev
+
+    sudo apt install build-essential cmake unzip pkg-config gfortran
+    sudo apt build-dep qt5-qmake libqt5gui5 libqt5webengine-data libqt5webkit5 libudev-dev libinput-dev libts-dev libxcb-xinerama0-dev libxcb-xinerama0 gdbserver
+    sudo apt install libxcb-randr0-dev libxcb-xtest0-dev libxcb-shape0-dev libxcb-xkb-dev
+    sudo apt install libjpeg-dev libpng-dev libtiff-dev
+    sudo apt install libavcodec-dev libavformat-dev libswscale-dev libv4l-dev
+    sudo apt install libxvidcore-dev libx264-dev
+    sudo apt install libopenal-data libsndio7.0 libopenal1 libopenal-dev pulseaudio
+    sudo apt install bluez-tools
+    sudo apt install libbluetooth-dev
+    sudo apt install libgstreamer1.0-0 gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-doc gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-alsa gstreamer1.0-gl gstreamer1.0-gtk3 gstreamer1.0-qt5 gstreamer1.0-pulseaudio
+    sudo apt install libgstreamer1.0-dev  libgstreamer-plugins-base1.0-dev
+
+    sudo apt install qtbase5-dev qtdeclarative5-dev qtmultimedia5-dev qtconnectivity5-dev
+
+    sudo apt-get install qt5-default qt5-qmake qtbase5-dev qtdeclarative5-dev libqt5gui5 libqt5quick5 qml-module-qtquick2 qtvirtualkeyboard-plugin
+
+    sudo apt-get install qtbase5-dev qtdeclarative5-dev libqt5quick5 qtquickcontrols2-5-dev qtvirtualkeyboard-plugin
+    sudo apt install qtcreator
+    sudo apt install build-essential libgl1-mesa-dev libpulse-dev
+    sudo apt-get install libqt5serialport5-dev
+    sudo apt-get install libqt5multimedia5-plugins qml-module-qtmultimedia
+    sudo apt-get install qtdeclarative5-* qml-module-qtquick* qtquick1-* qtquickcontrols5-* qml-module-qtquick2
+    sudo apt-get install -y qml-module-qtquick-extras
+
+    sudo apt-get build-dep qt5-qmake
+    sudo apt-get build-dep libqt5gui5
+    sudo apt-get build-dep libqt5webengine-data
+    sudo apt-get build-dep libqt5webkit5
+    sudo apt-get install libudev-dev libinput-dev libts-dev libxcb-xinerama0-dev libxcb-xinerama0 gdbserver
+    sudo apt-get install libasound2-dev libpulse-dev gstreamer1.0-omx libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev  gstreamer1.0-alsa
+    sudo apt-get install libgeoclue-2-dev libdbus-glib-1-dev libgudev-1.0-dev libbluetooth-dev
     sudo apt-get install libboost1.58-all-dev libudev-dev libinput-dev libts-dev libmtdev-dev libjpeg-dev libfontconfig1-dev libssl-dev libdbus-1-dev libglib2.0-dev libxkbcommon-dev libegl1-mesa-dev libgbm-dev libgles2-mesa-dev mesa-common-dev xcb libxcb-xkb-dev x11-xkb-utils libx11-xcb-dev libxkbcommon-x11-dev libwayland-dev
+
     sudo apt install build-essential cmake unzip pkg-config gfortran
     sudo apt build-dep qt5-qmake libqt5gui5 libqt5webengine-data libqt5webkit5 libudev-dev libinput-dev libts-dev libxcb-xinerama0-dev libxcb-xinerama0 gdbserver
     sudo apt install libxcb-randr0-dev libxcb-xtest0-dev libxcb-shape0-dev libxcb-xkb-dev
@@ -67,7 +102,7 @@ Ensure you have the following installed:
     sudo apt install libopenal-data libsndio7.0 libopenal1 libopenal-dev pulseaudio
     sudo apt install bluez-tools
     sudo apt install libbluetooth-dev
-    sudo apt install libgstreamer1.0-0 gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-doc gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-alsa gstreamer1.0-gl gstreamer1.0-gtk3 gstreamer1.0-qt5 gstreamer1.0-pulseaudio
+    sudo apt install libgstreamer1.0-0 gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-alsa gstreamer1.0-gl gstreamer1.0-gtk3 gstreamer1.0-qt5 gstreamer1.0-pulseaudio
     sudo apt install libgstreamer1.0-dev  libgstreamer-plugins-base1.0-dev
 
     sudo apt install qtbase5-dev qtdeclarative5-dev qtmultimedia5-dev qtconnectivity5-dev
@@ -80,14 +115,8 @@ Ensure you have the following installed:
     sudo apt install build-essential libgl1-mesa-dev libpulse-dev
     sudo apt-get install libqt5serialport5-dev
     sudo apt-get install libqt5multimedia5-plugins qml-module-qtmultimedia
-    sudo apt-get install qtdeclarative5-* qml-module-qtquick* qtquick1-* qtquickcontrols5-* qml-module-qtquick2
+    sudo apt-get install qtdeclarative5-* qml-module-qtquick* qtquickcontrols5-* qml-module-qtquick2
     sudo apt-get install -y qml-module-qtquick-extras
-
-    wget https://download.qt.io/archive/qt/5.15/5.15.2/single/qt-everywhere-src-5.15.2.tar.xz
-    tar -xf qt-everywhere-src-5.15.2.tar.xz
-    cd qt-everywhere-src-5.15.2
-
-
 
     sudo apt-get install build-essential libgl1-mesa-dev libglu1-mesa-dev \
     libxcb-xinerama0-dev libfontconfig1-dev libdbus-1-dev libicu-dev \
@@ -104,7 +133,6 @@ Ensure you have the following installed:
     gstreamer1.0-pulseaudio gstreamer1.0-tools \
     bison flex gperf libevent-dev libnss3-dev libnss3 \
     libxss-dev libxtst-dev libx11-xcb-dev \
-    python2
 
     sudo apt-get install qml-module-qt-labs-folderlistmodel
     sudo apt-get install qml-module-qtquick-controls
@@ -136,7 +164,7 @@ Ensure you have the following installed:
 - Python: For scripting and advanced data processing.
 - QProcess: For handling external processes and scripts.
 - JSON: For configuration and data communication.
-- Spotipy: For Spotify integration.
+- Spotipy: For Spotify integration. (not needed in Auto Spectra v2.1)
 
 ## Contributing
 Contributions are welcome! Please follow these steps to contribute:

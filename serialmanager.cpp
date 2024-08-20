@@ -109,11 +109,39 @@ void SerialManager::readSerial()
 
 }
 
+// void SerialManager::sendGearOverUDP(const QString &gear)
+// {
+//     // Create a JSON object to hold the gear information
+//     QJsonObject json;
+
+//     if (gear == "P") {
+//         carlaGear = -2;
+//     } else if (gear == "N") {
+//         carlaGear = 0;
+//     } else if (gear == "D") {
+//         carlaGear = 1;
+//     } else if (gear == "R") {
+//         carlaGear = -1;
+//     }
+//     json["gear"] = carlaGear;
+//     json["temp"] = temperature;
+//     // Create a JSON document from the JSON object
+//     QJsonDocument jsonDoc(json);
+
+//     // Convert the JSON document to bytes
+//     QByteArray jsonData = jsonDoc.toJson();
+//     // Send the JSON data over UDP
+//     udpSocket.writeDatagram(jsonData, QHostAddress("192.168.1.15"), 12346); // Replace with the IP and port of the Python PC
+// }
+
 void SerialManager::sendGearOverUDP(const QString &gear)
 {
-    // Create a JSON object to hold the gear information
-    QJsonObject json;
+    // Static variables to store the previous values
+    static int previousCarlaGear = -99; // Initial value different from any possible gear
+    static int previousTemperature = -99; // Initial value different from any possible temperature
 
+    // Map gear to corresponding values
+    int carlaGear = 0;
     if (gear == "P") {
         carlaGear = -2;
     } else if (gear == "N") {
@@ -123,16 +151,29 @@ void SerialManager::sendGearOverUDP(const QString &gear)
     } else if (gear == "R") {
         carlaGear = -1;
     }
-    json["gear"] = carlaGear;
-    json["temp"] = temperature;
-    // Create a JSON document from the JSON object
-    QJsonDocument jsonDoc(json);
 
-    // Convert the JSON document to bytes
-    QByteArray jsonData = jsonDoc.toJson();
-    // Send the JSON data over UDP
-    udpSocket.writeDatagram(jsonData, QHostAddress("192.168.1.15"), 12346); // Replace with the IP and port of the Python PC
+    // Only send data if gear or temperature has changed
+    if (carlaGear != previousCarlaGear || temperature != previousTemperature) {
+        // Update the previous values
+        previousCarlaGear = carlaGear;
+        previousTemperature = temperature;
+
+        // Create a JSON object to hold the gear information
+        QJsonObject json;
+        json["gear"] = carlaGear;
+        json["temp"] = temperature;
+
+        // Create a JSON document from the JSON object
+        QJsonDocument jsonDoc(json);
+
+        // Convert the JSON document to bytes
+        QByteArray jsonData = jsonDoc.toJson();
+
+        // Send the JSON data over UDP
+        udpSocket.writeDatagram(jsonData, QHostAddress("192.168.1.15"), 12346); // Replace with the IP and port of the Python PC
+    }
 }
+
 
 void SerialManager::sendAutopilotCommand(bool enable)
 {
