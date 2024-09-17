@@ -15,8 +15,8 @@
 #include <QFile>
 #include <QStandardPaths>
 #include <QDir>
-static const QString clientId = "3fb73f276ec048b78eff8151cee5563c";
-static const QString clientSecret = "e8d229b5cc704e4d9c29bbd62957f93d";
+static const QString clientId = "api-id-here";
+static const QString clientSecret = "api-secret-key-here";
 static const QString redirectUri = "http://localhost:8888/callback";
 static const QString scope = "user-read-currently-playing user-modify-playback-state user-read-playback-state";
 static const QString tokenFilePath = QDir::current().filePath("spotify_tokens.json");
