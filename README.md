@@ -1,5 +1,10 @@
 # Auto Spectra
-
+![Auto Spectra](https://github.com/mazenelnahla/AutoSpectra/blob/main/Preview/1.engine-not-running.png)
+![Auto Spectra](https://github.com/mazenelnahla/AutoSpectra/blob/main/Preview/2.no-alert.png)
+![Auto Spectra](https://github.com/mazenelnahla/AutoSpectra/blob/main/Preview/3.engine-not-running-spotify-on.png)
+![Auto Spectra](https://github.com/mazenelnahla/AutoSpectra/blob/main/Preview/4.autopilot-on.png)
+![Auto Spectra](https://github.com/mazenelnahla/AutoSpectra/blob/main/Preview/5.dynamic-speed-color.png)
+![Auto Spectra](https://github.com/mazenelnahla/AutoSpectra/blob/main/Preview/6.fota.png)
 ## Table of Contents
 - [Introduction](#introduction)
 - [Features](#features)
