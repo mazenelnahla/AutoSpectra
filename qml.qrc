@@ -108,5 +108,8 @@
         <file>images/play.png</file>
         <file>images/Autopilot.png</file>
         <file>images/no-wifi_white.png</file>
+        <file>Gauge_animation_RPM.qml</file>
+        <file>Fuel_gauge.qml</file>
+        <file>Temp_level.qml</file>
     </qresource>
 </RCC>

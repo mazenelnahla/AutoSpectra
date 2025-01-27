@@ -3,16 +3,21 @@
 
 #include <QObject>
 #include <QJsonObject>
-#include <QTcpServer>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QTimer>
-#include <QNetworkConfigurationManager>
+#include <QTcpServer>
+
+class QTcpSocket; // Forward declaration
 
 class OAuthServer : public QTcpServer {
     Q_OBJECT
 public:
-    QString authCode;
+    explicit OAuthServer(QObject *parent = nullptr);
+
+signals:
+    void authorizationReceived(const QString &code);
+
 protected:
     void incomingConnection(qintptr socketDescriptor) override;
 };
@@ -21,32 +26,48 @@ class SpotifyClient : public QObject {
     Q_OBJECT
 public:
     explicit SpotifyClient(QObject *parent = nullptr);
+    ~SpotifyClient();
+
     Q_INVOKABLE void updateCurrentTrack();
     Q_INVOKABLE void stopUpdate();
     Q_INVOKABLE void play();
     Q_INVOKABLE void pause();
     Q_INVOKABLE void nextTrack();
     Q_INVOKABLE void previousTrack();
-    Q_INVOKABLE void checkNetworkConnectivity();
-
 
 signals:
-    void spotifyReceivedData(const QString &trackName, const QString &artistName, const QString &albumName, const QString &albumImgUrl, bool isPlaying, double currentTime, double duration, QString currentTimeformatted, QString durationformatted);
+    void spotifyReceivedData(
+        const QString &trackName,
+        const QString &artistName,
+        const QString &albumName,
+        const QString &albumImgUrl,
+        bool isPlaying,
+        double currentTime,
+        double duration,
+        const QString &currentTimeFormatted,
+        const QString &durationFormatted
+        );
     void isConnectedChanged(bool isConnected);
+
+private slots:
+    void onNetworkAccessibleChanged(QNetworkAccessManager::NetworkAccessibility accessible);
+    void handleAuthorizationReceived(const QString &code); // Slot to handle received code
+
 private:
     bool isConnected;
     QTimer *updateTimer;
-    QTimer *networkCheckTimer;
     QString token;
     QString refreshToken;
+
     QString getAuthorizationCode();
     QJsonObject getAccessToken(const QString &authCode);
     QString readAccessToken();
-    QString refreshAccessToken(const QString &refreshToken);
+    QString refreshAccessToken(const QString &refreshTokenParam); // Renamed parameter
     QJsonObject getCurrentTrack(const QString &token);
     void saveTokens(const QString &accessToken, const QString &refreshToken);
 
-    QNetworkAccessManager networkManager;
+    QNetworkAccessManager *networkManager;
+    OAuthServer *oauthServer; // Pointer to OAuthServer instance
 };
 
 #endif // SPOTIFYCLIENT_H

@@ -1,10 +1,10 @@
 # Auto Spectra
-![Auto Spectra](https://github.com/mazenelnahla/AutoSpectra/blob/main/Preview/1.engine-not-running.png)
-![Auto Spectra](https://github.com/mazenelnahla/AutoSpectra/blob/main/Preview/2.no-alert.png)
-![Auto Spectra](https://github.com/mazenelnahla/AutoSpectra/blob/main/Preview/3.engine-not-running-spotify-on.png)
-![Auto Spectra](https://github.com/mazenelnahla/AutoSpectra/blob/main/Preview/4.autopilot-on.png)
-![Auto Spectra](https://github.com/mazenelnahla/AutoSpectra/blob/main/Preview/5.dynamic-speed-color.png)
-![Auto Spectra](https://github.com/mazenelnahla/AutoSpectra/blob/main/Preview/6.fota.png)
+![Auto Spectra](https://github.com/mazenelnahla/AutoSpectra/blob/Auto-Spectra-V2.0/Preview/1.engine-not-running.png)
+![Auto Spectra](https://github.com/mazenelnahla/AutoSpectra/blob/Auto-Spectra-V2.0/Preview/2.no-alert.png)
+![Auto Spectra](https://github.com/mazenelnahla/AutoSpectra/blob/Auto-Spectra-V2.0/Preview/3.engine-not-running-spotify-on.png)
+![Auto Spectra](https://github.com/mazenelnahla/AutoSpectra/blob/Auto-Spectra-V2.0/Preview/4.autopilot-on.png)
+![Auto Spectra](https://github.com/mazenelnahla/AutoSpectra/blob/Auto-Spectra-V2.0/Preview/5.dynamic-speed-color.png)
+![Auto Spectra](https://github.com/mazenelnahla/AutoSpectra/blob/Auto-Spectra-V2.0/Preview/6.fota.png)
 ## Table of Contents
 - [Introduction](#introduction)
 - [Features](#features)
@@ -51,20 +51,21 @@ Ensure you have the following installed:
 2. Navigate to the project directory:
    ```bash
     cd autospectra-instrument-cluster
+
+uncomment dist in source
+   ```bash
+    sudo nano /etc/apt/sources.list
+```
 3. Install dependencies:
     ```bash
     sudo apt-get update
     sudo apt-get dist-upgrade
     sudo reboot -h now
-    sudo apt-get build-dep qt5-qmake
-    sudo apt-get build-dep libqt5gui5
-    sudo apt-get build-dep libqt5webengine-data
-    sudo apt-get build-dep libqt5webkit5
+    sudo apt-get build-dep -y qt5-qmake libqt5gui5 libqt5webengine-data libqt5webkit5
     sudo apt-get install libudev-dev libinput-dev libts-dev libxcb-xinerama0-dev libxcb-xinerama0 gdbserver
     sudo apt-get install libasound2-dev libpulse-dev gstreamer1.0-omx libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev  gstreamer1.0-alsa
     sudo apt-get install libgeoclue-2-dev libdbus-glib-1-dev libgudev-1.0-dev libbluetooth-dev
     sudo apt-get install libudev-dev libinput-dev libts-dev libmtdev-dev libjpeg-dev libfontconfig1-dev libssl-dev libdbus-1-dev libglib2.0-dev libxkbcommon-dev libegl1-mesa-dev libgbm-dev libgles2-mesa-dev mesa-common-dev xcb libxcb-xkb-dev x11-xkb-utils libx11-xcb-dev libxkbcommon-x11-dev libwayland-dev
-
     sudo apt install build-essential cmake unzip pkg-config gfortran
     sudo apt build-dep qt5-qmake libqt5gui5 libqt5webengine-data libqt5webkit5 libudev-dev libinput-dev libts-dev libxcb-xinerama0-dev libxcb-xinerama0 gdbserver
     sudo apt install libxcb-randr0-dev libxcb-xtest0-dev libxcb-shape0-dev libxcb-xkb-dev
@@ -74,29 +75,18 @@ Ensure you have the following installed:
     sudo apt install libopenal-data libsndio7.0 libopenal1 libopenal-dev pulseaudio
     sudo apt install bluez-tools
     sudo apt install libbluetooth-dev
-    sudo apt install libgstreamer1.0-0 gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-doc gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-alsa gstreamer1.0-gl gstreamer1.0-gtk3 gstreamer1.0-qt5 gstreamer1.0-pulseaudio
+    sudo apt install libgstreamer1.0-0 gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-alsa gstreamer1.0-gl gstreamer1.0-gtk3 gstreamer1.0-qt5 gstreamer1.0-pulseaudio
     sudo apt install libgstreamer1.0-dev  libgstreamer-plugins-base1.0-dev
-
     sudo apt install qtbase5-dev qtdeclarative5-dev qtmultimedia5-dev qtconnectivity5-dev
-
-    sudo apt-get install qt5-default qt5-qmake qtbase5-dev qtdeclarative5-dev libqt5gui5 libqt5quick5 qml-module-qtquick2 qtvirtualkeyboard-plugin
-
+    sudo apt-get install qt5-qmake qtbase5-dev qtdeclarative5-dev libqt5gui5 libqt5quick5 qml-module-qtquick2 qtvirtualkeyboard-plugin
     sudo apt-get install qtbase5-dev qtdeclarative5-dev libqt5quick5 qtquickcontrols2-5-dev qtvirtualkeyboard-plugin
     sudo apt install qtcreator
     sudo apt install build-essential libgl1-mesa-dev libpulse-dev
     sudo apt-get install libqt5serialport5-dev
     sudo apt-get install libqt5multimedia5-plugins qml-module-qtmultimedia
-    sudo apt-get install qtdeclarative5-* qml-module-qtquick* qtquick1-* qtquickcontrols5-* qml-module-qtquick2
+    sudo apt-get install qtdeclarative5-* qml-module-qtquick* qtquickcontrols5-* qml-module-qtquick2
     sudo apt-get install -y qml-module-qtquick-extras
-
-    sudo apt-get build-dep qt5-qmake
-    sudo apt-get build-dep libqt5gui5
-    sudo apt-get build-dep libqt5webengine-data
-    sudo apt-get build-dep libqt5webkit5
-    sudo apt-get install libudev-dev libinput-dev libts-dev libxcb-xinerama0-dev libxcb-xinerama0 gdbserver
-    sudo apt-get install libasound2-dev libpulse-dev gstreamer1.0-omx libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev  gstreamer1.0-alsa
-    sudo apt-get install libgeoclue-2-dev libdbus-glib-1-dev libgudev-1.0-dev libbluetooth-dev
-    sudo apt-get install libboost1.58-all-dev libudev-dev libinput-dev libts-dev libmtdev-dev libjpeg-dev libfontconfig1-dev libssl-dev libdbus-1-dev libglib2.0-dev libxkbcommon-dev libegl1-mesa-dev libgbm-dev libgles2-mesa-dev mesa-common-dev xcb libxcb-xkb-dev x11-xkb-utils libx11-xcb-dev libxkbcommon-x11-dev libwayland-dev
+    sudo apt-get install libudev-dev libinput-dev libts-dev libmtdev-dev libjpeg-dev libfontconfig1-dev libssl-dev libdbus-1-dev libglib2.0-dev libxkbcommon-dev libegl1-mesa-dev libgbm-dev libgles2-mesa-dev mesa-common-dev xcb libxcb-xkb-dev x11-xkb-utils libx11-xcb-dev libxkbcommon-x11-dev libwayland-dev
 
     sudo apt install build-essential cmake unzip pkg-config gfortran
     sudo apt build-dep qt5-qmake libqt5gui5 libqt5webengine-data libqt5webkit5 libudev-dev libinput-dev libts-dev libxcb-xinerama0-dev libxcb-xinerama0 gdbserver
@@ -112,9 +102,8 @@ Ensure you have the following installed:
 
     sudo apt install qtbase5-dev qtdeclarative5-dev qtmultimedia5-dev qtconnectivity5-dev
 
-    sudo apt-get install qt5-default qt5-qmake qtbase5-dev qtdeclarative5-dev libqt5gui5 libqt5quick5 qml-module-qtquick2 qtvirtualkeyboard-plugin
+    sudo apt-get install qt5-qmake qtbase5-dev qtdeclarative5-dev libqt5gui5 libqt5quick5 qml-module-qtquick2 qtvirtualkeyboard-plugin
 
-    sudo apt-get update
     sudo apt-get install qtbase5-dev qtdeclarative5-dev libqt5quick5 qtquickcontrols2-5-dev qtvirtualkeyboard-plugin
     sudo apt install qtcreator
     sudo apt install build-essential libgl1-mesa-dev libpulse-dev
@@ -147,6 +136,7 @@ Ensure you have the following installed:
 
     sudo apt install qml-module-qtlocation
     sudo apt install qtpositioning5-dev qml-module-qtpositioning
+
 
 4. Build the project:
     ```bash

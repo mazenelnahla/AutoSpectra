@@ -7,7 +7,6 @@ import QtQuick.Controls.Styles 1.4
 import com.company.serialmanager 1.0
 import MyPythonScript 1.0
 import com.company.cardatareceiver 1.0
-import spotifyreceiver 1.0
 import spotifyclient 1.0
 Item {
     id: item1
@@ -22,6 +21,7 @@ Item {
     property bool isPlaying // Property to track play/pause state
     property bool isPlaying2 // Property to track play/pause state
     property int update_flag
+
     Rectangle{
         width: 1024
         height: 600
@@ -43,280 +43,332 @@ Item {
         id: rectangle_1
         source: "images/rectangle_1.png"
         x: 200
-        y: 153
+        y: 171
         opacity: 1
-    }
-
-
-    Rectangle {
-        id: artistImage
-        radius: 8
-        visible: false
-        color: "#000000"
-        width:170
-        height:170
-        x: 425
-        y: 225
-
-        ShaderEffectSource {
-            id: artistImageSource
-            sourceItem: artistImage
-            recursive: true
-            live: true
-        }
 
         Image {
-            source: "qrc:/images/unknown_song.png"
-            fillMode: Image.PreserveAspectCrop
-            width:170
-            height:170
+            id: wanring_massage
+            x: 115
+            y: 60
+            source: "images/wanring_massage.png"
+            cache: false
+            transformOrigin: Item.Center
+            width: 409
+            height: 212
             opacity: 1
-            // layer.enabled:true
-            // layer.effect: OpacityMask{
-            //     maskSource: artistImageSource
-            // }
-        }
-        Image {
-            id: artistImg
-            source: ""
-            fillMode: Image.PreserveAspectCrop
-            width:170
-            height:170
-            x: 0
-            y: 0
-            opacity: 1
-            // layer.enabled:true
-            // layer.effect: OpacityMask{
-            //     maskSource: artistImageSource
-            // }
-        }
-        Image {
-            id: bluetooth_icon
-            source: "images/Bluetooth_white_tray_icon.png"
-            anchors.horizontalCenterOffset: -100
-            anchors.horizontalCenter: parent.horizontalCenter
-            focus: true
-            sourceSize.height: 20
-            sourceSize.width: 20
-            fillMode: Image.PreserveAspectFit
-            width:20
-            height:20
-            x: -22
-            y: -55
-            opacity: 1
-        }
-        Text {
-            id: bluetooth_connected
-            text: "Connected to: " +bluetoothDeviceName
-            font.pixelSize: 15
-            horizontalAlignment: Text.AlignLeft
-            verticalAlignment: Text.AlignVCenter
-            anchors.horizontalCenter: parent.horizontalCenter
-            font.weight: Font.Black
-            font.family: "Arial-Black"
-            color: "#f2f2f2"
-            smooth: true
-            y: -60
-            width: 169
-            height: 25
-            opacity: 0.70196078431373
-            visible: true
-        }
-        Text {
-            id: playingNow
-            text: "Playing Now"
-            font.pixelSize: 21
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
-            font.weight: Font.Black
-            font.family: "Arial-Black"
-            color: "#f2f2f2"
-            smooth: true
-            x: 0
-            y: -34
-            width: 169
-            height: 25
-            opacity: 0.70196078431373
-            visible: true
-        }
+            visible: !(artistImage.visible)
 
-        Text {
-            id: songTitle
-            text: "."
-            font.pixelSize: 20
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
-            anchors.horizontalCenter: parent.horizontalCenter
-            font.family: "Arial-Black"
-            color: "#ffffff"
-            smooth: true
-            y: 168
-            width: 294
-            height: 32
-            opacity: 1
-        }
-
-        Text {
-            id: artistName
-            text: "."
-            font.pixelSize: 19
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
-            anchors.horizontalCenter: parent.horizontalCenter
-            font.family: "Arial-Black"
-            color: "#ffffff"
-            smooth: true
-            y: 200
-            width: 170
-            height: 19
-            opacity: 0.5
-        }
-
-        ProgressBar {
-            id:musicProgress
-            y: 230
-            width: 250
-            value: 100
-            anchors.horizontalCenter: parent.horizontalCenter
-            from: 0
-            to: 100
-            height: 5
-            background: Rectangle {
-                implicitWidth: 200
-                implicitHeight: 6
-                color: "#7f7f7f"
-                radius: 3
+            Text {
+                id: text1
+                color: "#ffffff"
+                text: qsTr("Spotifiy Needs Authentication")
+                anchors.top: parent.top
+                anchors.bottom: parent.bottom
+                anchors.topMargin: 59
+                anchors.bottomMargin: 129
+                font.pixelSize: 18
+                horizontalAlignment: Text.AlignHCenter
+                anchors.horizontalCenterOffset: 0
+                anchors.horizontalCenter: parent.horizontalCenter
+                font.family: "Futura"
             }
-            contentItem: Item {
-                implicitWidth: 200
-                implicitHeight: 4
 
-                Rectangle {
-                    width: musicProgress.visualPosition * parent.width
-                    height: parent.height
-                    radius: 2
-                    color: "#ffffff"
-                }
+            Text {
+                id: text2
+                y: 97
+                color: "#ffffff"
+                text: qsTr("Please visit:")
+                font.pixelSize: 14
+                horizontalAlignment: Text.AlignHCenter
+                anchors.horizontalCenterOffset: 0
+                anchors.horizontalCenter: parent.horizontalCenter
+                font.family: "Futura"
+            }
+
+
+            Text {
+                id: text3
+                y: 128
+                color: "#ff0000"
+                text: ipHandler.getWifiIPAddress() + "/spotify_auth.php"
+                font.pixelSize: 14
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                anchors.horizontalCenterOffset: 0
+                anchors.horizontalCenter: parent.horizontalCenter
+                font.family: "Futura"
+            }
+
+
+
+        }
+
+        Item {
+            id: artistImage
+            visible: false
+            width:170
+            height:170
+            x: 225
+            y: 54
+
+            Image {
+                id: bluetooth_icon
+                source: "images/Bluetooth_white_tray_icon.png"
+                focus: true
+                sourceSize.height: 20
+                sourceSize.width: 20
+                fillMode: Image.PreserveAspectFit
+                height:20
+                y: -40
+                opacity: 1
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: -20
+                anchors.rightMargin: 170
             }
             Text {
-                id: current_time
-                text: "00:00"
-                font.pixelSize: 14
-                font.family: "Arial"
-                font.bold: true
-                color: "#ffffff"
+                id: bluetooth_connected
+                text: "Connected to: " +bluetoothDeviceName
+                font.pixelSize: 15
+                horizontalAlignment: Text.AlignLeft
+                verticalAlignment: Text.AlignVCenter
+                anchors.horizontalCenterOffset: 11
+                anchors.horizontalCenter: parent.horizontalCenter
+                font.weight: Font.Black
+                font.family: "Arial-Black"
+                color: "#f2f2f2"
+                smooth: true
+                y: -43
+                width: 191
+                height: 25
+                opacity: 0.70196078431373
+                visible: true
+            }
+            Text {
+                id: playingNow
+                text: "Playing Now"
+                font.pixelSize: 21
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                font.weight: Font.Black
+                font.family: "Arial-Black"
+                color: "#f2f2f2"
                 smooth: true
                 x: 0
-                y: 10
-                opacity: 0.5
+                y: -20
+                width: 170
+                height: 25
+                opacity: 0.70196078431373
+                visible: true
             }
+
+            Image {
+                y: 10
+                source: "qrc:/images/unknown_song.png"
+                anchors.horizontalCenterOffset: 0
+                anchors.horizontalCenter: parent.horizontalCenter
+                fillMode: Image.PreserveAspectCrop
+                width:170
+                height:170
+                opacity: 1
+            }
+
+            Image {
+                id: artistImg
+                source: ""
+                fillMode: Image.PreserveAspectCrop
+                width:170
+                height:170
+                x: 0
+                y: 10
+                opacity: 1
+            }
+
             Text {
-                id: finish_time
-                text: "00:00"
-                font.pixelSize: 14
-                font.family: "Arial"
-                font.bold: true
+                id: songTitle
+                text: "."
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: -72
+                anchors.rightMargin: -72
+                font.pixelSize: 20
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                font.family: "Arial-Black"
                 color: "#ffffff"
                 smooth: true
-                x: 215
-                y: 10
+                y: 180
+                height: 32
+                opacity: 1
+            }
+
+
+            Text {
+                id: artistName
+                text: "."
+                font.pixelSize: 19
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                anchors.horizontalCenterOffset: 0
+                anchors.horizontalCenter: parent.horizontalCenter
+                font.family: "Arial-Black"
+                color: "#ffffff"
+                smooth: true
+                y: 218
+                width: 170
+                height: 19
                 opacity: 0.5
             }
-        }
-        Image {
-            id:spotifyControlButtons
-            y:270
-            width: 197
-            height: 54
-            source: "images/button_frame.png"
-            anchors.horizontalCenter: parent.horizontalCenter
-            opacity: 1
-            Image {
-                id: play
-                source: "images/play.png"
+
+            ProgressBar {
+                id:musicProgress
+                y: 245
+                width: 250
+                value: 100
+                anchors.horizontalCenterOffset: 0
                 anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenterOffset: 0
-                fillMode: Image.PreserveAspectCrop
-                height:45
-                width:45
-                opacity: isPlaying ? 0 : 1
-                anchors.verticalCenter: parent.verticalCenter
-                MouseArea {
-                    anchors.fill: parent
-                    enabled: true
-                    onClicked: {
-                        if(isPlaying2){
-                            spotify.pause()
-                        }else{
-                            spotify.play()
-                        }
-                        isPlaying2 = !isPlaying2;
+                from: 0
+                to: 100
+                height: 5
+                background: Rectangle {
+                    implicitWidth: 200
+                    implicitHeight: 6
+                    color: "#7f7f7f"
+                    radius: 3
+                }
+                contentItem: Item {
+                    implicitWidth: 200
+                    implicitHeight: 4
+
+                    Rectangle {
+                        width: musicProgress.visualPosition * parent.width
+                        height: parent.height
+                        radius: 2
+                        color: "#ffffff"
                     }
+                }
+                Text {
+                    id: current_time
+                    text: "00:00"
+                    font.pixelSize: 14
+                    font.family: "Arial"
+                    font.bold: true
+                    color: "#ffffff"
+                    smooth: true
+                    x: 0
+                    y: 10
+                    opacity: 0.5
+                }
+                Text {
+                    id: finish_time
+                    text: "00:00"
+                    font.pixelSize: 14
+                    font.family: "Arial"
+                    font.bold: true
+                    color: "#ffffff"
+                    smooth: true
+                    x: 215
+                    y: 10
+                    opacity: 0.5
                 }
             }
             Image {
-                id: pause
-                source: "images/pause.png"
+                id:spotifyControlButtons
+                y:284
+                width: 197
+                height: 54
+                source: "images/button_frame.png"
+                anchors.horizontalCenterOffset: 1
                 anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenterOffset: 0
-                fillMode: Image.PreserveAspectCrop
-                height:45
-                width:45
-                opacity: isPlaying ? 1 : 0
-                anchors.verticalCenter: parent.verticalCenter
-                MouseArea {
-                    anchors.fill: parent
-                    enabled: true
-                    onClicked: {
-                        if(isPlaying2){
-                            spotify.pause()
-                        }else{
-                            spotify.play()
+                opacity: 1
+                Image {
+                    id: play
+                    source: "images/play.png"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenterOffset: 0
+                    fillMode: Image.PreserveAspectCrop
+                    height:45
+                    width:45
+                    opacity: isPlaying ? 0 : 1
+                    anchors.verticalCenter: parent.verticalCenter
+                    MouseArea {
+                        anchors.fill: parent
+                        enabled: true
+                        onClicked: {
+                            if(isPlaying2){
+                                spotify.pause()
+                            }else{
+                                spotify.play()
+                            }
+                            isPlaying2 = !isPlaying2;
                         }
-                        isPlaying2 = !isPlaying2;
+                    }
+                }
+                Image {
+                    id: pause
+                    source: "images/pause.png"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenterOffset: 0
+                    fillMode: Image.PreserveAspectCrop
+                    height:45
+                    width:45
+                    opacity: isPlaying ? 1 : 0
+                    anchors.verticalCenter: parent.verticalCenter
+                    MouseArea {
+                        anchors.fill: parent
+                        enabled: true
+                        onClicked: {
+                            if(isPlaying2){
+                                spotify.pause()
+                            }else{
+                                spotify.play()
+                            }
+                            isPlaying2 = !isPlaying2;
+                        }
+                    }
+                }
+
+
+                Image {
+                    id: forward
+                    source: "images/forward.png"
+                    anchors.verticalCenterOffset: 0
+                    fillMode: Image.PreserveAspectCrop
+                    x: 127
+                    height:45
+                    width:45
+                    opacity: 1
+                    anchors.verticalCenter: parent.verticalCenter
+                    MouseArea {
+                        anchors.fill: parent
+                        enabled: true
+                        onClicked: {
+                            spotify.nextTrack()
+                        }
+                    }
+                }
+                Image {
+                    id: back
+                    source: "images/back.png"
+                    fillMode: Image.PreserveAspectCrop
+                    x: 21
+                    height:45
+                    width:45
+                    opacity: 1
+                    anchors.verticalCenter: parent.verticalCenter
+                    MouseArea {
+                        anchors.fill: parent
+                        enabled: true
+                        onClicked: {
+                            spotify.previousTrack()
+                        }
                     }
                 }
             }
 
-
-            Image {
-                id: forward
-                source: "images/forward.png"
-                anchors.verticalCenterOffset: 0
-                fillMode: Image.PreserveAspectCrop
-                x: 127
-                height:45
-                width:45
-                opacity: 1
-                anchors.verticalCenter: parent.verticalCenter
-                MouseArea {
-                    anchors.fill: parent
-                    enabled: true
-                    onClicked: {
-                        spotify.nextTrack()
-                    }
-                }
-            }
-            Image {
-                id: back
-                source: "images/back.png"
-                fillMode: Image.PreserveAspectCrop
-                x: 21
-                height:45
-                width:45
-                opacity: 1
-                anchors.verticalCenter: parent.verticalCenter
-                MouseArea {
-                    anchors.fill: parent
-                    enabled: true
-                    onClicked: {
-                        spotify.previousTrack()
-                    }
-                }
-            }
         }
-
     }
+
 
     VideoOutput {
         id: viewfinder
@@ -369,65 +421,362 @@ Item {
     Image {
         id: right_side_none
         source: "images/Right_Side.png"
-        x: 616
-        y: 113
+        x: 629
+        y: 138
         opacity: 1
-        visible: speed_read.text <= 0 || hasRealData== false
+        visible: true
     }
 
 
-    Image {
-        id: right_side_blue
-        source: "images/right_side_blue.png"
-        x: 616
-        y: 113
-        opacity: 1
-        visible: speed_read.text > 0 && speed_read.text < 60 && hasRealData== true
-    }
+    // Image {
+    //     id: right_side_blue
+    //     source: "images/right_side_blue.png"
+    //     x: 629
+    //     y: 138
+    //     opacity: 1
+    //     visible: speed_read.text > 0 && speed_read.text < 60 && hasRealData== true
+    // }
 
-    Image {
-        id: right_side_red
-        source: "images/right_side_red.png"
-        x: 616
-        y: 113
-        opacity: 1
-        visible: speed_read.text >= 120 && hasRealData== true
-    }
+    // Image {
+    //     id: right_side_red
+    //     source: "images/right_side_red.png"
+    //     x: 629
+    //     y: 138
+    //     opacity: 1
+    //     visible: speed_read.text >= 120 && hasRealData== true
+    // }
 
-    Image {
-        id: right_side_yellow
-        source: "images/right_side_yellow.png"
-        x: 616
-        y: 113
-        opacity: 1
-        visible: speed_read.text >= 60 && speed_read.text < 120 && hasRealData== true
-    }
+    // Image {
+    //     id: right_side_yellow
+    //     source: "images/right_side_yellow.png"
+    //     x: 629
+    //     y: 138
+    //     opacity: 1
+    //     visible: speed_read.text >= 60 && speed_read.text < 120 && hasRealData== true
+    // }
 
 
 
     Image {
         id: left_side_center1
-        x: 696
-        y: 194
+        x: 709
+        y: 219
         opacity: 1
         source: "images/center.png"
-        rotation: -173.341
+        z: 1
+        rotation: 217
+        visible:true
+        Item{
+            id: engineMulfunction
+            x: -100
+            y: 0
+            visible: true
+            rotation: -217
+            Image {
+                id: caution_icon_Engine
+                x: -118
+                y: -315
+                width: 34
+                height: 34
+                source: "images/check-engine-light-icon-1616189100.png"
+                sourceSize.height: 32
+                sourceSize.width: 48
+                fillMode: Image.PreserveAspectFit
+            }
+            Text {
+                id: _errorTitle
+                x: -185
+                y: -282
+                width: 169
+                height: 23
+                color: "#d92a27"
+                text: qsTr("Engine Malfunction")
+                font.pixelSize: 17
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                font.family: "Futura"
+                font.capitalization: Font.Capitalize
+                font.weight: Font.Bold
+            }
+            Text {
+                id: _errorEngine
+                x: -191
+                y: -256
+                width: 179
+                height: 118
+                color: "#ffffff"
+                text: qsTr("Engine operating at reduced output. Possible to continue. Drive with caution. Have the system checked by nearest service center.")
+                font.pixelSize: 14
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignTop
+                lineHeight: 0.9
+                wrapMode: Text.Wrap
+                font.family: "Futura"
+                font.weight: Font.Medium
+                font.preferShaping: true
+                font.kerning: true
+            }
+        }
+
+        Item{
+            id: roadImprefection
+            x: -100
+            y: 0
+            visible: false
+            rotation: -217
+            Image {
+                id: caution_icon_Road_Imprefection
+                x: -122
+                y: -323
+                width: 40
+                height: 40
+                source: "images/layer_2.png"
+                sourceSize.height: 34
+                sourceSize.width: 55
+                fillMode: Image.PreserveAspectFit
+            }
+            Text {
+                id: _errorTitle2
+                x: -194
+                y: -282
+                width: 184
+                height: 24
+                color: "#d97b27"
+                text: qsTr("Road Imprefection Detected")
+                font.pixelSize: 14
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                wrapMode: Text.WordWrap
+                font.family: "Futura"
+                font.capitalization: Font.Capitalize
+                font.weight: Font.ExtraBold
+            }
+            Text {
+                id: _errorRoadImprefections
+                x: -190
+                y: -249
+                width: 177
+                height: 86
+                color: "#ffffff"
+                text: qsTr("Alert an imperfection has been dectected please slow down. Drive with caution. Nearest road bump in 10 meters away.")
+                font.pixelSize: 13
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignTop
+                lineHeight: 0.9
+                wrapMode: Text.Wrap
+                font.family: "Futura"
+                font.weight: Font.Medium
+                font.preferShaping: true
+                font.kerning: true
+            }
+        }
+
+        Item{
+            id: radarDetected
+            x: 500
+            y: -190
+            visible: false
+            rotation: -217
+            Image {
+                id: caution_icon_errorRadarDetected
+                x: 474
+                y: -104
+                width: 34
+                height: 34
+                source: "images/speed_limit.png"
+                sourceSize.height: 29
+                sourceSize.width: 28
+                fillMode: Image.PreserveAspectFit
+            }
+            Text {
+                id: _errorTitle3
+                x: 394
+                y: -62
+                width: 194
+                height: 21
+                color: "#d92a27"
+                text: qsTr("Speed Radar Detected")
+                font.pixelSize: 17
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                font.family: "Futura"
+                font.capitalization: Font.Capitalize
+                font.weight: Font.ExtraBold
+            }
+            Text {
+                id: _errorRadarDetected
+                x: 399
+                y: -35
+                width: 185
+                height: 77
+                color: "#ffffff"
+                text: qsTr("Attention, Radar is near you, Please slow down and keep focused on the road.")
+                font.pixelSize: 14
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignTop
+                lineHeight: 0.9
+                wrapMode: Text.Wrap
+                font.family: "Futura"
+                font.weight: Font.DemiBold
+                font.preferShaping: true
+                font.kerning: true
+            }
+        }
+
+        Item{
+            id: airBagError
+            x: 500
+            y: -190
+            visible: false
+            rotation: -217
+            Image {
+                id: caution_icon_airBagError
+                x: 475
+                y: -102
+                width: 34
+                height: 34
+                source: "images/367-200.png"
+                sourceSize.height: 40
+                sourceSize.width: 42
+                fillMode: Image.PreserveAspectFit
+            }
+            Text {
+                id: _errorTitle4
+                x: 404
+                y: -62
+                width: 175
+                height: 23
+                color: "#d92a27"
+                text: qsTr("Airbag System Fault")
+                font.pixelSize: 17
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                font.family: "Futura"
+                font.capitalization: Font.Capitalize
+                font.weight: Font.ExtraBold
+            }
+            Text {
+                id: _errorAirbag
+                x: 399
+                y: -33
+                width: 185
+                height: 95
+                color: "#ffffff"
+                text: qsTr("SRS system detected a fault in the system. Continue wearing safety belt. consult nearest service center.")
+                font.pixelSize: 14
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignTop
+                lineHeight: 0.9
+                wrapMode: Text.Wrap
+                font.family: "Futura"
+                font.weight: Font.DemiBold
+                font.preferShaping: true
+                font.kerning: true
+            }
+        }
+
+        Item{
+            id: electricSteeringError
+            x: 500
+            y: -190
+            visible: false
+            rotation: -217
+            Image {
+                id: caution_icon_electricSteeringError
+                x: 475
+                y: -109
+                width: 34
+                height: 34
+                source: "images/steering_error.png"
+                sourceSize.height: 27
+                sourceSize.width: 32
+                fillMode: Image.PreserveAspectFit
+            }
+            Text {
+                id: _errorTitle5
+                x: 397
+                y: -74
+                width: 191
+                height: 25
+                color:"#d92a27"
+                text: qsTr("Electric Steering Failed")
+                font.pixelSize: 16
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                wrapMode: Text.WordWrap
+                font.family: "Futura"
+                font.capitalization: Font.Capitalize
+                font.weight: Font.ExtraBold
+            }
+            Text {
+                id: _errorSteering
+                x: 401
+                y: -48
+                width: 180
+                height: 89
+                color: "#ffffff"
+                text: qsTr("Steering system may have some communictaion issues or broken parts. Drive with caution. Have the system checked by nearest service center.")
+                font.pixelSize: 14
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignTop
+                lineHeight: 0.9
+                wrapMode: Text.Wrap
+                font.family: "Futura"
+                font.weight: Font.DemiBold
+                font.preferShaping: true
+                font.kerning: true
+            }
+        }
     }
 
+
+    Gauge_animation_RPM {
+        id: gauge_animation_RPM
+        x: 671
+        y: 180
+        width: 317
+        height: 317
+        value: rpm_read.text
+        maximumValue: 8000
+        anchors {
+            margins: window.height * 0.2
+        }
+        visible:false
+    }
 
     Image {
         id: left_side
         source: "images/left_side.png"
-        x: -5
-        y: 113
+        x: -8
+        y: 131
         opacity: 1
     }
 
+    Fuel_gauge{
+        id: fuel_Gauge
+        x: 654
+        y: 153
+        width: 363
+        height: 359
+        visible: true
+        z: 1
 
+    }
+
+    Temp_level{
+        id: temp_Gauge
+        x: 11
+        y: 151
+        width: 363
+        height: 359
+        visible: true
+        z: 1
+
+    }
 
     Gauge_animation {
-        x: 42
-        y: 161
+        x: 39
+        y: 179
         width: 317
         height: 317
         value: speed_read.text
@@ -465,8 +814,8 @@ Item {
     Image {
         id: left_side_center
         source: "images/center.png"
-        x: 80
-        y: 197
+        x: 77
+        y: 215
         opacity: 1
     }
 
@@ -492,16 +841,16 @@ Item {
         font.family: "Futura"
         color: "#d0d0d0"
         smooth: true
-        x: 782
-        y: 379
+        x: 804
+        y: 462
         opacity: 1
     }
 
 
     Text {
         id: miles
-        x: 824
-        y: 379
+        x: 848
+        y: 462
         opacity: 1
         color: "#7f7f7f"
         text: "km"
@@ -512,7 +861,7 @@ Item {
 
 
     Text {
-        id: gear
+        id: gearText
         text: "Gear"
         font.pixelSize: 20
         horizontalAlignment: Text.AlignHCenter
@@ -522,47 +871,42 @@ Item {
         font.bold: true
         color: "#e7bf8c"
         smooth: true
+        x: 434
+        y: 138
+        opacity: 1
+        visible: false
+    }
+    Item{
+        id: gear
+        smooth: true
         x: 791
         y: 231
         opacity: 1
         visible: true
-
-
         Text {
             id: selected_gear
             text: "P"
-            font.pixelSize: 80
+            font.pixelSize: 35
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             font.family: "Futura"
             font.bold: true
             color: "#ffffff"
             smooth: true
-            x: -60
-            y: 22
-            width: 170
-            height: 86
+            x: -517
+            y: 327
+            width: 48
+            height: 36
             opacity: 1
+            visible: false
         }
 
-        Text {
-            id: _P
-            x: -23
-            y: 114
-            width: 20
-            height: 20
-            color: "#ffffff"
-            text: qsTr("P")
-            font.pixelSize: 25
-            horizontalAlignment: Text.AlignHCenter
-            font.weight: Font.Black
-        }
 
 
         Text {
             id: _N
-            x: 27
-            y: 114
+            x: -594
+            y: 159
             width: 20
             height: 20
             color: "#7f7f7f"
@@ -572,11 +916,10 @@ Item {
             font.weight: Font.Black
         }
 
-
         Text {
             id: _D
-            x: 53
-            y: 114
+            x: -568
+            y: 159
             width: 20
             height: 20
             color: "#7f7f7f"
@@ -586,11 +929,10 @@ Item {
             font.weight: Font.Black
         }
 
-
         Text {
             id: _R
-            x: 0
-            y: 114
+            x: -620
+            y: 159
             width: 20
             height: 20
             color: "#7f7f7f"
@@ -599,11 +941,22 @@ Item {
             horizontalAlignment: Text.AlignHCenter
             font.weight: Font.Black
         }
-
+        Text {
+            id: _P
+            x: -643
+            y: 159
+            width: 20
+            height: 20
+            color: "#ffffff"
+            text: qsTr("P")
+            font.pixelSize: 25
+            horizontalAlignment: Text.AlignHCenter
+            font.weight: Font.Black
+        }
 
         Text {
             id: drive_mode
-            x: -344
+            x: -345
             y: -204
             text: "Parking"
             font.pixelSize: 18
@@ -620,110 +973,24 @@ Item {
         }
     }
 
-
-
     Text {
-        id: gearAuto
-        text: "Gear"
-        font.pixelSize: 20
+        id: rpm_read
+        font.pixelSize: 70
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
-        font.capitalization: Font.AllUppercase
         font.family: "Futura"
         font.bold: true
-        color: "#e7bf8c"
+        color: "#ffffff"
+        text: rpmValue
         smooth: true
-        x: 791
-        y: 231
+        x: 746
+        y: 295
+        z:2
+        width: 167
+        height: 90
         opacity: 1
-        visible: false
-
-        Text {
-            id: auto_selected_gear
-            text: "P"
-            font.pixelSize: 80
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
-            font.family: "Futura"
-            font.bold: true
-            color: "#ffffff"
-            smooth: true
-            x: -60
-            y: 22
-            width: 170
-            height: 86
-            opacity: 1
-        }
-
-        Text {
-            id: auto_P
-            x: -23
-            y: 114
-            width: 20
-            height: 20
-            color: "#ffffff"
-            text: qsTr("P")
-            font.pixelSize: 25
-            horizontalAlignment: Text.AlignHCenter
-            font.weight: Font.Black
-        }
-
-        Text {
-            id: auto_N
-            x: 27
-            y: 114
-            width: 20
-            height: 20
-            color: "#7f7f7f"
-            text: qsTr("N")
-            font.pixelSize: 25
-            horizontalAlignment: Text.AlignHCenter
-            font.weight: Font.Black
-        }
-
-        Text {
-            id: auto_D
-            x: 53
-            y: 114
-            width: 20
-            height: 20
-            color: "#7f7f7f"
-            text: qsTr("D")
-            font.pixelSize: 25
-            horizontalAlignment: Text.AlignHCenter
-            font.weight: Font.Black
-        }
-
-        Text {
-            id: auto_R
-            x: 0
-            y: 114
-            width: 20
-            height: 20
-            color: "#7f7f7f"
-            text: qsTr("R")
-            font.pixelSize: 25
-            horizontalAlignment: Text.AlignHCenter
-            font.weight: Font.Black
-        }
-
-        Text {
-            id: auto_drive_mode
-            x: -344
-            y: -204
-            text: "Parking"
-            font.pixelSize: 18
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
-            font.capitalization: Font.AllUppercase
-            font.weight: Font.Black
-            font.family: "Futura"
-            color: "#e7bf8c"
-            smooth: true
-            width: 133
-            height: 22
-            opacity: 1
-        }
+        visible: gauge_animation_RPM.visible
+        property int rpmValue: 0
     }
 
 
@@ -738,10 +1005,10 @@ Item {
         color: "#ffffff"
         text: speedValue
         smooth: true
-        x: 118
-        y: 261
+        x: 115
+        y: 274
         width: 167
-        height: 97
+        height: 90
         opacity: 1
         visible: true
 
@@ -764,16 +1031,6 @@ Item {
             }
         }
     }
-    // Start the animation only if hasRealData is false
-    // Component.onCompleted: {
-    //     if (hasRealData==false) {
-    //         speedAnimation.start()
-    //     }
-    //     else{
-    //         speedAnimation.stop()
-    //     }
-    // }
-
 
 
     Image {
@@ -784,7 +1041,7 @@ Item {
         focus: true
         fillMode: Image.PreserveAspectFit
         sourceSize.width: 37
-        x: 237
+        x: 245
         y: 358
         width: 37
         height: 37
@@ -900,82 +1157,11 @@ Item {
     Item{
         id:lights_indecators
         Image {
-            id: low_beam
-            source: "images/low_beam.png"
-            fillMode: Image.PreserveAspectFit
-            x: 200
-            y: 388
-            width: 30
-            height: 30
-            opacity: 1
-            property bool colorFlag: false
-        }
-
-
-        ColorOverlay {
-            y: 554
-            anchors.fill: low_beam
-            source: low_beam
-            color: low_beam.colorFlag ? "#39383c" : "transparent"
-        }
-
-
-        Image {
-            id: high_beam
-            source: "images/high_beam.png"
-            fillMode: Image.PreserveAspectFit
-            sourceSize.height: 0
-            sourceSize.width: 0
-            x: 173
-            y: 353
-            width: 30
-            height: 30
-            opacity: 1
-            property bool colorFlag: false
-        }
-
-
-        ColorOverlay {
-            y: 554
-            anchors.fill: high_beam
-            anchors.leftMargin: 0
-            anchors.rightMargin: 0
-            anchors.topMargin: 0
-            anchors.bottomMargin: 0
-            source: high_beam
-            color: high_beam.colorFlag ? "#39383c" : "transparent"
-        }
-
-
-        Image {
-            id: adaptive_on
-            source: "images/adaptive_on.png"
-            fillMode: Image.PreserveAspectFit
-            sourceSize.height: 0
-            sourceSize.width: 0
-            x: 124
-            y: 353
-            width: 30
-            height: 30
-            opacity: 1
-            property bool colorFlag: false
-        }
-
-
-        ColorOverlay {
-            y: 554
-            anchors.fill: adaptive_on
-            source: adaptive_on
-            color: adaptive_on.colorFlag ? "#39383c" : "transparent"
-        }
-
-
-        Image {
             id: daytime_light
             source: "images/daytime_light.png"
             fillMode: Image.PreserveAspectFit
-            x: 155
-            y: 381
+            x: 584
+            y: 133
             width: 30
             height: 30
             opacity: 1
@@ -986,8 +1172,87 @@ Item {
             y: 554
             anchors.fill: daytime_light
             source: daytime_light
-            color: daytime_light.colorFlag ? "#39383c" : "transparent"
+            color: daytime_light.colorFlag ? "#515151" : "transparent"
         }
+
+        Image {
+            id: low_beam
+            source: "images/low_beam.png"
+            fillMode: Image.PreserveAspectFit
+            x: 528
+            y: 133
+            width: 30
+            height: 30
+            opacity: 1
+            property bool colorFlag: false
+        }
+
+
+
+
+        ColorOverlay {
+            y: 554
+            anchors.fill: low_beam
+            source: low_beam
+            color: low_beam.colorFlag ? "#515151" : "transparent"
+        }
+
+
+
+
+        Image {
+            id: high_beam
+            source: "images/high_beam.png"
+            fillMode: Image.PreserveAspectFit
+            sourceSize.height: 0
+            sourceSize.width: 0
+            x: 472
+            y: 133
+            width: 30
+            height: 30
+            opacity: 1
+            property bool colorFlag: false
+        }
+
+
+
+
+        ColorOverlay {
+            y: 554
+            anchors.fill: high_beam
+            source: high_beam
+            color: high_beam.colorFlag ? "#515151" : "transparent"
+        }
+
+
+
+
+        Image {
+            id: adaptive_on
+            source: "images/adaptive_on.png"
+            fillMode: Image.PreserveAspectFit
+            sourceSize.height: 0
+            sourceSize.width: 0
+            x: 412
+            y: 133
+            width: 30
+            height: 30
+            opacity: 1
+            property bool colorFlag: false
+        }
+
+
+
+
+        ColorOverlay {
+            y: 554
+            anchors.fill: adaptive_on
+            source: adaptive_on
+            color: adaptive_on.colorFlag ? "#515151" : "transparent"
+        }
+
+
+
     }
 
 
@@ -1074,7 +1339,7 @@ Item {
 
     Image {
         id: lower_right
-        x: 805
+        x: 799
         y: 532
         width: 336
         height: 68
@@ -1089,12 +1354,13 @@ Item {
         anchors.verticalCenter: lower_right.verticalCenter
         font.pixelSize: 20
         verticalAlignment: Text.AlignVCenter
+        anchors.verticalCenterOffset: -2
         font.styleName: "Black"
         font.family: "Arial"
         font.bold: true
         color: "#ffffff"
         smooth: true
-        x: 865
+        x: 864
         opacity: 1
     }
 
@@ -1107,8 +1373,8 @@ Item {
         font.bold: true
         color: "#7f7f7f"
         smooth: true
-        x: 927
-        y: 562
+        x: 926
+        y: 560
         opacity: 1
     }
 
@@ -1229,254 +1495,6 @@ Item {
 
 
 
-    Image {
-        id: wanring_massage
-        x: 327
-        y: 335
-        source: "images/wanring_massage.png"
-        cache: false
-        transformOrigin: Item.Center
-        width: 366
-        height: 190
-        opacity: 1
-        visible: true
-        Item{
-            id: engineMulfunction
-            visible: true
-            Image {
-                id: caution_icon_Engine
-                x: 36
-                y: 29
-                width: 42
-                height: 38
-                source: "images/check-engine-light-icon-1616189100.png"
-                sourceSize.height: 0
-                sourceSize.width: 0
-                fillMode: Image.PreserveAspectFit
-            }
-            Text {
-                id: _errorTitle
-                x: 100
-                y: 36
-                width: 245
-                height: 23
-                color: "#d92a27"
-                text: qsTr("Engine Malfunction")
-                font.pixelSize: 19
-                verticalAlignment: Text.AlignVCenter
-                font.family: "Futura"
-                font.capitalization: Font.Capitalize
-                font.weight: Font.ExtraBold
-            }
-            Text {
-                id: _errorEngine
-                x: 35
-                y: 68
-                width: 300
-                height: 89
-                color: "#ffffff"
-                text: qsTr("Engine operating at reduced output. Possible to continue. Drive with caution. Have the system checked by nearest service center.")
-                font.pixelSize: 17
-                verticalAlignment: Text.AlignTop
-                lineHeight: 0.9
-                wrapMode: Text.Wrap
-                font.family: "Futura"
-                font.weight: Font.DemiBold
-                font.preferShaping: true
-                font.kerning: true
-            }
-        }
-
-        Item{
-            id: roadImprefection
-            visible: false
-            Image {
-                id: caution_icon_Road_Imprefection
-                x: 32
-                y: 13
-                width: 60
-                height: 60
-                source: "images/layer_2.png"
-                sourceSize.height: 0
-                sourceSize.width: 0
-                fillMode: Image.Stretch
-            }
-            Text {
-                id: _errorTitle2
-                x: 80
-                y: 40
-                width: 255
-                height: 23
-                color: "#d97b27"
-                text: qsTr("Road Imprefection Detected")
-                font.pixelSize: 18
-                verticalAlignment: Text.AlignVCenter
-                font.family: "Futura"
-                font.capitalization: Font.Capitalize
-                font.weight: Font.ExtraBold
-            }
-            Text {
-                id: _errorRoadImprefections
-                x: 35
-                y: 68
-                width: 300
-                height: 89
-                color: "#ffffff"
-                text: qsTr("Alert an imperfection has been dectected please slow down. Drive with caution. Nearest road bump in 10 meters away.")
-                font.pixelSize: 17
-                verticalAlignment: Text.AlignTop
-                lineHeight: 0.9
-                wrapMode: Text.Wrap
-                font.family: "Futura"
-                font.weight: Font.DemiBold
-                font.preferShaping: true
-                font.kerning: true
-            }
-        }
-
-        Item{
-            id: radarDetected
-            visible: false
-            Image {
-                id: caution_icon_errorRadarDetected
-                x: 36
-                y: 30
-                width: 38
-                height: 37
-                source: "images/speed_limit.png"
-                sourceSize.height: 0
-                sourceSize.width: 0
-                fillMode: Image.PreserveAspectFit
-            }
-            Text {
-                id: _errorTitle3
-                x: 100
-                y: 36
-                width: 245
-                height: 23
-                color: "#d92a27"
-                text: qsTr("Speed Radar Detected")
-                font.pixelSize: 19
-                verticalAlignment: Text.AlignVCenter
-                font.family: "Futura"
-                font.capitalization: Font.Capitalize
-                font.weight: Font.ExtraBold
-            }
-            Text {
-                id: _errorRadarDetected
-                x: 35
-                y: 68
-                width: 299
-                height: 89
-                color: "#ffffff"
-                text: qsTr("Attention, Radar is near you, Please slow down and keep focused on the road.")
-                font.pixelSize: 17
-                verticalAlignment: Text.AlignTop
-                lineHeight: 0.9
-                wrapMode: Text.Wrap
-                font.family: "Futura"
-                font.weight: Font.DemiBold
-                font.preferShaping: true
-                font.kerning: true
-            }
-        }
-
-        Item{
-            id: airBagError
-            visible: false
-            Image {
-                id: caution_icon_airBagError
-                x: 39
-                y: 29
-                width: 39
-                height: 35
-                source: "images/367-200.png"
-                sourceSize.height: 0
-                sourceSize.width: 0
-                fillMode: Image.Stretch
-            }
-            Text {
-                id: _errorTitle4
-                x: 84
-                y: 35
-                width: 254
-                height: 23
-                color: "#d92a27"
-                text: qsTr("Airbag System Fault")
-                font.pixelSize: 19
-                verticalAlignment: Text.AlignVCenter
-                font.family: "Futura"
-                font.capitalization: Font.Capitalize
-                font.weight: Font.ExtraBold
-            }
-            Text {
-                id: _errorAirbag
-                x: 35
-                y: 67
-                width: 303
-                height: 95
-                color: "#ffffff"
-                text: qsTr("SRS system detected a fault in the system. Continue wearing safety belt. consult nearest service center.")
-                font.pixelSize: 17
-                verticalAlignment: Text.AlignTop
-                lineHeight: 0.9
-                wrapMode: Text.Wrap
-                font.family: "Futura"
-                font.weight: Font.DemiBold
-                font.preferShaping: true
-                font.kerning: true
-            }
-        }
-
-
-        Item{
-            id: electricSteeringError
-            visible: false
-            Image {
-                id: caution_icon_electricSteeringError
-                x: 35
-                y: 32
-                width: 36
-                height: 33
-                source: "images/steering_error.png"
-                sourceSize.height: 0
-                sourceSize.width: 0
-                fillMode: Image.PreserveAspectFit
-            }
-            Text {
-                id: _errorTitle5
-                x: 82
-                y: 37
-                width: 238
-                height: 23
-                color:"#d92a27"
-                text: qsTr("Electric Steering Failed")
-                font.pixelSize: 19
-                verticalAlignment: Text.AlignVCenter
-                font.family: "Futura"
-                font.capitalization: Font.Capitalize
-                font.weight: Font.ExtraBold
-            }
-            Text {
-                id: _errorSteering
-                x: 35
-                y: 65
-                width: 312
-                height: 89
-                color: "#ffffff"
-                text: qsTr("Steering system may have some communictaion issues or broken parts. Drive with caution. Have the system checked by nearest service center.")
-                font.pixelSize: 17
-                verticalAlignment: Text.AlignTop
-                lineHeight: 0.9
-                wrapMode: Text.Wrap
-                font.family: "Futura"
-                font.weight: Font.DemiBold
-                font.preferShaping: true
-                font.kerning: true
-            }
-        }
-
-    }
 
     Image {
         id: lower_status2
@@ -1563,6 +1581,7 @@ Item {
     }
     Fota {
         id:fota_open
+        z:1
         visible:false;
         Component.onCompleted: {
             update_flag=update;
@@ -1677,7 +1696,7 @@ Item {
             font.pixelSize: 15
             horizontalAlignment: Text.AlignLeft
             verticalAlignment: Text.AlignVCenter
-            wrapMode: Text.WrapAnywhere
+            wrapMode: Text.WordWrap
             font.wordSpacing: 0
             font.capitalization: Font.Capitalize
             font.styleName: "Black"
@@ -1688,14 +1707,12 @@ Item {
     Connections{
         target:carDataReceiver
         onCarlaJsonDataParsed:{
+            gauge_animation_RPM.visible=true;
             speedAnimation.stop();
             speed_read.speedValue=0;
             speed_read.speedValue=speed;
-            // speed_read.text = ""+speed;
-            // console.log(speed);
+            rpm_read.rpmValue=RPM
             if(autoPilotFlag===1){
-                // gear.visible=false;
-                // gearAuto.visible=true;
                 autopilot=1;
                 selected_gear.text=AGear;
                 if (selected_gear.text === "P") {
@@ -1793,10 +1810,14 @@ Item {
                 }
             }
             if(warning===false){
+                engineMulfunction.visible=false;
+                roadImprefection.visible=false;
+                electricSteeringError.visible=false;
+                airBagError.visible=false;
+                radarDetected.visible=false;
                 wanring_massage.visible=false;
                 _cautionMassage.visible=false;
                 alert_.visible=false;
-
                 assist_disable.visible=false;
                 steering_error.visible=false;
                 low_beam.visible=false;
@@ -1862,7 +1883,14 @@ Item {
         onNoConnection:{
             if(warning===true){
                 autopilot=0;
-                wanring_massage.visible=true;
+                rightlabel.visible=true;
+                leftlabel.visible=true;
+                engineMulfunction.visible=true;
+                roadImprefection.visible=false;
+                electricSteeringError.visible=false;
+                airBagError.visible=false;
+                radarDetected.visible=false;
+                gauge_animation_RPM.visible=false;
                 _cautionMassage.visible=true;
                 alert_.visible=true;
                 assist_disable.visible=true;
@@ -1970,28 +1998,21 @@ Item {
         }
     }
 
-        // Python spotify
-    // Connections{
-    //     target: SpotifyReceiver
-    //     function onSpotifyReceivedData( Track_Name, Artist_Name, Album_Name, Album_Img_URL,isPlaying){
-    //         if(Album_Name===""){
-    //             artistImage.visible=false
-    //             playingNow.visible=false
-    //         }
-    //         else{
-    //             artistImage.visible=true
-    //             playingNow.visible=true
-    //             if(isPlaying){
-    //                 playingNow.text="Playing Now"
-    //             }else{
-    //                 playingNow.text="Music Puased"
-    //             }
-    //             artistImg.source = Album_Img_URL
-    //             songTitle.text=Track_Name
-    //             artistName.text=Artist_Name
-    //         }
-    //     }
-    // }
+
+    Text {
+        id: miles1
+        x: 177
+        y: 361
+        opacity: 1
+        color: "#7f7f7f"
+        text: "km/h"
+        font.pixelSize: 16
+        smooth: true
+        font.family: "Futura"
+    }
+
 
 }
+
+
 
