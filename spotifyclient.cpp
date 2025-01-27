@@ -7,86 +7,105 @@
 #include <QUrl>
 #include <QDateTime>
 #include <QDebug>
-#include <QUdpSocket>
-#include <QCoreApplication>
+#include <QTextStream>
 #include <QProcess>
 #include <QThread>
 #include <QTimer>
 #include <QFile>
 #include <QStandardPaths>
 #include <QDir>
-static const QString clientId = "api-id-here";
-static const QString clientSecret = "api-secret-key-here";
-static const QString redirectUri = "http://localhost:8888/callback";
+#include <QUrlQuery>
+#include <QTcpSocket>
+
+// Spotify Credentials
+static const QString clientId = "3fb73f276ec048b78eff8151cee5563c";
+static const QString clientSecret = "e8d229b5cc704e4d9c29bbd62957f93d";
+static const QString redirectUri = "http://autospectra/spotify_auth.php"; // Replace with Pi's actual IP
 static const QString scope = "user-read-currently-playing user-modify-playback-state user-read-playback-state";
 static const QString tokenFilePath = QDir::current().filePath("spotify_tokens.json");
 
-void openUrlInBrowser(const QString &url) {
-#ifdef Q_OS_WIN
-    // Windows
-    QString program = "rundll32";
-    QStringList arguments;
-    arguments << "url.dll,FileProtocolHandler" << url;
-    QProcess::startDetached(program, arguments);
-#elif defined(Q_OS_MACOS)
-    // macOS
-    QProcess::startDetached("open", QStringList() << url);
-#elif defined(Q_OS_LINUX)
-    // Linux
-    QProcess::startDetached("xdg-open", QStringList() << url);
-#endif
+// ===== OAuthServer Implementation =====
+
+OAuthServer::OAuthServer(QObject *parent) : QTcpServer(parent)
+{
+    // No additional initialization required
 }
 
 void OAuthServer::incomingConnection(qintptr socketDescriptor) {
     QTcpSocket *socket = new QTcpSocket(this);
-    socket->setSocketDescriptor(socketDescriptor);
+
+    if (!socket->setSocketDescriptor(socketDescriptor)) {
+        qWarning() << "Failed to set socket descriptor:" << socket->errorString();
+        socket->deleteLater();
+        return;
+    }
+
     connect(socket, &QTcpSocket::readyRead, this, [this, socket]() {
         QByteArray data = socket->readAll();
-        QString response = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n"
-                           "<html><body>"
-                           "<script>window.close();</script>"
-                           "<p>Authorization successful! You can close this window.</p>"
-                           "</body></html>";
-        socket->write(response.toUtf8());
-        socket->flush();
-        socket->waitForBytesWritten(3000);
-        socket->close();
-        QString request(data);
-        int codeIndex = request.indexOf("code=");
-        if (codeIndex != -1) {
-            int startIndex = codeIndex + 5;
-            int endIndex = request.indexOf(' ', startIndex);
-            authCode = request.mid(startIndex, endIndex - startIndex);
-            close();
-        }
+        QString authCode = QString::fromUtf8(data).trimmed();  // Convert to QString and trim any whitespace
+        qDebug() << "Authorization Code received:" << authCode;
+
+        // Emit the signal with the authorization code
+        emit this->authorizationReceived(authCode);
+
+        // Close the socket
+        socket->disconnectFromHost();
+        socket->deleteLater();
+
+        // Close the server after receiving the code
+        this->close();
     });
 }
+
+
+// ===== SpotifyClient Implementation =====
 
 SpotifyClient::SpotifyClient(QObject *parent) : QObject(parent)
 {
     updateTimer = new QTimer(this);
-    networkCheckTimer = new QTimer(this);
 
-    // Check network connectivity every 5 seconds
-    connect(networkCheckTimer, &QTimer::timeout, this, &SpotifyClient::checkNetworkConnectivity);
-    networkCheckTimer->start(5000);
-}
+    // Initialize QNetworkAccessManager
+    networkManager = new QNetworkAccessManager(this);
 
-void SpotifyClient::checkNetworkConnectivity() {
-    QNetworkConfigurationManager mgr;
-    isConnected = mgr.isOnline();
+    // Connect the networkAccessibleChanged signal to your slot
+    connect(networkManager, &QNetworkAccessManager::networkAccessibleChanged,
+            this, &SpotifyClient::onNetworkAccessibleChanged);
+
+    // Perform an initial network accessibility check
+    QNetworkAccessManager::NetworkAccessibility accessible = networkManager->networkAccessible();
+    isConnected = (accessible == QNetworkAccessManager::Accessible);
 
     if (isConnected) {
-        // qDebug() << "Network is connected";
-        // Optionally: Restart track updates if the network was previously disconnected
-        emit isConnectedChanged(isConnected);
-        if (!updateTimer->isActive()) {
+        // Start updating current track
+        updateCurrentTrack();
+    }
+}
+
+SpotifyClient::~SpotifyClient()
+{
+    if (oauthServer && oauthServer->isListening()) {
+        oauthServer->close();
+    }
+}
+
+void SpotifyClient::onNetworkAccessibleChanged(QNetworkAccessManager::NetworkAccessibility accessible)
+{
+    bool wasConnected = isConnected;
+    isConnected = (accessible == QNetworkAccessManager::Accessible);
+
+    emit isConnectedChanged(isConnected);
+
+    if (isConnected && !wasConnected)
+    {
+        // Network just became accessible
+        if (!updateTimer->isActive())
+        {
             updateCurrentTrack();
         }
-    } else {
-        // qDebug() << "Network is disconnected";
-        // Stop track updates if the network is disconnected
-        emit isConnectedChanged(isConnected);
+    }
+    else if (!isConnected && wasConnected)
+    {
+        // Network just became inaccessible
         stopUpdate();
     }
 }
@@ -95,49 +114,61 @@ QString SpotifyClient::getAuthorizationCode() {
     QString authUrl = QString("https://accounts.spotify.com/authorize?response_type=code&client_id=%1&scope=%2&redirect_uri=%3")
                           .arg(clientId, scope, redirectUri);
 
-    // Open the URL in the default web browser
-    openUrlInBrowser(authUrl);
+    // Start the OAuth server to listen for the redirect
+    oauthServer = new OAuthServer(this);
+    connect(oauthServer, &OAuthServer::authorizationReceived, this, &SpotifyClient::handleAuthorizationReceived);
 
-    OAuthServer server;
-    server.listen(QHostAddress::LocalHost, 8888);
-    while (server.authCode.isEmpty()) {
-        QCoreApplication::processEvents();
+    if (!oauthServer->listen(QHostAddress::Any, 8888)) {
+        qCritical() << "Failed to start OAuth server:" << oauthServer->errorString();
+        return QString();
     }
-    return server.authCode;
+
+    qDebug() << "Listening for authorization code on port 8888...";
+
+    return QString(); // Authorization code will be handled asynchronously
 }
 
-QJsonObject SpotifyClient::getAccessToken(const QString &authCode) {
+void SpotifyClient::handleAuthorizationReceived(const QString &code) {
+    qDebug() << "Authorization code received:" << code;
+    QJsonObject tokenInfo = getAccessToken(code);
+    // Proceed with updating the current track is handled in getAccessToken's finished slot
+}
+
+QJsonObject SpotifyClient::getAccessToken(const QString &authCodeParam) { // Renamed parameter
     QNetworkRequest request(QUrl("https://accounts.spotify.com/api/token"));
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
 
     QByteArray data;
     data.append("grant_type=authorization_code&");
-    data.append("code=" + QUrl::toPercentEncoding(authCode) + "&");
+    data.append("code=" + QUrl::toPercentEncoding(authCodeParam) + "&"); // Use authCodeParam
     data.append("redirect_uri=" + QUrl::toPercentEncoding(redirectUri) + "&");
     data.append("client_id=" + QUrl::toPercentEncoding(clientId) + "&");
     data.append("client_secret=" + QUrl::toPercentEncoding(clientSecret));
 
-    QNetworkReply *reply = networkManager.post(request, data);
-    while (!reply->isFinished()) {
-        QCoreApplication::processEvents();
-    }
-    QByteArray response = reply->readAll();
-    if (reply->error() != QNetworkReply::NoError) {
-        qWarning() << "Error in getting access token:" << reply->errorString();
-        reply->deleteLater();
-        return QJsonObject();
-    }
-    QJsonDocument jsonResponse = QJsonDocument::fromJson(response);
-    QJsonObject tokenInfo = jsonResponse.object();
-    tokenInfo["expires_at"] = QDateTime::currentSecsSinceEpoch() + tokenInfo["expires_in"].toInt();
-    reply->deleteLater();
+    QNetworkReply *reply = networkManager->post(request, data);
+    connect(reply, &QNetworkReply::finished, this, [this, reply, authCodeParam]() { // Capture authCodeParam
+        if (reply->error() == QNetworkReply::NoError) {
+            QByteArray response = reply->readAll();
+            QJsonDocument jsonResponse = QJsonDocument::fromJson(response);
+            QJsonObject tokenInfo = jsonResponse.object();
+            tokenInfo["expires_at"] = QDateTime::currentSecsSinceEpoch() + tokenInfo["expires_in"].toInt();
+            token = tokenInfo["access_token"].toString();
+            qDebug() << "Access Token:" << tokenInfo["access_token"].toString();
+            qDebug() << "Refresh Token:" << tokenInfo["refresh_token"].toString();
+            saveTokens(tokenInfo["access_token"].toString(), tokenInfo["refresh_token"].toString());
+            reply->deleteLater();
+            // Start updating the current track
+            updateCurrentTrack();
+        } else {
+            qWarning() << "Error in getting access token:" << reply->errorString();
+            reply->deleteLater();
+        }
+    });
 
-    saveTokens(tokenInfo["access_token"].toString(), tokenInfo["refresh_token"].toString());
-
-    return tokenInfo;
+    return QJsonObject();
 }
 
-void SpotifyClient::saveTokens(const QString &accessToken, const QString &refreshToken) {
+void SpotifyClient::saveTokens(const QString &accessToken, const QString &refreshTokenParam) { // Renamed parameter
     QFile file(tokenFilePath);
 
     if (!file.open(QIODevice::WriteOnly)) {
@@ -147,7 +178,7 @@ void SpotifyClient::saveTokens(const QString &accessToken, const QString &refres
 
     QJsonObject jsonObj;
     jsonObj["access_token"] = accessToken;
-    jsonObj["refresh_token"] = refreshToken;
+    jsonObj["refresh_token"] = refreshTokenParam; // Use refreshTokenParam
     jsonObj["expires_at"] = QDateTime::currentSecsSinceEpoch() + 3600; // Example: Token expires in 1 hour
 
     QJsonDocument jsonDoc(jsonObj);
@@ -176,83 +207,81 @@ QString SpotifyClient::readAccessToken() {
     qint64 expiresAt = jsonObj["expires_at"].toVariant().toLongLong();
 
     if (QDateTime::currentSecsSinceEpoch() > expiresAt) {
-        token = refreshAccessToken(refreshToken);
+        token = refreshAccessToken(refreshToken); // Use member variable
     }
     return token;
 }
 
-QString SpotifyClient::refreshAccessToken(const QString &refreshToken) {
+QString SpotifyClient::refreshAccessToken(const QString &refreshTokenParam) { // Renamed parameter
     QNetworkRequest request(QUrl("https://accounts.spotify.com/api/token"));
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
 
     QByteArray data;
     data.append("grant_type=refresh_token&");
-    data.append("refresh_token=" + QUrl::toPercentEncoding(refreshToken) + "&");
+    data.append("refresh_token=" + QUrl::toPercentEncoding(refreshTokenParam) + "&"); // Use refreshTokenParam
     data.append("client_id=" + QUrl::toPercentEncoding(clientId) + "&");
     data.append("client_secret=" + QUrl::toPercentEncoding(clientSecret));
 
-    QNetworkReply *reply = networkManager.post(request, data);
-    while (!reply->isFinished()) {
-        QCoreApplication::processEvents();
-    }
-    QByteArray response = reply->readAll();
-    if (reply->error() != QNetworkReply::NoError) {
-        qWarning() << "Error in refreshing access token:" << reply->errorString();
-        reply->deleteLater();
-        return QString();
-    }
-    QJsonDocument jsonResponse = QJsonDocument::fromJson(response);
-    QJsonObject tokenInfo = jsonResponse.object();
-    tokenInfo["expires_at"] = QDateTime::currentSecsSinceEpoch() + tokenInfo["expires_in"].toInt();
-    reply->deleteLater();
+    QNetworkReply *reply = networkManager->post(request, data);
+    connect(reply, &QNetworkReply::finished, this, [this, reply, refreshTokenParam]() { // Capture refreshTokenParam
+        if (reply->error() == QNetworkReply::NoError) {
+            QByteArray response = reply->readAll();
+            QJsonDocument jsonResponse = QJsonDocument::fromJson(response);
+            QJsonObject tokenInfo = jsonResponse.object();
+            tokenInfo["expires_at"] = QDateTime::currentSecsSinceEpoch() + tokenInfo["expires_in"].toInt();
+            token = tokenInfo["access_token"].toString();
+            qDebug() << "Access Token Refreshed:" << token;
+            saveTokens(token, refreshTokenParam); // Use refreshTokenParam
+            reply->deleteLater();
+            // Continue with application logic if needed
+        } else {
+            qWarning() << "Error refreshing access token:" << reply->errorString();
+            reply->deleteLater();
+        }
+    });
 
-    saveTokens(tokenInfo["access_token"].toString(), tokenInfo["refresh_token"].toString());
-
-    return tokenInfo["access_token"].toString();
+    return QString();
 }
 
 QJsonObject SpotifyClient::getCurrentTrack(const QString &token) {
     QNetworkRequest request(QUrl("https://api.spotify.com/v1/me/player/currently-playing"));
     request.setRawHeader("Authorization", QString("Bearer %1").arg(token).toUtf8());
 
-    QNetworkReply *reply = networkManager.get(request);
-    while (!reply->isFinished()) {
-        QCoreApplication::processEvents();
-    }
-    QByteArray response = reply->readAll();
-    if (reply->error() != QNetworkReply::NoError) {
-        qWarning() << "Error in getting current track:" << reply->errorString();
-        reply->deleteLater();
-        return QJsonObject();
-    }
-    QJsonDocument jsonResponse = QJsonDocument::fromJson(response);
-    reply->deleteLater();
-    return jsonResponse.object();
-}
+    QNetworkReply *reply = networkManager->get(request);
+    connect(reply, &QNetworkReply::finished, this, [this, reply]() {
+        QByteArray response = reply->readAll();
 
-void SpotifyClient::updateCurrentTrack() {
-    qDebug()<<tokenFilePath;
-    connect(updateTimer, &QTimer::timeout, this, [=]() {
-        QString token = readAccessToken();
-        if (token.isEmpty()) {
-            QString authCode = getAuthorizationCode();
-            if (!authCode.isEmpty()) {
-                QJsonObject tokenInfo = getAccessToken(authCode);
-                token = tokenInfo["access_token"].toString();
-            }
+        if (reply->error() != QNetworkReply::NoError) {
+            qWarning() << "Error in getting current track:" << reply->errorString();
+            qWarning() << "API Response:" << response;
+            isConnected = false;
+            emit isConnectedChanged(isConnected);
+            stopUpdate();
+            reply->deleteLater();
+            return;
         }
-        QJsonObject currentTrack = getCurrentTrack(token);
+
+        // If we reach here, the network is connected
+        if (!isConnected) {
+            isConnected = true;
+            emit isConnectedChanged(isConnected);
+        }
+
+        QJsonDocument jsonResponse = QJsonDocument::fromJson(response);
+        QJsonObject currentTrack = jsonResponse.object();
+        reply->deleteLater();
+
         QJsonObject jsonData;
         if (!currentTrack.isEmpty() && currentTrack.contains("item")) {
             QJsonObject trackInfo = currentTrack["item"].toObject();
             int durationMs = trackInfo["duration_ms"].toInt();
             int progressMs = currentTrack["progress_ms"].toInt();
             // Format time
-            int minutes_currentTime = static_cast<int>(progressMs/1000) / 60;
-            int seconds_currentTime = static_cast<int>(progressMs/1000) % 60;
+            int minutes_currentTime = static_cast<int>(progressMs / 1000) / 60;
+            int seconds_currentTime = static_cast<int>(progressMs / 1000) % 60;
             QString currentTimeformatted = QString("%1:%2").arg(minutes_currentTime, 2, 10, QChar('0')).arg(seconds_currentTime, 2, 10, QChar('0'));
-            int minutes_duration = static_cast<int>(durationMs/1000) / 60;
-            int seconds_duration = static_cast<int>(durationMs/1000) % 60;
+            int minutes_duration = static_cast<int>(durationMs / 1000) / 60;
+            int seconds_duration = static_cast<int>(durationMs / 1000) % 60;
             QString durationformatted = QString("%1:%2").arg(minutes_duration, 2, 10, QChar('0')).arg(seconds_duration, 2, 10, QChar('0'));
             jsonData = {
                 {"trackName", trackInfo["name"].toString()},
@@ -288,10 +317,25 @@ void SpotifyClient::updateCurrentTrack() {
             };
 
             // Emit the signal with no song information
-            emit spotifyReceivedData("", "", "", "", false,0,0,"00:00","00:00");
+            emit spotifyReceivedData("", "", "", "", false, 0, 0, "00:00", "00:00");
         }
     });
-    updateTimer->start(1000); // Update every 1 seconds, for example
+
+    return QJsonObject();
+}
+
+void SpotifyClient::updateCurrentTrack() {
+    qDebug() << "Token File Path:" << tokenFilePath;
+    connect(updateTimer, &QTimer::timeout, this, [=]() {
+        QString token = readAccessToken();
+        if (token.isEmpty()) {
+            qDebug() << "No access token available. Initiating authorization...";
+            getAuthorizationCode();
+            return;
+        }
+        getCurrentTrack(token);
+    });
+    updateTimer->start(1000); // Update every 10 seconds, adjust as needed
 }
 
 void SpotifyClient::stopUpdate()
@@ -308,11 +352,13 @@ void SpotifyClient::pause() {
     QNetworkRequest request(QUrl("https://api.spotify.com/v1/me/player/pause"));
     request.setRawHeader("Authorization", QString("Bearer %1").arg(token).toUtf8());
 
-    QNetworkReply *reply = networkManager.put(request, QByteArray());
-    while (!reply->isFinished()) {
-        QCoreApplication::processEvents();
-    }
-    reply->deleteLater();
+    QNetworkReply *reply = networkManager->put(request, QByteArray());
+    connect(reply, &QNetworkReply::finished, this, [reply]() {
+        if (reply->error() != QNetworkReply::NoError) {
+            qWarning() << "Error in pausing playback:" << reply->errorString();
+        }
+        reply->deleteLater();
+    });
 }
 
 void SpotifyClient::play() {
@@ -322,11 +368,13 @@ void SpotifyClient::play() {
     QNetworkRequest request(QUrl("https://api.spotify.com/v1/me/player/play"));
     request.setRawHeader("Authorization", QString("Bearer %1").arg(token).toUtf8());
 
-    QNetworkReply *reply = networkManager.put(request, QByteArray());
-    while (!reply->isFinished()) {
-        QCoreApplication::processEvents();
-    }
-    reply->deleteLater();
+    QNetworkReply *reply = networkManager->put(request, QByteArray());
+    connect(reply, &QNetworkReply::finished, this, [reply]() {
+        if (reply->error() != QNetworkReply::NoError) {
+            qWarning() << "Error in resuming playback:" << reply->errorString();
+        }
+        reply->deleteLater();
+    });
 }
 
 void SpotifyClient::nextTrack() {
@@ -336,11 +384,13 @@ void SpotifyClient::nextTrack() {
     QNetworkRequest request(QUrl("https://api.spotify.com/v1/me/player/next"));
     request.setRawHeader("Authorization", QString("Bearer %1").arg(token).toUtf8());
 
-    QNetworkReply *reply = networkManager.post(request, QByteArray());
-    while (!reply->isFinished()) {
-        QCoreApplication::processEvents();
-    }
-    reply->deleteLater();
+    QNetworkReply *reply = networkManager->post(request, QByteArray());
+    connect(reply, &QNetworkReply::finished, this, [reply]() {
+        if (reply->error() != QNetworkReply::NoError) {
+            qWarning() << "Error in skipping to next track:" << reply->errorString();
+        }
+        reply->deleteLater();
+    });
 }
 
 void SpotifyClient::previousTrack() {
@@ -350,9 +400,11 @@ void SpotifyClient::previousTrack() {
     QNetworkRequest request(QUrl("https://api.spotify.com/v1/me/player/previous"));
     request.setRawHeader("Authorization", QString("Bearer %1").arg(token).toUtf8());
 
-    QNetworkReply *reply = networkManager.post(request, QByteArray());
-    while (!reply->isFinished()) {
-        QCoreApplication::processEvents();
-    }
-    reply->deleteLater();
+    QNetworkReply *reply = networkManager->post(request, QByteArray());
+    connect(reply, &QNetworkReply::finished, this, [reply]() {
+        if (reply->error() != QNetworkReply::NoError) {
+            qWarning() << "Error in skipping to previous track:" << reply->errorString();
+        }
+        reply->deleteLater();
+    });
 }

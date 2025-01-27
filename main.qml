@@ -7,7 +7,6 @@ import QtGraphicalEffects 1.0
 import com.company.serialmanager 1.0
 import MyPythonScript 1.0
 import com.company.cardatareceiver 1.0
-import spotifyreceiver 1.0
 Window {
     id: window
     height: 600

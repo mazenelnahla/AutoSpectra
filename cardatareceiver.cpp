@@ -40,6 +40,7 @@ void CarDataReceiver::processPendingDatagrams()
 
             autoPilotFlag = jsonObj["autoPilot"].toInt();
             double speed = jsonObj["speed"].toDouble();
+            double RPM = jsonObj["RPM"].toDouble();
             QString trafficSign = jsonObj["trafficSign"].toString();
             int autoGear = jsonObj["gear"].toInt();
             if(autoGear == 0){
@@ -66,7 +67,7 @@ void CarDataReceiver::processPendingDatagrams()
             bool warning = jsonObj["warning"].toBool();
             QString alart = jsonObj["alart"].toString();
             bool drowsinessDetection = jsonObj["sleep"].toBool();
-            emit carlaJsonDataParsed(speed, alart, autoPilotFlag, AGear, leftSignal, rightSignal, false, handBrake, trafficSign, highBeam, adaptiveLights, drowsinessDetection);
+            emit carlaJsonDataParsed(speed, alart, autoPilotFlag, AGear, leftSignal, rightSignal, false, handBrake, trafficSign, highBeam, adaptiveLights, drowsinessDetection,RPM);
             dataTimeoutTimer.start();
         }
     }
