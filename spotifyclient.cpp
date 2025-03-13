@@ -190,6 +190,7 @@ QString SpotifyClient::readAccessToken() {
     QFile file(tokenFilePath);
     if (!file.open(QIODevice::ReadOnly)) {
         qWarning() << "Could not open token file for reading.";
+        emit authenticationStatusChanged(false);
         file.close();
         return QString();
     }
@@ -198,6 +199,7 @@ QString SpotifyClient::readAccessToken() {
 
     QJsonDocument jsonDoc = QJsonDocument::fromJson(data);
     if (jsonDoc.isNull() || !jsonDoc.isObject()) {
+        emit authenticationStatusChanged(false);
         qWarning() << "Invalid token file format.";
         return QString();
     }
@@ -209,6 +211,7 @@ QString SpotifyClient::readAccessToken() {
     if (QDateTime::currentSecsSinceEpoch() > expiresAt) {
         token = refreshAccessToken(refreshToken); // Use member variable
     }
+    emit authenticationStatusChanged(true);
     return token;
 }
 
@@ -233,8 +236,10 @@ QString SpotifyClient::refreshAccessToken(const QString &refreshTokenParam) { //
             qDebug() << "Access Token Refreshed:" << token;
             saveTokens(token, refreshTokenParam); // Use refreshTokenParam
             reply->deleteLater();
+            emit authenticationStatusChanged(true);
             // Continue with application logic if needed
         } else {
+            emit authenticationStatusChanged(false);
             qWarning() << "Error refreshing access token:" << reply->errorString();
             reply->deleteLater();
         }

@@ -45,6 +45,7 @@ else()
           spotifyclient.h spotifyclient.cpp
           fota.h fota.cpp
           iphandler.h iphandler.cpp
+          bluetoothdevicename.h bluetoothdevicename.cpp
         )
     endif()
 endif()

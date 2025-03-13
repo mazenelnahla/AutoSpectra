@@ -1,4 +1,5 @@
 import QtQuick 2.12
+import QtGraphicalEffects 1.0
 
 Item {
     width: 200
@@ -9,20 +10,32 @@ Item {
 
     // Redraw the canvas whenever the fuel level changes
     onFuelLevelChanged: {
-        console.log("Fuel level changed to: " + fuelLevel)
         canvas.requestPaint()
     }
+    Image{
+        id:gas_icon_fuel
+        source:"/images/Gas_icon.png"
+        height:20
+        width:20
+        x:305
+        y:20
+        visible: false
+    }
+    ColorOverlay {
+        anchors.fill: gas_icon_fuel
+        source: gas_icon_fuel
+        color:  "white"
+    }
+
     Canvas {
         id: canvas
         anchors.fill: parent
 
         Component.onCompleted: {
-            console.log("Canvas component completed")
             requestPaint()
         }
 
         onPaint: {
-            console.log("Canvas onPaint called")
             var ctx = getContext("2d");
 
             // Clear the canvas
@@ -43,14 +56,14 @@ Item {
             ctx.stroke();
 
             // Calculate the end angle based on the fuel level
-            var endAngle = Math.PI * 1.5 + (Math.PI / 2) * fuelLevel;
+            var endAngle = Math.PI*2 - (Math.PI / 2) * fuelLevel;
 
             // Draw the foreground arc (fuel level indicator)
             ctx.beginPath();
             ctx.lineWidth = 15;
             ctx.lineCap = "round";
-            ctx.strokeStyle = "red";
-            ctx.arc(centerX, centerY, radius, Math.PI * 1.5, endAngle, false);
+            ctx.strokeStyle = "orange";
+            ctx.arc(centerX, centerY, radius, Math.PI *2, endAngle, true);
             ctx.stroke();
         }
     }

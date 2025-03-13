@@ -46,24 +46,17 @@
         <file>images/adaptive_off.png</file>
         <file>images/adaptive_on.png</file>
         <file>images/assist_disable.png</file>
-        <file>images/color_fill_1.png</file>
         <file>images/daytime_light.png</file>
         <file>images/door_open.png</file>
         <file>images/high_beam.png</file>
-        <file>images/left_side.png</file>
         <file>images/low_bat.png</file>
         <file>images/low_beam.png</file>
         <file>images/lower_status.png</file>
         <file>images/parking_break.png</file>
-        <file>images/rectangle_1.png</file>
         <file>images/seat_belt.png</file>
         <file>images/speed_limit.png</file>
         <file>images/steering_error.png</file>
         <file>images/upper_status.png</file>
-        <file>img/background.png</file>
-        <file>img/background.svg</file>
-        <file>img/needle.svg</file>
-        <file>img/tickmark.svg</file>
         <file>Gauge_animation.qml</file>
         <file>images/wanring_massage.png</file>
         <file>images/s.png</file>
@@ -95,7 +88,6 @@
         <file>images/right_side_blue.png</file>
         <file>images/right_side_red.png</file>
         <file>images/right_side_yellow.png</file>
-        <file>images/Right_Side.png</file>
         <file>images/button_frame.png</file>
         <file>images/fota_bg.png</file>
         <file>images/update_icon.png</file>
@@ -111,5 +103,13 @@
         <file>Gauge_animation_RPM.qml</file>
         <file>Fuel_gauge.qml</file>
         <file>Temp_level.qml</file>
+        <file>images/Gas_icon.png</file>
+        <file>images/no-wifi_9311566.png</file>
+        <file>img/background.svg</file>
+        <file>images/temp.png</file>
+        <file>images/car.png</file>
+        <file>images/gauge.png</file>
+        <file>fonts/digital-7.ttf</file>
+        <file>images/tyre_pressure.svg</file>
     </qresource>
 </RCC>

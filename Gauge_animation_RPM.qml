@@ -48,27 +48,6 @@ CircularGauge {
                 }
             }
 
-            // Add tick labels with scaled down values (1k, 2k, 3k...)
-            Repeater {
-                model: 8
-                delegate: Text {
-                    property real angle: -195 + (index * 35)
-                    property real radius: gauge.width / 2 - 25 // Adjust radius as needed
-                    property real xOffset: Math.cos(Math.PI * angle / 180) * radius
-                    property real yOffset: Math.sin(Math.PI * angle / 180) * radius
-                    x: (gauge.width / 2) + xOffset - width / 2
-                    y: (gauge.height / 2) + yOffset - height / 2
-                    text: (1 + (index * 1)).toFixed(0) // Show 1k, 2k, 3k, etc.
-                    color: "white"
-                    font.pixelSize: 20
-                    transform: Rotation {
-                        origin.x: x + width / 2
-                        origin.y: y + height / 2
-                        angle: angle
-                    }
-                }
-            }
-
             Canvas {
                 property int value: gauge.value
 
@@ -80,18 +59,18 @@ CircularGauge {
                 }
 
                 Repeater {
-                    z:1
-                    model: 8
+                    model: 9
                     delegate: Text {
-                        property real angle: -195 + (index * 35)
-                        property real radius: gauge.width / 2 - 25 // Adjust radius as needed
+                        property real angle: -235 + (index * 36)
+                        property real radius: gauge.width / 2 - 30 // Adjust radius as needed
                         property real xOffset: Math.cos(Math.PI * angle / 180) * radius
                         property real yOffset: Math.sin(Math.PI * angle / 180) * radius
                         x: (gauge.width / 2) + xOffset - width / 2
                         y: (gauge.height / 2) + yOffset - height / 2
-                        text: (1 + (index * 1)).toFixed(0)  // Show 1k, 2k, 3k, etc.
-                        color: "white"
+                        text: (0 + (index * 1)).toFixed(0)  // Show 1k, 2k, 3k, etc.
+                        color:(0 + (index * 1)) >= 6 ? "#d92a27" : "#e5e5e5"
                         font.pixelSize: 20
+                        font.bold:true
                         transform: Rotation {
                             origin.x: x + width / 2
                             origin.y: y + height / 2
@@ -106,7 +85,7 @@ CircularGauge {
                         needleColor2.visible=false
                         needleColor3.visible=false
                     }
-                    if (gauge.value>=4000&&gauge.value<6000){
+                    if (gauge.value>=3000&&gauge.value<6000){
                         needleColor1.visible=false
                         needleColor2.visible=true
                         needleColor3.visible=false
@@ -132,37 +111,32 @@ CircularGauge {
             }
         }
 
-        // Central display shows the value scaled by 1000 (in thousands) and adds "k"
-        foreground: Item {
-            Text {
-                x: 118
-                y: 200
-                width: 167
-                height: 97
-                font.pixelSize: 80
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignBottom
-                font.family: "Futura"
-                font.bold: true
-                smooth: true
-                anchors.centerIn: parent
-                text: gauge.value  // Display value in "k" format (e.g., 6.0k)
-                color: "white"
-            }
-        }
-
         tickmarkLabel: Text {
             visible: false
         }
 
         tickmark: Rectangle {
-            visible: false
+            visible: styleData.value % 1000 == 0
+            implicitWidth: outerRadius * 0.02
+            antialiasing: true
+            implicitHeight: outerRadius * 0.1
+            color: styleData.value >= 6000 ? "red" : "#e5e5e5"
         }
-        needle: Item {
-            visible: false
+
+        needle: Rectangle {
+            y: outerRadius * 0.15
+            implicitWidth: outerRadius * 0.03
+            implicitHeight: outerRadius * 1.15
+            antialiasing: true
+            color: "orange"
         }
+
         minorTickmark: Rectangle {
-            visible: false
+            visible: styleData.value < 8000
+            implicitWidth: outerRadius * 0.018
+            antialiasing: true
+            implicitHeight: outerRadius * 0.03
+            color: styleData.value >= 6000 ? "red" : "#e5e5e5"
         }
     }
 }

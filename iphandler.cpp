@@ -7,7 +7,7 @@ IpHandler::IpHandler(QObject *parent) : QObject(parent)
 
 QString IpHandler::getWifiIPAddress()
 {
-    QStringList wifiInterfaceNames = { "wlan0", "wlp", "wl", "en0", "Wi-Fi" };  // WiFi names to check
+    QStringList wifiInterfaceNames = { "wlan0", "wlp", "wl", "en0", "WiFi" };  // WiFi names to check
 
     // qDebug() << "Listing all available network interfaces:";
     // foreach (const QNetworkInterface &interface, QNetworkInterface::allInterfaces()) {
