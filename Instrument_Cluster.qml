@@ -8,6 +8,8 @@ import com.company.serialmanager 1.0
 import MyPythonScript 1.0
 import com.company.cardatareceiver 1.0
 import spotifyclient 1.0
+import QtQuick.Timeline 1.0
+
 Item {
     id: item1
     width: 1024
@@ -17,7 +19,7 @@ Item {
     property bool lSignal:false
     property int autopilot:0
     property string albumImgUrl: ""
-    property string bluetoothDeviceName: "Mazen's A20"
+    property string bluetoothDeviceName: " "
     property bool isPlaying // Property to track play/pause state
     property bool isPlaying2 // Property to track play/pause state
     property int update_flag
@@ -25,26 +27,54 @@ Item {
     Rectangle{
         width: 1024
         height: 600
-        color: "#353535"
+        // color: "#353535"
+        gradient: Gradient {
+            orientation: Gradient.Vertical // Optional: Specifies vertical gradient
 
+            // GradientStop {
+            //     position: 0.0
+            //     color: "#005f7f" // Dark navy blue at the top
+            // }
+            // GradientStop {
+            //     position: 1.0
+            //     color: "#001f3f" // Lighter blue at the bottom
+            // }
+
+            //night mode color
+            GradientStop {
+                position: 0.0
+                color: "#2F3B4C" // Deep steel blue at the top
+            }
+            GradientStop {
+                position: 0.5
+                color: "#3A465A" // Slate gray in the middle
+            }
+            GradientStop {
+                position: 1.0
+                color: "#1A1C20" // Charcoal black at the bottom
+            }
+        }
     }
 
 
-    // Image {
-    //     id: color_fill_1
-    //     source: "images/color_fill_1.png"
-    //     x: 0
-    //     y: 0
-    //     opacity: 1
-    // }
-
-
-    Image {
+    Rectangle {
         id: rectangle_1
-        source: "images/rectangle_1.png"
+        width: 640
+        height:332
         x: 200
         y: 171
+        color:"#1A1C20"
         opacity: 1
+        Image{
+            id:car_simulation
+            visible: !artistImage.visible
+            anchors.fill: parent
+            source:"/images/car.png"
+            sourceSize.height: 332
+            sourceSize.width: 640
+            fillMode: Image.PreserveAspectFit
+            opacity: 1
+        }
 
         Image {
             id: wanring_massage
@@ -56,7 +86,7 @@ Item {
             width: 409
             height: 212
             opacity: 1
-            visible: !(artistImage.visible)
+            visible: false
 
             Text {
                 id: text1
@@ -125,29 +155,31 @@ Item {
                 anchors.right: parent.right
                 anchors.leftMargin: -20
                 anchors.rightMargin: 170
+                visible: false
+                Text {
+                    id: bluetooth_connected
+                    text: "Connected to: " +bluetoothDeviceName
+                    font.pixelSize: 15
+                    horizontalAlignment: Text.AlignLeft
+                    verticalAlignment: Text.AlignVCenter
+                    anchors.horizontalCenterOffset: 11
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    font.weight: Font.Black
+                    font.family: "Arial-Black"
+                    color: "#f2f2f2"
+                    smooth: true
+                    y: -43
+                    width: 191
+                    height: 25
+                    opacity: 0.70196078431373
+                    visible: true
+                }
             }
-            Text {
-                id: bluetooth_connected
-                text: "Connected to: " +bluetoothDeviceName
-                font.pixelSize: 15
-                horizontalAlignment: Text.AlignLeft
-                verticalAlignment: Text.AlignVCenter
-                anchors.horizontalCenterOffset: 11
-                anchors.horizontalCenter: parent.horizontalCenter
-                font.weight: Font.Black
-                font.family: "Arial-Black"
-                color: "#f2f2f2"
-                smooth: true
-                y: -43
-                width: 191
-                height: 25
-                opacity: 0.70196078431373
-                visible: true
-            }
+
             Text {
                 id: playingNow
                 text: "Playing Now"
-                font.pixelSize: 21
+                font.pixelSize: 18
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
                 font.weight: Font.Black
@@ -184,29 +216,111 @@ Item {
                 opacity: 1
             }
 
-            Text {
-                id: songTitle
-                text: "."
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.leftMargin: -72
-                anchors.rightMargin: -72
-                font.pixelSize: 20
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
-                font.family: "Arial-Black"
-                color: "#ffffff"
-                smooth: true
-                y: 180
-                height: 32
-                opacity: 1
-            }
+            // Text {
+            //     id: songTitle
+            //     text: "."
+            //     anchors.left: parent.left
+            //     anchors.right: parent.right
+            //     anchors.leftMargin: -72
+            //     anchors.rightMargin: -72
+            //     font.pixelSize: 20
+            //     horizontalAlignment: Text.AlignHCenter
+            //     verticalAlignment: Text.AlignVCenter
+            //     font.family: "Arial-Black"
+            //     color: "#ffffff"
+            //     smooth: true
+            //     y: 180
+            //     height: 32
+            //     opacity: 1
+            // }
 
+            // Container for the song title
+            Rectangle {
+                id: titleContainer
+                anchors.horizontalCenter: parent.horizontalCenter
+                y: 180
+                width: 308 // Adjusted for left and right margins (-72 each)
+                height: 32
+                color: "transparent"
+                clip: true // Ensure the text is clipped within the container
+
+                // Text element for the song title
+                Text {
+                    id: songTitle
+                    text: "This is a very long song title that needs to scroll because it exceeds the available width."
+                    font.pixelSize: 20
+                    horizontalAlignment: Text.AlignLeft // Changed to AlignLeft for scrolling
+                    font.family: "Arial-Black"
+                    color: "#ffffff"
+                    smooth: true
+                    verticalAlignment: Text.AlignVCenter
+                    height: parent.height
+                    opacity: 1
+
+                    // Initial position
+                    x: 0
+
+                    // Function to start the scrolling animation
+                    function startScrolling() {
+                        // Stop any existing animation
+                        scrollAnimation.stop()
+
+                        // Define the total distance to scroll
+                        var scrollDistance = contentWidth + parent.width
+
+                        // Set animation properties
+                        scrollAnimation.from = parent.width
+                        scrollAnimation.to = -contentWidth
+                        scrollAnimation.duration = (scrollDistance / 50) * 1000 // Adjust speed here (50 pixels per second)
+
+                        // Start the animation
+                        scrollAnimation.start()
+                    }
+
+                    // Function to stop the scrolling animation
+                    function stopScrolling() {
+                        scrollAnimation.stop()
+                        // Center the text if it's short enough
+                        x = (parent.width - contentWidth) / 2
+                    }
+
+                    // Monitor changes in contentWidth to decide whether to scroll
+                    onContentWidthChanged: {
+                        if (contentWidth > parent.width) {
+                            // Align text to the left to prepare for scrolling
+                            horizontalAlignment = Text.AlignLeft
+                            startScrolling()
+                        } else {
+                            stopScrolling()
+                        }
+                    }
+
+                    // Animation for scrolling
+                    NumberAnimation {
+                        id: scrollAnimation
+                        target: songTitle
+                        property: "x"
+                        loops: Animation.Infinite
+                        easing.type: Easing.Linear
+                    }
+
+                    // Optional: Handle text changes dynamically
+                    onTextChanged: {
+                        // Reset position and re-evaluate scrolling necessity
+                        x = 0
+                        if (contentWidth > parent.width) {
+                            startScrolling()
+                        } else {
+                            stopScrolling()
+                        }
+                    }
+                }
+            }
 
             Text {
                 id: artistName
                 text: "."
-                font.pixelSize: 19
+                font.pixelSize: 17
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
                 anchors.horizontalCenterOffset: 0
@@ -214,7 +328,7 @@ Item {
                 font.family: "Arial-Black"
                 color: "#ffffff"
                 smooth: true
-                y: 218
+                y: 210
                 width: 170
                 height: 19
                 opacity: 0.5
@@ -272,99 +386,99 @@ Item {
                     opacity: 0.5
                 }
             }
-            Image {
-                id:spotifyControlButtons
-                y:284
-                width: 197
-                height: 54
-                source: "images/button_frame.png"
-                anchors.horizontalCenterOffset: 1
-                anchors.horizontalCenter: parent.horizontalCenter
-                opacity: 1
-                Image {
-                    id: play
-                    source: "images/play.png"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenterOffset: 0
-                    fillMode: Image.PreserveAspectCrop
-                    height:45
-                    width:45
-                    opacity: isPlaying ? 0 : 1
-                    anchors.verticalCenter: parent.verticalCenter
-                    MouseArea {
-                        anchors.fill: parent
-                        enabled: true
-                        onClicked: {
-                            if(isPlaying2){
-                                spotify.pause()
-                            }else{
-                                spotify.play()
-                            }
-                            isPlaying2 = !isPlaying2;
-                        }
-                    }
-                }
-                Image {
-                    id: pause
-                    source: "images/pause.png"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenterOffset: 0
-                    fillMode: Image.PreserveAspectCrop
-                    height:45
-                    width:45
-                    opacity: isPlaying ? 1 : 0
-                    anchors.verticalCenter: parent.verticalCenter
-                    MouseArea {
-                        anchors.fill: parent
-                        enabled: true
-                        onClicked: {
-                            if(isPlaying2){
-                                spotify.pause()
-                            }else{
-                                spotify.play()
-                            }
-                            isPlaying2 = !isPlaying2;
-                        }
-                    }
-                }
+            // Image {
+            //     id:spotifyControlButtons
+            //     y:284
+            //     width: 197
+            //     height: 54
+            //     source: "images/button_frame.png"
+            //     anchors.horizontalCenterOffset: 1
+            //     anchors.horizontalCenter: parent.horizontalCenter
+            //     opacity: 1
+            //     Image {
+            //         id: play
+            //         source: "images/play.png"
+            //         anchors.horizontalCenter: parent.horizontalCenter
+            //         anchors.verticalCenterOffset: 0
+            //         fillMode: Image.PreserveAspectCrop
+            //         height:45
+            //         width:45
+            //         opacity: isPlaying ? 0 : 1
+            //         anchors.verticalCenter: parent.verticalCenter
+            //         MouseArea {
+            //             anchors.fill: parent
+            //             enabled: true
+            //             onClicked: {
+            //                 if(isPlaying2){
+            //                     spotify.pause()
+            //                 }else{
+            //                     spotify.play()
+            //                 }
+            //                 isPlaying2 = !isPlaying2;
+            //             }
+            //         }
+            //     }
+            //     Image {
+            //         id: pause
+            //         source: "images/pause.png"
+            //         anchors.horizontalCenter: parent.horizontalCenter
+            //         anchors.verticalCenterOffset: 0
+            //         fillMode: Image.PreserveAspectCrop
+            //         height:45
+            //         width:45
+            //         opacity: isPlaying ? 1 : 0
+            //         anchors.verticalCenter: parent.verticalCenter
+            //         MouseArea {
+            //             anchors.fill: parent
+            //             enabled: true
+            //             onClicked: {
+            //                 if(isPlaying2){
+            //                     spotify.pause()
+            //                 }else{
+            //                     spotify.play()
+            //                 }
+            //                 isPlaying2 = !isPlaying2;
+            //             }
+            //         }
+            //     }
 
 
-                Image {
-                    id: forward
-                    source: "images/forward.png"
-                    anchors.verticalCenterOffset: 0
-                    fillMode: Image.PreserveAspectCrop
-                    x: 127
-                    height:45
-                    width:45
-                    opacity: 1
-                    anchors.verticalCenter: parent.verticalCenter
-                    MouseArea {
-                        anchors.fill: parent
-                        enabled: true
-                        onClicked: {
-                            spotify.nextTrack()
-                        }
-                    }
-                }
-                Image {
-                    id: back
-                    source: "images/back.png"
-                    fillMode: Image.PreserveAspectCrop
-                    x: 21
-                    height:45
-                    width:45
-                    opacity: 1
-                    anchors.verticalCenter: parent.verticalCenter
-                    MouseArea {
-                        anchors.fill: parent
-                        enabled: true
-                        onClicked: {
-                            spotify.previousTrack()
-                        }
-                    }
-                }
-            }
+            //     Image {
+            //         id: forward
+            //         source: "images/forward.png"
+            //         anchors.verticalCenterOffset: 0
+            //         fillMode: Image.PreserveAspectCrop
+            //         x: 127
+            //         height:45
+            //         width:45
+            //         opacity: 1
+            //         anchors.verticalCenter: parent.verticalCenter
+            //         MouseArea {
+            //             anchors.fill: parent
+            //             enabled: true
+            //             onClicked: {
+            //                 spotify.nextTrack()
+            //             }
+            //         }
+            //     }
+            //     Image {
+            //         id: back
+            //         source: "images/back.png"
+            //         fillMode: Image.PreserveAspectCrop
+            //         x: 21
+            //         height:45
+            //         width:45
+            //         opacity: 1
+            //         anchors.verticalCenter: parent.verticalCenter
+            //         MouseArea {
+            //             anchors.fill: parent
+            //             enabled: true
+            //             onClicked: {
+            //                 spotify.previousTrack()
+            //             }
+            //         }
+            //     }
+            // }
 
         }
     }
@@ -420,46 +534,16 @@ Item {
 
     Image {
         id: right_side_none
-        source: "images/Right_Side.png"
+        source: "images/gauge.png"
         x: 629
-        y: 138
+        y: 131
         opacity: 1
         visible: true
     }
 
-
-    // Image {
-    //     id: right_side_blue
-    //     source: "images/right_side_blue.png"
-    //     x: 629
-    //     y: 138
-    //     opacity: 1
-    //     visible: speed_read.text > 0 && speed_read.text < 60 && hasRealData== true
-    // }
-
-    // Image {
-    //     id: right_side_red
-    //     source: "images/right_side_red.png"
-    //     x: 629
-    //     y: 138
-    //     opacity: 1
-    //     visible: speed_read.text >= 120 && hasRealData== true
-    // }
-
-    // Image {
-    //     id: right_side_yellow
-    //     source: "images/right_side_yellow.png"
-    //     x: 629
-    //     y: 138
-    //     opacity: 1
-    //     visible: speed_read.text >= 60 && speed_read.text < 120 && hasRealData== true
-    // }
-
-
-
     Image {
         id: left_side_center1
-        x: 709
+        x: 710
         y: 219
         opacity: 1
         source: "images/center.png"
@@ -732,21 +816,21 @@ Item {
 
     Gauge_animation_RPM {
         id: gauge_animation_RPM
-        x: 671
-        y: 180
+        x: 676
+        y: 179
         width: 317
         height: 317
-        value: rpm_read.text
+        value: 0
         maximumValue: 8000
         anchors {
             margins: window.height * 0.2
         }
-        visible:false
+        visible:true
     }
 
     Image {
         id: left_side
-        source: "images/left_side.png"
+        source: "images/gauge.png"
         x: -8
         y: 131
         opacity: 1
@@ -754,7 +838,7 @@ Item {
 
     Fuel_gauge{
         id: fuel_Gauge
-        x: 654
+        x: 658
         y: 153
         width: 363
         height: 359
@@ -784,27 +868,6 @@ Item {
         anchors {
             margins: window.height * 0.2
         }
-        Text {
-            id: min_speed
-            x: 84
-            y: 264
-            color: "#ffffff"
-            text: qsTr("0")
-            font.pixelSize: 17
-            font.family: "GoogleSansDisplay-Bold"
-            font.bold: true
-        }
-
-        Text {
-            id: max_speed
-            x: 206
-            y: 268
-            font.family: "GoogleSansDisplay-Bold"
-            color: "#d92a27"
-            text: qsTr("160")
-            font.pixelSize: 17
-            font.bold: true
-        }
     }
 
 
@@ -828,7 +891,7 @@ Item {
         y: 0
         width: 1026
         height: 127
-        opacity: 0.911
+        opacity: 0.5
         visible: true
     }
 
@@ -973,34 +1036,121 @@ Item {
         }
     }
 
-    Text {
-        id: rpm_read
-        font.pixelSize: 70
-        horizontalAlignment: Text.AlignHCenter
-        verticalAlignment: Text.AlignVCenter
-        font.family: "Futura"
-        font.bold: true
-        color: "#ffffff"
-        text: rpmValue
-        smooth: true
-        x: 746
-        y: 295
-        z:2
-        width: 167
-        height: 90
-        opacity: 1
-        visible: gauge_animation_RPM.visible
-        property int rpmValue: 0
+    // Text {
+    //     id: rpm_read
+    //     font.pixelSize: 70
+    //     horizontalAlignment: Text.AlignHCenter
+    //     verticalAlignment: Text.AlignVCenter
+    //     font.family: "Futura"
+    //     font.bold: true
+    //     color: "#ffffff"
+    //     text: gauge_animation_RPM.value /1000
+    //     smooth: true
+    //     x: 746
+    //     y: 295
+    //     z:2
+    //     width: 167
+    //     height: 90
+    //     opacity: 1
+    //     visible: gauge_animation_RPM.value>0
+    // }
+    Image {
+        id: tyre_pressure
+        visible: true
+        anchors.verticalCenter: left_side_center1.verticalCenter
+        anchors.horizontalCenter: left_side_center1.horizontalCenter
+        source: "/images/tyre_pressure.svg"
+        fillMode: Image.PreserveAspectFit
+        sourceSize.height: 190
+        sourceSize.width: 190
+        z: 2
+
+        Text {
+            id: flTyre
+            visible: true
+            color: "#ffffff"
+            text: "34"
+            width: 27
+            height: 29
+            anchors.fill: parent
+            anchors.leftMargin: -79
+            anchors.rightMargin: 52
+            anchors.topMargin: -37
+            anchors.bottomMargin: 8
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+            font.pointSize: 22
+            font.family: "Digital-7"
+        }
+
+        Text {
+            id: frTyre
+            visible: true
+            color: "#ffffff"
+            text: "31"
+            width: 27
+            height: 29
+            anchors.fill: parent
+            anchors.leftMargin: 56
+            anchors.rightMargin: -79
+            anchors.topMargin: -39
+            anchors.bottomMargin: 8
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+            font.pointSize: 22
+            font.family: "Digital-7"
+        }
+
+        Text {
+            id: rlTyre
+            width: 27
+            height: 29
+            anchors.fill: parent
+            anchors.leftMargin: -79
+            anchors.rightMargin: 52
+            anchors.topMargin: 39
+            anchors.bottomMargin: -10
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+            x: -79
+            y: 28
+            visible: true
+            color: "#ffffff"
+            text: "35"
+            font.pointSize: 22
+            font.family: "Digital-7"
+        }
+
+        Text {
+            id: rrTyre
+            width: 27
+            height: 29
+            anchors.fill: parent
+            anchors.leftMargin: 50
+            anchors.rightMargin: -77
+            anchors.topMargin: 39
+            anchors.bottomMargin: -10
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+            x: 50
+            y: 28
+            visible: true
+            color: "#ffffff"
+            text: "32"
+            font.pointSize: 22
+            font.family: "Digital-7"
+        }
     }
+
 
 
 
     Text {
         id: speed_read
-        font.pixelSize: 80
+        font.pixelSize: 95
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignBottom
-        font.family: "Futura"
+        font.family: "Digital-7"
         font.bold: true
         color: "#ffffff"
         text: speedValue
@@ -1191,7 +1341,6 @@ Item {
 
 
         ColorOverlay {
-            y: 554
             anchors.fill: low_beam
             source: low_beam
             color: low_beam.colorFlag ? "#515151" : "transparent"
@@ -1218,7 +1367,6 @@ Item {
 
 
         ColorOverlay {
-            y: 554
             anchors.fill: high_beam
             source: high_beam
             color: high_beam.colorFlag ? "#515151" : "transparent"
@@ -1245,7 +1393,6 @@ Item {
 
 
         ColorOverlay {
-            y: 554
             anchors.fill: adaptive_on
             source: adaptive_on
             color: adaptive_on.colorFlag ? "#515151" : "transparent"
@@ -1339,11 +1486,11 @@ Item {
 
     Image {
         id: lower_right
-        x: 799
+        x: 768
         y: 532
         width: 336
         height: 68
-        opacity: 1
+        opacity: 0.4
         source: "images/lower_status.png"
         fillMode: Image.PreserveAspectFit
     }
@@ -1352,15 +1499,15 @@ Item {
         id: clockdate
         text: "00:00"
         anchors.verticalCenter: lower_right.verticalCenter
-        font.pixelSize: 20
+        font.pixelSize: 27
         verticalAlignment: Text.AlignVCenter
-        anchors.verticalCenterOffset: -2
+        anchors.verticalCenterOffset: -3
         font.styleName: "Black"
-        font.family: "Arial"
+        font.family: "Digital-7"
         font.bold: true
         color: "#ffffff"
         smooth: true
-        x: 864
+        x: 840
         opacity: 1
     }
 
@@ -1373,8 +1520,8 @@ Item {
         font.bold: true
         color: "#7f7f7f"
         smooth: true
-        x: 926
-        y: 560
+        x: 902
+        y: 559
         opacity: 1
     }
 
@@ -1447,7 +1594,7 @@ Item {
                 target: rightlabel
                 property: "opacity"
                 to: 0
-                duration: 750  // Adjust the duration of the fade-out
+                duration: 550  // Adjust the duration of the fade-out
             }
 
             NumberAnimation {
@@ -1481,7 +1628,7 @@ Item {
                 target: leftlabel
                 property: "opacity"
                 to: 0
-                duration: 750  // Adjust the duration of the fade-out
+                duration: 550  // Adjust the duration of the fade-out
             }
 
             NumberAnimation {
@@ -1495,14 +1642,13 @@ Item {
 
 
 
-
     Image {
         id: lower_status2
-        x: -94
-        y: 532
+        x: -77
+        y: 535
         width: 336
         height: 68
-        opacity: 1
+        opacity: 0.4
         source: "images/lower_status.png"
         fillMode: Image.PreserveAspectFit
         property bool colorFlag: false
@@ -1571,7 +1717,11 @@ Item {
     MouseArea {
         anchors.fill: autopilot_mode_button
         onClicked: {
-            autopilot_mode_button.colorFlag=!autopilot_mode_button.colorFlag;
+            if(autopilot===1){
+                autopilot=0;
+            }else{
+                autopilot=1;
+            }
         }
     }
     ColorOverlay {
@@ -1581,7 +1731,6 @@ Item {
     }
     Fota {
         id:fota_open
-        z:1
         visible:false;
         Component.onCompleted: {
             update_flag=update;
@@ -1711,7 +1860,7 @@ Item {
             speedAnimation.stop();
             speed_read.speedValue=0;
             speed_read.speedValue=speed;
-            rpm_read.rpmValue=RPM
+            gauge_animation_RPM.value=RPM
             if(autoPilotFlag===1){
                 autopilot=1;
                 selected_gear.text=AGear;
@@ -1783,7 +1932,7 @@ Item {
                 }
             }else{
                 gear.visible=true;
-                gearAuto.visible=false;
+                // gearAuto.visible=false;
                 autopilot==0;
                 if(leftSignal===1){
                     lSignal=true;
@@ -1815,7 +1964,6 @@ Item {
                 electricSteeringError.visible=false;
                 airBagError.visible=false;
                 radarDetected.visible=false;
-                wanring_massage.visible=false;
                 _cautionMassage.visible=false;
                 alert_.visible=false;
                 assist_disable.visible=false;
@@ -1882,6 +2030,7 @@ Item {
         }
         onNoConnection:{
             if(warning===true){
+                gauge_animation_RPM.value=0;
                 autopilot=0;
                 rightlabel.visible=true;
                 leftlabel.visible=true;
@@ -1996,16 +2145,25 @@ Item {
         function onIsConnectedChanged(status){
             lower_alert.visible=!status;
         }
+        function onAuthenticationStatusChanged(isAuthenticated) {
+            if (isAuthenticated) {
+                wanring_massage.visible=false;
+                warning_icon.visible=false;
+            } else {
+                wanring_massage.visible=true;
+                warning_icon.visible=true;
+            }
+        }
     }
 
 
     Text {
         id: miles1
-        x: 177
-        y: 361
+        x: 182
+        y: 358
         opacity: 1
         color: "#7f7f7f"
-        text: "km/h"
+        text: "kph"
         font.pixelSize: 16
         smooth: true
         font.family: "Futura"

@@ -18,6 +18,8 @@ public:
 signals:
     void authorizationReceived(const QString &code);
 
+
+
 protected:
     void incomingConnection(qintptr socketDescriptor) override;
 };
@@ -48,6 +50,7 @@ signals:
         const QString &durationFormatted
         );
     void isConnectedChanged(bool isConnected);
+    void authenticationStatusChanged(bool isAuthenticated);
 
 private slots:
     void onNetworkAccessibleChanged(QNetworkAccessManager::NetworkAccessibility accessible);

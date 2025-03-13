@@ -15,60 +15,34 @@ CircularGauge {
         background: Rectangle {
             implicitHeight: gauge.height
             implicitWidth: gauge.width
-            color:  "#0039383c"
+            color: "#0039383c"
             anchors.centerIn: parent
             radius: 360
+
             Image {
-                id:needleColor1
+                id: needleColor1
                 visible: false
                 anchors.fill: parent
                 source: "/img/background60.svg"
                 asynchronous: true
-                sourceSize {
-                    width: width
-                }
+                sourceSize.width: width
             }
             Image {
-                id:needleColor2
+                id: needleColor2
                 visible: false
                 anchors.fill: parent
                 source: "/img/background120.svg"
                 asynchronous: true
-                sourceSize {
-                    width: width
-                }
+                sourceSize.width: width
             }
             Image {
-                id:needleColor3
+                id: needleColor3
                 visible: false
                 anchors.fill: parent
                 source: "/img/background.svg"
                 asynchronous: true
-                sourceSize {
-                    width: width
-                }
+                sourceSize.width: width
             }
-            // Add tick labels behind the Canvas
-            Repeater {
-                model: 7
-                delegate: Text {
-                    property real angle: -200 + (index * 37)
-                    property real radius: gauge.width / 2 - 25 // Adjust radius as needed
-                    property real xOffset: Math.cos(Math.PI * angle / 180) * radius
-                    property real yOffset: Math.sin(Math.PI * angle / 180) * radius
-                    x: (gauge.width / 2) + xOffset - width / 2
-                    y: (gauge.height / 2) + yOffset - height / 2
-                    text: (20+(index *20)).toFixed(0)
-                    color: "white"
-                    font.pixelSize: 20
-                    transform: Rotation {
-                        origin.x: x + width / 2
-                        origin.y: y + height / 2
-                        angle: angle
-                    }
-                }
-            }
-
             Canvas {
                 property int value: gauge.value
 
@@ -79,18 +53,18 @@ CircularGauge {
                     return degrees * (Math.PI / 180);
                 }
                 Repeater {
-                    z:1
-                    model: 7
+                    model: 17
                     delegate: Text {
-                        property real angle: -200 + (index * 37)
+                        property real angle: -240 + (index * 18.9)
                         property real radius: gauge.width / 2 - 25 // Adjust radius as needed
                         property real xOffset: Math.cos(Math.PI * angle / 180) * radius
                         property real yOffset: Math.sin(Math.PI * angle / 180) * radius
                         x: (gauge.width / 2) + xOffset - width / 2
                         y: (gauge.height / 2) + yOffset - height / 2
-                        text: (20+(index *20)).toFixed(0)
-                        color: "white"
-                        font.pixelSize: 20
+                        text: (0 + (index * 10)).toFixed(0)
+                        color: (0 + (index * 10)) >= 140 ? "#d92a27" : "#e5e5e5"
+                        font.bold: true
+                        font.pixelSize: 18
                         transform: Rotation {
                             origin.x: x + width / 2
                             origin.y: y + height / 2
@@ -99,75 +73,83 @@ CircularGauge {
                     }
                 }
                 onPaint: {
-                    if(gauge.value>0&&gauge.value<60){
-                        needleColor1.visible=true
-                        needleColor2.visible=false
-                        needleColor3.visible=false
+                    if (gauge.value > 0 && gauge.value < 60) {
+                        needleColor1.visible = true
+                        needleColor2.visible = false
+                        needleColor3.visible = false
                     }
-                    if (gauge.value>=60&&gauge.value<120){
-                        needleColor1.visible=false
-                        needleColor2.visible=true
-                        needleColor3.visible=false
+                    if (gauge.value >= 60 && gauge.value < 120) {
+                        needleColor1.visible = false
+                        needleColor2.visible = true
+                        needleColor3.visible = false
                     }
-                    if(gauge.value>=120){
-                        needleColor1.visible=false
-                        needleColor2.visible=false
-                        needleColor3.visible=true
+                    if (gauge.value >= 120) {
+                        needleColor1.visible = false
+                        needleColor2.visible = false
+                        needleColor3.visible = true
                     }
+
                     var ctx = getContext("2d");
                     ctx.reset();
                     ctx.beginPath();
                     ctx.strokeStyle = "#39383c"
                     ctx.lineWidth = 46
-                    ctx.arc(outerRadius,
-                        outerRadius,
-                        outerRadius - ctx.lineWidth / 2,
-                        degreesToRadians(valueToAngle(gauge.value) - 90),
-                        degreesToRadians(valueToAngle(gauge.maximumValue + 1) - 90)
-                    );
+                    ctx.arc(gauge.width / 2,
+                            gauge.height / 2,
+                            gauge.width / 2 - ctx.lineWidth / 2,
+                            degreesToRadians(valueToAngle(gauge.value) - 90),
+                            degreesToRadians(valueToAngle(gauge.maximumValue + 1) - 90));
                     ctx.stroke();
                 }
             }
         }
 
-
-        foreground: Item {
-            Text {
-                x: 118
-                y: 200
-                width: 167
-                height: 97
-                font.pixelSize: 80
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignBottom
-                font.family: "Futura"
-                font.bold: true
-                smooth: true
-                anchors.centerIn: parent
-                text: gauge.value.toFixed(0)
-                color: "white"
-                visible: false
-            }
-        }
+        // foreground: Item {
+        //     Text {
+        //         x: 118
+        //         y: 200
+        //         width: 167
+        //         height: 97
+        //         font.pixelSize: 80
+        //         horizontalAlignment: Text.AlignHCenter
+        //         verticalAlignment: Text.AlignBottom
+        //         font.family: "Futura"
+        //         font.bold: true
+        //         smooth: true
+        //         anchors.centerIn: parent
+        //         text: gauge.value.toFixed(0)
+        //         color: "white"
+        //         visible: false
+        //     }
+        // }
 
         tickmarkLabel: Text {
             visible: false
         }
 
         tickmark: Rectangle {
-            visible: false
+            visible: styleData.value % 10 == 0
+            implicitWidth: outerRadius * 0.02
+            antialiasing: true
+            implicitHeight: outerRadius * 0.04
+            color: styleData.value >= 140 ? "#e34c22" : "#e5e5e5"
         }
-        needle: Item {
-            visible: false
+
+        needle: Rectangle {
+            y: outerRadius * 0.15
+            implicitWidth: outerRadius * 0.03
+            implicitHeight: outerRadius * 1.15
+            antialiasing: true
+            color: "orange"
         }
+
+
         minorTickmark: Rectangle {
-            visible: false
+            visible: styleData.value < 160
+            implicitWidth: outerRadius * 0.01
+            antialiasing: true
+            implicitHeight: outerRadius * 0.03
+            color: styleData.value >= 140 ? "#e34c22" : "#e5e5e5"
         }
     }
 }
-
-/*##^##
-Designer {
-    D{i:0;autoSize:true;height:480;width:640}
-}
-##^##*/
